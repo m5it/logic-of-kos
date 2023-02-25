@@ -73,6 +73,28 @@ document.querySelectorAll(".fields > .tabs .name").forEach(function(elmx) {
 	    document.dispatchEvent(new CustomEvent("tab_opening",{"detail":attrActive}));
 	});
 });
+/** here jquery version:
+// tab menus
+$(".fields > .tabs .name").on("click",function(e) {
+    //
+    var attrActive = $(this).attr("attr-active");
+    //
+    var elm = findParent(e.target,{classname:'fields',});
+    var tmpid = $(elm).attr("id");
+    if(typeof(tmpid)=='undefined' || tmpid==null) {
+		tmpid = "tmpid"+(new Date().getTime())+random(100,99999);
+	    $(elm).attr("id",tmpid);
+	}
+	//
+    $("#"+tmpid+" > .tabs .name").removeClass("active");
+    $(this).addClass("active");
+    //
+    $("#"+tmpid+" > .display").removeClass("active");
+    $("#"+tmpid+" > .display."+attrActive).addClass("active");
+    // trigger event with name attrActive on specific tab click.
+    $(document).trigger( attrActive, [e] );
+});
+*/
 </script>
 
 	<!-- Example of horizontal tab menus -->
