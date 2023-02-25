@@ -25,4 +25,4 @@ echo "gitp: Using branch: "$cbranch
 #--
 git add .
 git commit -m "$lastcommit"
-git push github
+git push origin
