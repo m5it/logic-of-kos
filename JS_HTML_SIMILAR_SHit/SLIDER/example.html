@@ -1,0 +1,103 @@
+<!-- https://github.com/m5it/html_js_4_fun_slid3r -->
+<html>
+    <head>
+        <meta name="viewport" content="width=100%, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta charset="UTF-8">
+        <title>HTML and JS for FuN - Slider Example by t3ch aka B.K. aka grandekos aka etc...</title>
+        <script src="slid3r.js" type="text/javascript"></script>
+        <link href="slid3r_style.css" type="text/css" rel="stylesheet"></link>
+<style>
+body { margin:20px 0px 0px 0px; padding:0px; }
+.leftSide, .rightSide {
+    float:left;
+    width:50%;
+    height:63vh;
+    box-sizing:border-box;
+    position:relative;
+}
+</style>
+<script>
+//
+function IsMobile() {
+    var ua = navigator.userAgent;
+    if( ua.match( /iPhone OS/i ) ) return true;
+    else if( ua.match( /Linux\; Android/i ) ) return true;
+    else return false;
+}
+//
+function onLoad(e) {
+    // Example initialize slider
+    var slider = (new Slid3r({
+        mobile    :IsMobile(),
+        doubleside:true,
+        element   :document.querySelector(".slider.hor .field"),
+        onscroll  :function(H) {
+            document.querySelector(".slider.hor .info").innerText = "result: "+H.getResult()+", scroll speed: "+H.scrollSpeed;
+        },
+        onstart:function(H) { console.info("onstart.hor: ",H.getResult()); },
+        onend:function(H) { console.info("onend.hor: ",H.getResult()); },
+        onended:function(H) { console.info("onended.hor: ",H.getResult()); },
+    }));
+    //
+    document.querySelector(".slider.hor .info").innerText = "result: "+slider.getResult()+", scroll speed: "+slider.scrollSpeed;
+    
+    //
+    var slider1 = (new Slid3r({
+        mobile    :IsMobile(),
+        doubleside:true,
+        vertical:true,
+        element   :document.querySelector(".slider.ver .field"),
+        onscroll  :function(H) {
+            document.querySelector(".slider.ver .info").innerText = "result: "+H.getResult()+", scroll speed: "+H.scrollSpeed;
+        },
+        onstart:function(H) { console.info("onstart.ver: ",H.getResult()); },
+        onend:function(H) { console.info("onend.ver: ",H.getResult()); },
+        onended:function(H) { console.info("onended.ver: ",H.getResult()); },
+    }));
+    //
+    document.querySelector(".slider.ver .info").innerText = "result: "+slider1.getResult()+", scroll speed: "+slider1.scrollSpeed;
+}
+window.onload = function(e) { onLoad(e); }
+</script>
+    </head>
+    
+    <body>
+        <h6 align="center" style="position:fixed:top:0px;">
+			Example sliders for remote control panels in HTML and JS. Supported and tested "mobile Chrome Android" and "pc Chrome". <br>
+			Can be found on <a href="https://github.com/m5it/html_js_4_fun_slid3r" target="_BLANK">https://github.com/m5it/html_js_4_fun_slid3r</a></h6>
+        
+        <div class="leftSide">
+            <div>
+                <div class="slider ver">
+                    <div>
+                        <div class="field scrollit">
+                            <div class="cover"></div>
+                            <div class="space"></div>
+                            <div class="info"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="rightSide">
+            <div>
+                <div class="slider hor">
+                    <div>
+                        <div class="field scrollit">
+                            <div class="cover"></div>
+                            <div class="space"></div>
+                            <div class="info"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position:fixed;bottom:0px;left:0px;right:0px;text-align:center;">
+        <h4 style="margin:0px;"># Donate - Welcome - Thanks!</h4>
+        <a href="https://www.paypal.com/donate/?hosted_button_id=QGRYL4SL5N4FE"> Donate - Donar - Spenden - Daruj - пожертвовать - दान करना - 捐 - 寄付</a>
+        </div>
+    </body>
+</html>

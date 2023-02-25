@@ -1,0 +1,115 @@
+/* https://github.com/m5it/html_js_4_fun_slid3r */
+.slider {
+    position:absolute;
+    display:inline-block;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+.slider > div {
+    position:relative;
+}
+.slider .field {
+    display:inline-block;
+}
+.slider .field:not(.active) {
+    scroll-behavior: smooth;
+}
+.slider .info {
+    position:absolute;
+    padding: 2px;
+    color: black;
+    font-size: 0.7em;
+    white-space:nowrap;
+}
+/* horizontal */
+.slider.hor .field {
+    width:200px;
+    height:56px;
+    overflow-x:scroll;
+    overflow-y: hidden;
+}
+.slider.hor > div:before, .slider.hor > div:after, .slider.ver > div:before, .slider.ver > div:after {
+    position:absolute;
+    padding:2px;
+    color:black;
+    background:gray;
+    box-shadow:0px 0px 2px 1px lightgray;
+    font-size:0.7em;
+}
+.slider.hor > div:before {
+    left:0px;
+    top:-18px;
+    content:"LEFT";
+}
+.slider.hor > div:after {
+    right:0px;
+    top:-18px;
+    content:"RIGHT";
+}
+.slider.hor .info {
+    top: -20px;
+    left: 50%;
+    transform: translate(-50%,0px);
+}
+
+/* vertical */
+.slider.ver .field {
+    height:200px;
+    width:56px;
+    overflow-y:scroll;
+    overflow-x: hidden;
+}
+.slider.ver > div:before {
+    top:0px;
+    left:60px;
+    content:"FORWARD";
+}
+.slider.ver > div:after {
+    bottom:0px;
+    left:60px;
+    content:"BACKWARD";
+}
+.slider.ver .info {
+    top: 50%;
+    left:60px;
+    transform: translate(0px,-50%);
+}
+.slider.hor .space {
+    width:400%;
+    display:inline-block;
+    height:55px;
+}
+.slider.ver .space {
+    height:400%;
+    display:inline-block;
+    width:55px;
+}
+.slider.ver .cover, .slider.hor .cover {
+	position:absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	z-index:2;
+}
+/**/
+.scrollit::-webkit-scrollbar {
+  width: 55px;
+  height:55px;
+}
+.scrollit {
+  scrollbar-width: 20px;
+  scrollbar-color: green orange;
+}
+.scrollit::-webkit-scrollbar-track {
+  background: lightgray;
+  border-radius:13px;
+}
+.scrollit::-webkit-scrollbar-thumb {
+  background-color: black;
+  border-radius: none;
+  border: none;
+  min-height:60px;
+  border-radius:13px;
+}
