@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>infinite tab menus</title>
+</head>
+<body>
+
+<script>
+//-- First was created in jQuery. This version is pure JS!***
+// initialize tab menus
+//
+document.querySelectorAll(".fields > .tabs .name").forEach(function(elmx) {
+    elmx.addEventListener("click",function(e) {
+	    var attrActive = this.getAttribute("attr-active");
+	    var elm = findParent(e.target,{classname:'fields',});
+	    var tmpid = elm.getAttribute("id");
+	    if(typeof(tmpid)=='undefined' || tmpid==null) {
+			tmpid = "tmpid"+(new Date().getTime())+random(100,99999);
+		    elm.setAttribute("id",tmpid);
+		}
+	    document.querySelectorAll("#"+tmpid+" > .tabs .name").forEach(function(el) { el.classList.remove("active"); });
+	    this.classList.add("active");
+	    document.querySelectorAll("#"+tmpid+" > .display").forEach(function(el) { el.classList.remove("active"); });
+	    document.querySelectorAll("#"+tmpid+" > .display."+attrActive).forEach(function(el) { el.classList.add("active"); });
+	    // Trigger attrActive event
+	    console.warn("adm/index -> Trigger","tabs_"+attrActive);
+	    //
+	    document.dispatchEvent(new CustomEvent("tab_opening",{"detail":attrActive}));
+	});
+});
+</script>
+
+	<!-- Example of horizontal tab menus -->
+	<div class="fields hor">
+		<div class="tabs">
+            <div class="name active" attr-active="tab_h1" style="margin:2px;">tab horiznotal 1</div>
+            <div class="name" attr-active="tab_h2" style="margin:2px;">tab horiznotal 2</div>
+        </div>
+        <div class="display tab_h1 active"><div> hola tab h1! </div></div>
+        <div class="display tab_h2">
+			<div> 
+				<label>hola tab h2!</label>
+				
+				<!-- Example of vertical tab menu inside of horizontal... bip -->
+				<div class="fields vertical">
+					<div class="tabs">
+			            <div class="name active" attr-active="tab_v1" style="margin:2px;">tab vertical 1</div>
+			            <div class="name" attr-active="tab_v2" style="margin:2px;">tab vertical 2</div>
+			        </div>
+			        <div class="display tab_h1 active"><div> hola tab v1! </div></div>
+			        <div class="display tab_h1 active"><div> hola tab v2! </div></div>
+			    </div>
+			</div>
+		</div>
+    </div>
+    
+</body>
+</html>
