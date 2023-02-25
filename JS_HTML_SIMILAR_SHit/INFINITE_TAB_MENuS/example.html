@@ -3,7 +3,53 @@
 <title>infinite tab menus</title>
 </head>
 <body>
+<style>
+/*-- TAB MENuS CSS START --*/
+.fields .display:not(.active) {
+    display:none;
+}
+.fields .tabs {
+    color:white;
+    font-weight: bolder;
+    font-family: system-ui;
+}
+.fields .tabs > div {
+	display:inline-block;
+	padding:3px 13px;
+}
+.fields .tabs .name {
+    cursor:pointer;
+    background:#8fbc8f;
+}
+.fields .tabs .name:not(.active) {
+    color:lightblue;
+}
+.fields .tabs .name:not(.active):hover {color:white;}
+.fields .tabs .name.active {
+    box-shadow:0px 0px 2px 1px green;
+}
 
+.fields.vertical > .tabs {
+    float:left;
+}
+.fields.vertical > .tabs > div {
+    display:block;
+    width:100px;
+    text-align:center;
+    
+}
+.fields.vertical > .display {
+    margin-left:120px;
+}
+.fields.vertical > .display > div {
+    margin:0px 27px;
+}
+
+.fields:not(.vertical) > .display > div {
+    margin:13px 0px;
+}
+/*-- TAB MENuS CSS END --*/
+</style>
 <script>
 //-- First was created in jQuery. This version is pure JS!***
 // initialize tab menus
