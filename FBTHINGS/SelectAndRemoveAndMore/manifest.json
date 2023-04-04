@@ -1,7 +1,6 @@
 {
-  "name": "SelectAndRemove",
+  "name": "SelectAndRemoveAndMore",
   "version": "1.0",
-  "type":"module",
   "manifest_version": 3,
   /*"browser_action": {
     "default_title": "SelectAndRemove Action"
@@ -14,8 +13,8 @@
     "<all_urls>"
   ],
   "action": {
-    /*"default_popup": "popup.html"*/
-    "default_title":"Select & Remove Panel"
+    "default_popup": "popup.html",
+    "default_title":"Select & Remove And More Panel"
   },
   "content_scripts":[
     {
