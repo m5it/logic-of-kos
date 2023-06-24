@@ -1,0 +1,26 @@
+#!/bin/bash
+# Script to create git server repository
+
+NAME=$1
+PATH=$2
+CDIR=$(pwd)
+
+echo $0" => Debug name: "$NAME", path: "$PATH", cdir: "$CDIR
+
+#
+if [[ "$NAME" == "" ]]; then
+    echo $0" => Usage: "$0" new_repo_name.git"
+    exit
+fi
+#
+if [[ "$PATH" == "" ]]; then
+    PATH="/home/git/"
+fi
+#
+echo $0" => Creating repository at "$PATH$NAME
+mkdir $PATH$NAME
+cd $PATH$NAME
+git init --bare
+chown -R git.git $PATH$NAME
+cd $CDIR
+echo $0" => Done!"

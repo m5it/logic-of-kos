@@ -1,0 +1,141 @@
+#!/bin/bash
+#
+
+#--
+GITDIR_ALPHA="/home/www/web/lokkal.com/.git/"
+WORKTREE_ALPHA="/home/www/web/lokkal.com/"
+VERFILE_ALPHA="/home/www/web/lokkal.com/VERSION.md"
+
+#-- colors
+RED='\033[1;31m'
+NC='\033[0m'
+
+
+#-- vars
+echo "hook->post-update => retriving branch"
+branch=`git rev-parse --abbrev-ref HEAD`
+echo "hook->post-update => retriving rbranch"
+rbranch=$(git rev-parse --symbolic --abbrev-ref $1)
+echo "hook->post-update => retriving cbranch"
+cbranch=$(git --git-dir=$GITDIR --work-tree=$WORKTREE rev-parse --abbrev-ref HEAD)
+
+#--
+# %ae = Extract the user email from the last commit (author email)
+USER_EMAIL=$(git log -1 --format=format:%ae $1)
+# %an = Extract the username from the last commit (author name)
+USER_NAME=$(git log -1 --format=format:%an $1)
+
+#-- retrive required infos by user email
+GITDIR=$(cat postuserinfo | grep "$USER_EMAIL|" | awk '{split($0,a,"|"); print a[2]}')
+WORKTREE=$(cat postuserinfo | grep "$USER_EMAIL|" | awk '{split($0,a,"|"); print a[3]}')
+PULLFILE=$(cat postuserinfo | grep "$USER_EMAIL|" | awk '{split($0,a,"|"); print a[4]}')
+LOGFILE=$(cat postuserinfo | grep "$USER_EMAIL|" | awk '{split($0,a,"|"); print a[5]}')
+#
+GITDIR=$GITDIR_ALPHA
+WORKTREE=$WORKTREE_ALPHA
+#
+VERFILE=$WORKTREE"VERSION.md"
+#--
+#echo "hook->post-update => user_email: "$USER_EMAIL", user_name: "$USER_NAME
+echo "debug gitdir: "$GITDIR", worktree: "$WORKTREE", pullfile: "$PULLFILE", logfile: "$LOGFILE", verfile: "$VERFILE
+if [ "$GITDIR" == "" ]; then
+    echo "hook->post-update => Failed retriving postuserinfo"
+    exit 1
+fi
+
+#-- check if there is anything to commit
+#check=$(git --git-dir=$GITDIR --work-tree=$WORKTREE status | grep "Changes not staged for commit" -n10)
+#if [ "$check" != "" ]; then
+#    echo "hook->post-update => have noticed changes on git dir. Probably drdave have using ftp.. :). DBG:($check)"
+#    git --git-dir=$GITDIR --work-tree=$WORKTREE add .
+#    git --git-dir=$GITDIR --work-tree=$WORKTREE commit -m "Noticed changes. Probably DrDave have using ftp. Please first pull from repo.!"
+#fi
+
+#-- first pull from local repository & reset from origin and checkout branch
+echo "hook->post-update => fetching for worktree: $WORKTREE"
+sleep 3 && \
+git --git-dir=$GITDIR --work-tree=$WORKTREE fetch $PULLFILE
+git --git-dir=$GITDIR --work-tree=$WORKTREE fetch
+
+#--
+echo "hook->post-update => reseting & checking out origin/$rbranch"
+
+sleep 3 && \
+git --git-dir=$GITDIR --work-tree=$WORKTREE reset --hard origin/$rbranch
+#git --git-dir=$GITDIR --work-tree=$WORKTREE pull --no-edit origin $rbranch
+sleep 3 && \
+git --git-dir=$GITDIR --work-tree=$WORKTREE checkout $rbranch
+git --git-dir=$GITDIR --work-tree=$WORKTREE pull --no-edit origin $rbranch
+
+#--
+git --git-dir=$GITDIR --work-tree=$WORKTREE add .
+git --git-dir=$GITDIR --work-tree=$WORKTREE commit -m "Merge?"
+
+#--
+#if [ "$check" != "" ]; then
+#    git --git-dir=$GITDIR --work-tree=$WORKTREE push
+#fi
+
+#-- 
+echo "hook->post-update => worktree: $WORKTREE is updated."
+
+#-- if changes was noticed push to server
+
+#-- more vars. retrive at the end to get info even merge happens
+rbranchnum=$(git rev-list --count $rbranch)
+shash=`git --git-dir=$GITDIR --work-tree=$WORKTREE log -1 --pretty=format:'%h'`
+revcount=`git log --oneline | wc -l`
+latesttag=`git --git-dir=$GITDIR --work-tree=$WORKTREE describe --tags --abbrev=0 --always`
+msgcmd=$(git --git-dir=$GITDIR --work-tree=$WORKTREE log -1 --pretty=format:'%s')
+
+#--
+VER=$rbranch"."$rbranchnum"."$revcount"."$shash
+
+#--
+LOG=$(date '+%d/%m/%Y %H:%M:%S')" ( "$SSH_CLIENT" ) "$USER_NAME" / "$USER_EMAIL" => dev.lokkal.com.git "
+LOG="${LOG} version: "$VER", branch: "$branch", rbranch: "$rbranch", rbranchnum: "$rbranchnum", cbranch: "$cbranch", "
+LOG="${LOG} shash: "$shash", revcount: "$revcount", tag: "$tag", msgcmd: "$msgcmd
+echo $LOG >> $LOGFILE
+
+#-- set version --
+# branch: master, rbranch: test1, rbranchnum: 63, cbranch: master, shash: c910082, revcount: 63, tag: , msgcmd: merge again
+# VER= test1.63.63.c910082
+echo $VER > $VERFILE
+#echo "hook->post-update => Setting version: "$VER
+
+###-- ALPHA.lokkal.com --###
+#-- pull from alpha if master. alpha are merges from all developers
+#if [ "$rbranch" == "master" ];then
+        ##-- check if there is anything to commit
+        #check=$(git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA status | grep "Changes not staged for commit" -n10)
+        #if [ "$check" != "" ]; then
+            #echo "hook->post-update => have noticed changes on git dir. Probably drdave have using ftp.. :). DBG:($check)"
+            #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA add .
+            #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA commit -m "Noticed changes. Probably DrDave have using ftp."
+        #fi
+
+        ##--
+        #echo "hook->post-update => Pulling from alpha.lokkal.com rbranch: "$rbranch"=master, setting version: "$VER
+        
+        ##-- switch to remote branch & pull & auto merge
+        ##-- fetch
+        #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA fetch $PULLFILE
+        #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA fetch
+        
+        ##-- reset from origin and checkout branch
+        ##git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA reset --hard origin/$rbranch
+        #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA pull --no-edit origin $rbranch
+        #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA checkout $rbranch
+        #git --git-dir=$GITDIR_ALPHA --work-tree=$WORKTREE_ALPHA pull --no-edit origin $rbranch
+        ##-- 
+        #echo "hook->post-update => worktree: $WORKTREE_ALPHA is updated."
+        ##--
+        #if [ "$check" != "" ]; then
+            #git --git-dir=$GITDIR --work-tree=$WORKTREE push
+        #fi
+#else
+    #echo "hook->post-update => Skipping pull to master. Branch not in master!"
+#fi
+
+#--
+exec git update-server-info
