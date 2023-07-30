@@ -1,7 +1,7 @@
 #!/bin/bash
 #--
 # Script to DROP ips or ranges defined in $FILE=dropped.txt ...
-# by t3ch que esta follando a todos hackers de ciglo 21!
+# by t3ch
 #--
 
 #
