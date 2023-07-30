@@ -7,7 +7,7 @@
 # So interesting is:
 # - check last character: ${tmp1:0-1}
 # - remove last character: ${tmp1:0:-1}
-# and more i guess...
+# and more i guess... :)
 # by t3ch
 #--
 
