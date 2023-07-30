@@ -12,8 +12,8 @@
 #--
 
 #
-FROM=$1
-ACTION="SHOW"
+FROM=$1        # IP OR HOST
+ACTION="SHOW"  # DROP OR DEBUG
 if [[ $2 != "" ]]; then 
 	ACTION=$2 
 fi
