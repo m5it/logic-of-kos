@@ -1,6 +1,5 @@
 #!/bin/bash
 #--
-# Script to DROP ips or ranges defined in $FILE=dropped.txt ...
 # This is just a testing script.. it wont drop or what ever anything a tthe moment.
 # We are trying to read args etc.. handle things good way.. :D***
 # by t3ch
