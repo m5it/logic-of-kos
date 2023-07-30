@@ -4,6 +4,10 @@
 # We are trying to read args etc.. handle things good way.. :D***
 #
 # I see we use Bash aka version 4.0 and above. Because of this we can handle special string modifications etc...*** love you all!
+# So interesting is:
+# - check last character: ${tmp1:0-1}
+# - remove last character: ${tmp1:0:-1}
+# and more i guess...
 # by t3ch
 #--
 
