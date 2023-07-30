@@ -30,7 +30,7 @@ else
 	# Retrive ip from host
 	FROM=$(host $FROM | awk '!/IPv6/ && /address/ {print $4}')
 fi
-#
+# This thing with TMPWHOIS i am still not sure.. lol
 whois $FROM > TMPWHOIS
 NETRANGE=$(cat TMPWHOIS | grep NetRange | awk '{print $2"-"$4}')
 INETNUM=$(cat TMPWHOIS | grep inetnum | awk '{print $2"-"$4}')
