@@ -1,21 +1,26 @@
 #!/bin/bash
 #--
 # Script to DROP ips or ranges defined in $FILE=dropped.txt ...
+# This is just a testing script.. it wont drop or what ever anything a tthe moment.
+# We are trying to read args etc.. handle things good way.. :D***
 # by t3ch
 #--
 
 #
 FROM=$1
-ACTION=$2
+ACTION="SHOW"
+if [[ $2 != "" ]]; then 
+	ACTION=$2 
+fi
 
 #
 if [[ "$FROM" == "" ]]; then
 	echo "Ex. usage: "$0" 8.8.8.8"
 	echo "           "$0" example.com"
-	echo "           "$0" 8.8.8.8 [SHOW/DROP]"
+	echo "           "$0" 8.8.8.8 [DROP/DEBUG]"
 	exit
 fi
-echo "DEBUG FROM: "$FROM", ACTION: "$ACTION
+echo "Using address: "$FROM" and ACTION: "$ACTION
 # Check if ip if not lets retrive it
 if [[ "$FROM" =~ ^([0-9].+[0-9].+[0-9].+[0-9])+$ ]]; then
 	#
@@ -34,6 +39,7 @@ rm TMPWHOIS
 
 #
 if [[ "$ACTION" =~ SHOW|DROP|DEBUG ]]; then
+	#
 	if [[ "$INETNUM" != "" ]]; then
 		echo "DROPPING inetnum on "$INETNUM
 		tmp1=$(echo $INETNUM|awk '{print $1}')
@@ -53,6 +59,7 @@ if [[ "$ACTION" =~ SHOW|DROP|DEBUG ]]; then
 		else # Block range
 			echo "Blocking range: "$tmp1"-"$tmp2
 		fi
+	#
 	elif [[ "$NETRANGE" != "" ]]; then
 		echo "DROPPING netrange on "$NETRANGE
 		tmp1=$(echo $NETRANGE|awk '{print $1}')
@@ -70,6 +77,7 @@ if [[ "$ACTION" =~ SHOW|DROP|DEBUG ]]; then
 		else # Block range
 			echo "Blocking range: "$tmp1"-"$tmp2
 		fi
+	#
 	else
 		echo "Failed, can not find ip or range!"
 	fi
