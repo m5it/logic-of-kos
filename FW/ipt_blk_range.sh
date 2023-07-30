@@ -2,9 +2,9 @@
 #--
 # This is just a testing script.. it wont drop or what ever anything a tthe moment.
 # We are trying to read args etc.. handle things good way.. :D***
-# by t3ch
 #
 # I see we use Bash aka version 4.0 and above. Because of this we can handle special string modifications etc...*** love you all!
+# by t3ch
 #--
 
 #
