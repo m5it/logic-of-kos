@@ -22,7 +22,7 @@ if [[ "$FROM" == "" ]]; then
 	exit
 fi
 echo "Using address: "$FROM" and ACTION: "$ACTION
-# Check if ip if not lets retrive it
+# Check if ip if not lets retrive it. (if is host, then we retrive ip! lol)
 if [[ "$FROM" =~ ^([0-9].+[0-9].+[0-9].+[0-9])+$ ]]; then
 	#
 	justsothereisnoerror=""
