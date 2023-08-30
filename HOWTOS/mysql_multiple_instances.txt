@@ -1,0 +1,44 @@
+#--
+# Refs.: 
+# - https://ubiq.co/database-blog/how-to-run-multiple-mysql-instances-on-same-machine/
+# - https://medium.com/@omkarmanjrekar/running-multiple-mysql-instances-on-ubuntu-4af059aad5ae
+#--
+# How to create multiple mysql instances, separated and running on different ports..
+# Ex. ( copy data from [mysqld] and create [mysqld1]...:), Make sure all have correct privileges! ):
+#--
+[mysqld1] 
+user = mysql 
+pid-file = /var/run/mysqld/mysqld1.pid 
+socket   = /var/run/mysqld/mysqld1.sock 
+port     = 13307 
+datadir  = /var/lib/mysql1
+
+
+#1.) Create datadir
+mkdir -p /var/lib/mysql1
+
+#--
+#2.) Copy references from already ready mysql directory or manualy set user&group:
+#--
+chmod --reference /var/lib/mysql /var/lib/mysql1
+chown --reference /var/lib/mysql /var/lib/mysql1
+
+#--
+#3.) initialize datadir
+#--
+mysqld --initialize --user=mysql --datadir=/var/lib/mysql1
+
+#--
+#4.) update /etc/apparmor.d/usr.sbin.mysqld if exists and apparmor is enabled
+#--
+
+
+#--
+#x.) resetting root pwd and starting mysqld
+#--
+mysqld --defaults-file=/etc/mysql/my1.cnf --user=mysql --skip-grant-tables
+mysql
+FLUSH PRIVILEGES;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'hellopass';
+quit
+mysqld --defaults-file=/etc/mysql/my1.cnf --user=mysql
