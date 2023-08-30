@@ -1,0 +1,19 @@
+#--
+# https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
+# https://unix.stackexchange.com/questions/49796/x11-client-not-authorized-when-calling-with-sudo
+# https://forums.raspberrypi.com/viewtopic.php?t=189006
+#--
+
+# start server
+vncserver&
+
+# allow user to use X server
+# xauth list "$DISPLAY"
+xhost +localhost
+# or
+# xhost +si:localuser:myuser
+# or
+# xhost +si:localuser
+
+# start chromium
+DISPLAY=:0 chromium

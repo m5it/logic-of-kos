@@ -1,0 +1,14 @@
+#!/bin/bash
+# Example send, read with netcat! Ole!
+#--
+# Refs:
+# - https://askubuntu.com/questions/873788/bash-read-lines-from-netcat-connection
+# - https://unix.stackexchange.com/questions/332163/netcat-send-text-to-echo-service-read-reply-then-exit
+#--
+netcat -l localhost 12345  # port 12345
+exec 6<>/dev/tcp/localhost/12345
+
+while read <&6
+do
+        echo "$REPLY"
+done

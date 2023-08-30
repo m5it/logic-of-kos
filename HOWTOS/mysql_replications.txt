@@ -1,0 +1,109 @@
+#--------------------------------------------------------------
+# Refs.: 
+#  - https://hevodata.com/learn/mysql-master-master-replication/
+#  - https://stackoverflow.com/questions/40046124/write-lock-all-tables-in-mysql-for-a-moment
+#  - https://severalnines.com/blog/how-run-php-5-applications-mysql-80-centos-7/
+#  - https://stackoverflow.com/questions/675289/mysql-cloning-a-mysql-database-on-the-same-mysql-instance
+#  - https://serverfault.com/questions/384956/load-balance-http-based-on-a-percentage-of-traffic-or-requests
+#  - https://planet.mysql.com/entry/?id=5992931
+#  - https://severalnines.com/blog/using-nginx-database-load-balancer-galera-cluster/
+#--
+
+
+#--------------------------------------------------------------
+# How to install, configure mysql-server on two servers replicated as MASTER-MASTER.
+#--
+
+
+#--------------------------------------------------------------
+# Bale, lets begin.. we will use server1 an server2. If you stop configuring at x point you can use configuration as MASTER-SLAVE! But we will continue configuring to achive MASTER-MASTER! Ole!
+#--
+
+
+#--------------------------------------------------------------
+# 1.) install and configure mysql-server on both servers
+# 2.) prepare user credentials, privileges, db
+# 3.) configure master1, master2
+# 4.) test
+# 5.) dump / copy old to new(replicated)
+#--
+
+
+#--------------------------------------------------------------
+# 1.) install and configure mysql-server on both servers 
+#
+sudo apt install mysql-server
+
+# Example (mysqld.cnf), possible path /etc/mysql/mysql.conf.d/mysqld.cnf (ubuntu)
+# server-id should be different for every server !!
+[mysqld]
+user		= mysql
+port		= 3307
+
+#-- sql-mode we overwrite to allow empty columns,values by default.
+#sql-mode=""
+#-- Set default encoding
+#collation-server = utf8_unicode_ci
+#character-set-server = utf8
+
+#-- Set default password authentication (php5)
+#default-authentication-plugin=mysql_native_password
+
+#-- Settings for replication
+key_buffer_size		= 16M
+myisam-recover-options  = BACKUP
+log_error = /var/log/mysql/error_db.log
+server-id		= 1
+log_bin			= /var/log/mysql/mysql-bin_db.log
+max_binlog_size   = 100M
+binlog_do_db		= your_db_to_replicate
+
+#--------------------------------------------------------------
+# 2.) Credentials, privileges
+#--
+create user 'demouser'@'%' identified by 'password';
+grant replication slave on *.* to 'demouser'@'%';
+alter user 'demouser'@'%' identified with mysql_native_password by 'xH11mu';
+
+#--------------------------------------------------------------
+# 3.) Configure master1, master2
+#-- 
+# sudo mysql -uroot -p
+# When configurin master-slave is good to LOCK db for write access!
+
+# Ex. (lock tables):
+FLUSH TABLES WITH READ LOCK;
+
+#
+STOP SLAVE;
+
+# For master_log_file & master_log_pos check on server that will be replicated:
+# (this you check on master server) 
+SHOW MASTER STATUS;
+
+# Like this you will see what is current MASTER_LOG_FILE & MASTER_LOG_POS!
+# (this you set on slave server)
+CHANGE MASTER TO MASTER_HOST = '127.0.0.3', MASTER_USER = 'testuser', MASTER_PASSWORD = 'testpwd', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 107;
+#
+CHANGE MASTER TO MASTER_HOST = '172.31.3.59',master_port=3307,MASTER_USER = 'rep4all', MASTER_PASSWORD = 'k0nnB2U', MASTER_LOG_FILE = 'mysql-bin.000
+#
+CHANGE MASTER TO MASTER_HOST = '172.31.14.199',master_port=3307,MASTER_USER = 'rep4all', MASTER_PASSWORD = 'k0nnB2U', MASTER_LOG_FILE = 'mysql-bin.000
+#
+START SLAVE;
+
+# Ex. (unlock):
+UNLOCK TABLES;
+
+
+#--------------------------------------------------------------
+# 4.) Test
+#--
+
+#--------------------------------------------------------------
+# 5.) Dump / Copy old to replicated
+#--
+
+#--
+# ERRORS
+#--
+Coordinator stopped because there were error(s) in the worker(s). The most recent failure being: Worker 2 failed executing transaction 'ANONYMOUS' at source log mysql-bin.000115, end_log_pos 4832454. See error log and/or performance_schema.replication_applier_status_by_worker table for more details about this failure or others, if any.
