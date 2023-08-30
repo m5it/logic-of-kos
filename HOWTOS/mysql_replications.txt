@@ -7,6 +7,10 @@
 #  - https://serverfault.com/questions/384956/load-balance-http-based-on-a-percentage-of-traffic-or-requests
 #  - https://planet.mysql.com/entry/?id=5992931
 #  - https://severalnines.com/blog/using-nginx-database-load-balancer-galera-cluster/
+#  - https://www.google.com/search?q=what+does+reset+slave&oq=what+does+reset+slave&aqs=chrome..69i57j0i22i30l9.3744j0j7&client=ubuntu-chr&sourceid=chrome&ie=UTF-8
+#  - https://serverfault.com/questions/1121261/how-to-fix-mysql-8-replication-error-1062-after-system-reboot
+#  - https://www.reddit.com/r/mysql/comments/ya4djz/mysql_database_replication_master_to_slave_and/
+#  - https://dba.stackexchange.com/questions/310259/mysql-8-replication
 #--
 
 
