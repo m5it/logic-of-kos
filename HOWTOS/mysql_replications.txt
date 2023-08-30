@@ -88,13 +88,14 @@ STOP SLAVE;
 # (this you check on master server) 
 SHOW MASTER STATUS;
 
+#-- LOL
 # Like this you will see what is current MASTER_LOG_FILE & MASTER_LOG_POS!
 # (this you set on slave server)
 CHANGE MASTER TO MASTER_HOST = '127.0.0.3', MASTER_USER = 'testuser', MASTER_PASSWORD = 'testpwd', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 107;
-#
-CHANGE MASTER TO MASTER_HOST = '172.31.3.59',master_port=3307,MASTER_USER = 'rep4all', MASTER_PASSWORD = 'k0nnB2U', MASTER_LOG_FILE = 'mysql-bin.000
-#
-CHANGE MASTER TO MASTER_HOST = '172.31.14.199',master_port=3307,MASTER_USER = 'rep4all', MASTER_PASSWORD = 'k0nnB2U', MASTER_LOG_FILE = 'mysql-bin.000
+# or :D
+CHANGE MASTER TO MASTER_HOST = '172.31.3.59',master_port=3306,MASTER_USER = 'tousuer', MASTER_PASSWORD = 'tourpwd', MASTER_LOG_FILE = 'mysql-bin.000
+# or :D
+CHANGE MASTER TO MASTER_HOST = '172.31.14.199',master_port=3306,MASTER_USER = 'touser', MASTER_PASSWORD = 'tourpwd, MASTER_LOG_FILE = 'mysql-bin.000
 #
 START SLAVE;
 
