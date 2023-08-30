@@ -67,7 +67,7 @@ binlog_do_db		= your_db_to_replicate
 #--
 create user 'demouser'@'%' identified by 'password';
 grant replication slave on *.* to 'demouser'@'%';
-alter user 'demouser'@'%' identified with mysql_native_password by 'peroconjo';
+alter user 'demouser'@'%' identified with mysql_native_password by 'password';
 
 #--------------------------------------------------------------
 # 3.) Configure master1, master2
