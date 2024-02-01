@@ -1,0 +1,78 @@
+<html>
+<head>
+	<title>test javaFX, this is title! :)</title>
+	<script>
+//
+function random(min,max) {
+    return Math.round((Math.random(min,max)*max)+min);
+}
+
+//
+function writeAsPerson(inputElement, text) {
+	console.info("start writeAsPerson()...");
+	var i      = 0;
+	var randMs = [50,100,150,200,250,300,350,400,450,500];
+	//
+	function start(i) {
+		//
+		var letter = text[i];
+		//
+		insert(i,letter);
+		//
+		function insert(i, c) {
+			//
+			var writeMs = randMs[ random(0,randMs.length-1) ];
+			console.info("writeAsPerson() i: "+i+", c: "+c+", writeMs: "+writeMs);
+			//
+			setTimeout(function() {
+				inputElement.value = inputElement.value+c;
+				//
+				if(i<(text.length-1)) {
+					start(i+=1);
+				}
+			},writeMs);
+		}
+	}
+	//
+	start(i);
+}
+
+//
+var cnt=0;
+function test() {
+	alert("test "+cnt);
+	cnt++;
+}
+
+var ttt = `)]}'
+[[["traductor",0,[362,308,67],{"zl":40009}],["visual studio code",0,[362,308,67],{"zl":40009}],["hello world",46,[340,362,308,67],{"zh":"Hello World","zi":"Película de 2019","zl":40009,"zp":{"gs_ssp":"eJzj4tVP1zc0zDCIzzBMNkk2YPTizkjNyclXKM8vykkBAHOvCKs"},"zs":"data:image/jpeg;base64,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\u003d\u003d"}],["python",0,[362,308,67],{"zl":40009}],["nicolas schurmann",0,[362,308,67],{"zl":40009}],["hola mundo php",0,[362,308,67],{"zl":40009}],["linux",0,[362,308,67],{"zl":40009}],["test de velocidad",0,[362,308,67],{"zl":40009}],["hola mundo html",0,[362,308,67],{"zl":40009}],["hola mundo java",0,[362,308,394,439,468,357],{"zl":40009}]],{"ag":{"a":{"40009":["Relacionados con búsquedas recientes"]}},"q":"Q3Sn8u1idYOgMK9aSEEGFUeP7dA"}]`;
+//
+console.info("tttt: "+ttt);
+
+var ttt1 = `<!doctype html><html itemscope="" itemtype="http://schema.org/SearchResultsPage" lang="es"><head><meta charset="UTF-8"><meta content="origin" name="referrer"><meta content="/images/branding/googleg/1x/googleg_standard_color_128dp.png" itemprop="image"><title>hola mundo - Buscar con Google</title><script nonce="A2AV7wM4JLJxBwMetpAuww">(function(){
+var b=window.addEventListener;window.addEventListener=function(a,c,d){"unload"!==a&&b(a,c,d)};}).call(this);(function(){window.google={kEI:'7-BvYvziOdWhlQf-zLyoAw',kEXPI:'31',kBL:'WaFM'};google.sn='web';google.kHL='es';})();(function(){
+var f=this||self;var h,k=[];function l(a){for(var b;a&&(!a.getAttribute||!(b=a.getAttribute("eid")));)a=a.parentNode;return b||h}function m(a){for(var b=null;a&&(!a.getAttribute||!(b=a.getAttribute("leid")));)a=a.parentNode;return b}`;
+//
+console.info("ttt1: "+ttt1);
+
+//
+window.onload = function() {
+	//
+	document.addEventListener("click",function(e) {
+		alert("testjavafx click x:, y:, ...");
+	});
+	//
+	writeAsPerson( document.querySelector("input.testInput"), "hello, world!" );
+}
+	</script>
+</head>
+
+<body>
+<h1>test javaFX</h1>
+
+<div>
+    <input type="text" class="testInput" value="">
+    <button class="testButton" onclick="alert('hello, world.');">testxxx button</button>
+</div>
+</body>
+</html>

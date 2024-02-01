@@ -1,0 +1,61 @@
+<!-- Encode like a child -->
+<!DOCTYPE html>
+	<head>
+		<title>Encode like a child</title>
+<style>
+.outer {}
+.outer .inner {
+	margin:30px 0px;
+}
+.outer .inner .input, .outer .inner .output {
+	width:100%;
+	height:25vh;
+	border:solid 1px red;
+}
+.outer .inner .input {
+}
+.outer .inner .output {
+	
+}
+</style>
+<script>
+function qS(str) {
+	return document.querySelector(str);
+}
+function qSA(str) {
+	return document.querySelectorAll(str);
+}
+function cE(str) {
+	return document.createElement(str);
+}
+window.addEventListener("load",function(e) {
+	console.warn("Document is ready! Bale...! :D");
+	
+	//
+	qS("#input").addEventListener("keydown",function(e) {
+		console.info("input change",e);
+		var key     = e.key;
+		var keyCode = e.keyCode;
+		console.info("input key: "+key+", keyCode: "+keyCode);
+	});
+	
+},false);
+</script>
+	</head>
+	
+	<body>
+	
+<div class="outer">
+	<div class="inner">
+		<label>(Input) Encode like a child</label>
+		<div id="input" class="input encode" contenteditable=true></div>
+	</div>
+	
+	<div class="inner">
+		<label>(Output)</label>
+		<div id="output" class="output encode" contenteditable=true></div>
+	</div>
+</div>
+	
+	</body>
+</html>
