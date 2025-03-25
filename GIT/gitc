@@ -21,6 +21,6 @@ echo $0" => Creating repository at "$path$name
 mkdir $path$name
 cd $path$name
 git init --bare
-chown -R git.git $path$name
+chown -R git:git $path$name
 cd $cdir
 echo $0" => Done!"
