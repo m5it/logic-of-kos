@@ -21,7 +21,8 @@ $opt_dir_slave  = null; //( isset($argv[2])?(preg_match("/.*\/$/i",$argv[2])?$ar
 $opt_excludes   = null; //( isset($argv[3])?$argv[3]:null); // string of paths separated by comma
 $opt_yestoall   = false; //( isset($argv[4])&&$argv[4]=="y"?true:false );
 $opt_which      = "MISSING,UPDATE,EXISTS"; //( isset($argv[5])?$argv[5]:"MISSING,UPDATE,EXISTS" );
-$opt_action     = "PREVIEW"; // PREVIEW | UPDATE
+$opt_action     = "PREVIEW"; // PREVIEW | UPDATE | DIFF
+$opt_diff       = null; // if set should be value from 0...
 
 // PARSE ARGS
 $argc=0;
@@ -43,7 +44,7 @@ for($i=0; $i<count($argv); $i++) {
 			$opt_which = $argv[$argc+1];
 		}
 		else if( $argv[$i]=="-A" ) {
-			$opt_action = $argv[$argc+1]; // PREVIEW or UPDATE
+			$opt_action = $argv[$argc+1]; // PREVIEW or UPDATE or DIFF to diff all files
 		}
 	}
 	$argc++;
@@ -80,7 +81,7 @@ if( $opt_dir_master==null || $opt_dir_slave==null ) {
 	    "-E /path/to/excludes1,/path/to/excludes2   # excludes \n".
 	    "-Y                                         # yes to all\n".
 	    "-W MISSING,UPDATE,EXISTS                   # which action should be executed\n".
-	    "-A PREVIEW                                 # action that should be taken. ( PREVIEW or UPDATE )".
+	    "-A PREVIEW                                 # action that should be taken. ( PREVIEW, UPDATE or DIFF )".
 	    "".
 	    "");
 }
@@ -200,6 +201,15 @@ for($i=0; $i<count($afs); $i++) {
 		else {
 			echo " = SUCCESS";
 		}
+	}
+	//(12.9.24), added
+	else if( $opt_action=="DIFF" ) {
+		echo " running diff with ".$f["full_slave"].": \n\n";
+		$data = shell_exec("diff ".$f["full"]." ".$f["full_slave"]);
+		echo $data."\n\n";
+	}
+	else {
+		echo " unknown action ".$opt_action."";
 	}
 	echo "\n";
 }
