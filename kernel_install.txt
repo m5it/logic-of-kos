@@ -1,3 +1,0 @@
-#---
-# to have support for sshfs enable:
-# Filesystem -> FUSE (Filesystem in Userspace) support

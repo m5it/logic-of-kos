@@ -1,0 +1,13 @@
+install.sh is used to link `Logic-Of-Kos` scripts to /usr/local/bin/... so they are accessable globaly.
+For example:
+    cputemp
+Without linking you need to enter into current directory and run script like ./cputemp.sh or 
+load current directory into $PATH variable.
+
+
+Options:
+-h     # Help
+-v     # Version
+-l     # Link
+-u     # Unlink
+-t     # Set new location to link to. Default /usr/local/bin/
