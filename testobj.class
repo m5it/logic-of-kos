@@ -1,0 +1,4 @@
+# Class for testobj
+testobj.sayHello(){
+	echo "Hello from testobj.class!"
+}
