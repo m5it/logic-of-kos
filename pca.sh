@@ -2,8 +2,17 @@
 #
 #
 #
-# Parse command args ( someFileName.pca )
+# Parse command args
 #
+# Require global defined variables:
+# - array PCA=("ARG1 ARG2 ARG3") ...
+# - configuration variables:
+#     ARG1_SHORT_ARG
+#     ARG1_ARG
+#     ARG1_VAL
+#     ARG1_FUNCTION
+#     Ex.:
+#       ARG1_SHORT_ARG='-a1', ARG1_ARG='--arg1', ARG1_VAL=true|false, ARG1_FUNCTION={echo 'a';exit}...
 #
 #--
 #
