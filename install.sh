@@ -49,21 +49,23 @@ done
 echo "Overview of setting: "
 echo "Action: "$ARG_ACTION
 echo "Location: "$CNF_LOCATION
+
 #
 if [[ $ARG_ACTION != "VIEW" && $UID -ne 0 ]]; then
 	echo "Required super adminitrator privileges. Exiting..."
 	exit
 fi
+
 #
 source $P'/'continue.sh
 
 #--
-#
+# SET ACTION LOOP
 if [[ $ARG_ACTION == 'UNLINK' ]]; then
 	ARRAY=$(cat $CNF_INSTALL)
 	rm $CNF_INSTALL
 else
-	ARRAY=$(find . ! -name '$CNF_INSTALL' ! -path './tests*' | grep -P ".sh+$")
+	ARRAY=$(find . ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -P ".sh+$")
 fi
 
 #--

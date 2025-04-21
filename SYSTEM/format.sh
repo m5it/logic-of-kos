@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 #
-
 #--
 # Prepare global variables and data
 PRE="../"               # perfix
@@ -10,14 +9,15 @@ source prepare.sh       # include prepared global variables like: realpath, file
 #--
 # Define variables for pca.sh ( parse command line arguments )
 #--
-# Options for argument IDENTIFY 
+# Options for arg IDENTIFY 
 IDENTIFY_SHORT_ARG="-i"          #
 IDENTIFY_ARG="--identify"        #
 IDENTIFY_VAL=false               # true | false ( if argument contain value )
-# Options for argument UMOUNT
+# Options for arg UMOUNT
 UMOUNT_SHORT_ARG="-u"          #
 UMOUNT_ARG="--umount"        #
 UMOUNT_VAL=false               # true | false ( if argument contain value )
+# Options for arg FORMAT
 
 #--
 # Define array of available argument options

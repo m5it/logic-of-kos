@@ -14,10 +14,13 @@
 #     Ex.:
 #       ARG1_SHORT_ARG='-a1', ARG1_ARG='--arg1', ARG1_VAL=true|false, ARG1_FUNCTION={echo 'a';exit}...
 #
-#--
+# Required scripts:
+# - prepare.sh
+# - pca.sh
 #
-PRE="../"               # perfix
-source prepare.sh       # include prepared global variables like: realpath, filenick, filename..
+# Other global variables:
+# - $P, $B, $V, $H, $U, $PRE
+#--
 #
 next_arg=""
 #
