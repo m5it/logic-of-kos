@@ -5,14 +5,16 @@
 #
 # Test include
 echo "Including prepare.sh: "
-PRE="" #
-source prepare.sh
+# Prepare global variables and data
+PRE=$(dirname $(realpath $0))"/"
+source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 
-echo "Preview of prepare.sh variables (V, U, H, P): "
+echo "Preview of prepare.sh variables (V, U, H, B, P): "
 echo "V: "$V
 echo "U: "$U
 echo "H: "$H
 echo "P: "$P
+echo "B: "$B
 
 # Test objects
 echo "Including testobj.h: "
@@ -49,7 +51,16 @@ for x in $myf; do
 done
 
 # .. :)
+t="/dev/sdb"
+b=$(echo $t | grep -E "*.([0-9])+$")
+echo "t: "$t
+echo "b: "$b
+cnt=0
 while true; do
-	echo "loop..."
-	sleep 1
+	echo "loop..."$cnt
+	let cnt=cnt+1
+	if [[ $cnt -ge 5 ]]; then
+		exit
+	fi
+	sleep 3
 done

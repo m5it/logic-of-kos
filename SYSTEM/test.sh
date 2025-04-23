@@ -1,7 +1,7 @@
 #!/bin/bash
-#
-PRE="../"               # perfix
-source prepare.sh       # include prepared global variables like: realpath, filenick, filename..
+# Prepare global variables and data
+PRE=$(dirname $(realpath $0))"/../"
+source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 
 # 
 IDENTIFY_SHORT_ARG="-i"          #
@@ -16,7 +16,13 @@ PCA=("IDENTIFY")
 #
 ARG_IDENTIFY="" # defined value from command line arguments
 #
-source $P"/"$PRE"pca.sh"
+source $PRE"pca.sh"
 
 #
 echo "ARG_IDENTIFY: "$ARG_IDENTIFY
+
+#
+pwd
+dd=$(SYSTEM/test.sh -a -b -c def)
+
+echo "done! "$dd

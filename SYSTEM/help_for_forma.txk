@@ -1,0 +1,16 @@
+
+Script use different tools to give informations and to do it job.
+It perform some checks so user wont make mistake when formating.
+
+-i or --identify    # Display mounted partitions
+Ex.: 
+  forma -i
+
+-u or --umount      # Define location to umount
+Ex.: 
+  forma -u -p /dev/sdb1
+
+-f or --format      # Define type of format. ( ext3, ext4, vfat... )
+Ex.: 
+  forma -f ext4 -p /dev/sdb1
+

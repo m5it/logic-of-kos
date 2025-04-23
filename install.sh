@@ -51,13 +51,13 @@ echo "Action: "$ARG_ACTION
 echo "Location: "$CNF_LOCATION
 
 #
-if [[ $ARG_ACTION != "VIEW" && $UID -ne 0 ]]; then
-	echo "Required super adminitrator privileges. Exiting..."
-	exit
+if [[ $ARG_ACTION != "VIEW" ]]; then
+	#
+	source $P'/'$PRE'isadmin.sh'
 fi
 
 #
-source $P'/'continue.sh
+source $P'/'$PRE'continue.sh'
 
 #--
 # SET ACTION LOOP

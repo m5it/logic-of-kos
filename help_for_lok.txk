@@ -1,0 +1,11 @@
+
+-i or --install               # Install scripts/tools by `LOK aka Logic Of Kos`
+-i or --install scriptName    # Install specific script/tool by `LOK aka Logic Of Kos`
+-u or --uninstall             # Uninstall scripts/tools by `LOK aka Logic Of Kos`
+-u or --uninstall scriptName  # Uninstall specific scripts/tool from `LOK aka Logic Of Kos`
+-l or --preview_available     # Preview available tools
+-p or --preview_installed     # Preview installed tools
+-h or --help                  # Preview this help what you are reading right now
+-h or --help scriptName       # Display help for specific tool supported by `LOK aka Logic Of Kos`
+-r or --run scriptName        # Run script with `lok` or direct by it name
+

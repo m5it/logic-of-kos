@@ -1,8 +1,11 @@
 #!/bin/bash
 #
-#
+# LOK Framework: prepare.sh, continue.sh, isadmin.sh, pca.sh
 #
 # Parse command args
+#
+# Optional variable:
+# - PCA_ON_NONE_HELP=true|false    # display help info. if no arguments passed..
 #
 # Require global defined variables:
 # - array PCA=("ARG1 ARG2 ARG3") ...
@@ -23,19 +26,32 @@
 #--
 #
 next_arg=""
+find_arg=false
+
+#
+function HELP(){
+	cat $PRE'hr.txk'
+	echo $V
+	cat $PRE'created.txk'
+	cat $PRE'hr.txk'
+	echo -ne "\nHelp for "$B"...:\n"
+	if [[ -f $H ]]; then
+		cat $H
+	else
+		echo -ne "Sorry can not find documentation for $B.\n"
+	fi
+}
+
+#
+if [[ "$#" -eq 0 && $PCA_ON_NONE_HELP == true ]]; then
+	HELP
+	exit
+fi
+
 #
 for arg in "$@"; do
 	if [[ $arg == "-h" || $arg == "--help" ]]; then
-        	echo "Help for "$B"...:"
-			cat $P'/'$PRE'hr.txk'
-	        cat $P'/'$PRE'created.txk'
-        	echo $V
-	        cat $P'/'$PRE'hr.txk'
-	        if [[ -f $H ]]; then
-				cat $H
-			else
-				echo -ne "Sorry can not find documentation for $B.\n"
-			fi
+			HELP
         	exit
 	elif [[ $arg == "-v" || $arg == "--version" ]]; then
 		echo $V
@@ -43,6 +59,7 @@ for arg in "$@"; do
 	elif [[ $next_arg != "" ]]; then
 		declare -gx "$next_arg"=$arg # Set value from STRING name!
 		next_arg=""
+		find_arg=true
 	fi
 	#
 	for opca in $PCA; do
@@ -53,6 +70,8 @@ for arg in "$@"; do
 		tmp_fun=$opca'_FUNCTION'          # fireFunction
 		#
 		if [[ $arg == ${!tmp_short_arg} || $arg == ${!tmp_arg} ]]; then
+			#
+			find_arg=true
 			# Argument contain value
 			if [[ ${!tmp_val} == true ]]; then
 				next_arg="ARG_"$opca
@@ -66,3 +85,9 @@ for arg in "$@"; do
 		fi
 	done
 done
+
+# No action was specified, displaying help if exists...
+if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
+	HELP
+	exit
+fi

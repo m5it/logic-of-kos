@@ -4,8 +4,7 @@
 #
 #--
 #
-echo "Do you like to continune? (y/n)"
-read -r CHK
-if [[ $CHK != "y" ]]; then
+if [[ $UID -ne 0 ]]; then
+	echo "Required super adminitrator privileges. Exiting..."
 	exit
 fi
