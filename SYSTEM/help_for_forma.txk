@@ -1,6 +1,10 @@
 
 Script use different tools to give informations and to do it job.
-It perform some checks so user wont make mistake when formating.
+It perform some checks so user wont make mistake when working with.
+
+-p or --path        # Set path to device
+Ex.:
+  forma -p /dev/sdc
 
 -i or --identify    # Display mounted partitions
 Ex.: 
@@ -14,3 +18,6 @@ Ex.:
 Ex.: 
   forma -f ext4 -p /dev/sdb1
 
+-c or --create      # Create bootable usb from .iso or .img
+Ex.:
+  forma -c someimage.iso -p /dev/sdc

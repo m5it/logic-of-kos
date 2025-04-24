@@ -1,0 +1,10 @@
+
+-t or --temperature
+Ex.:
+	cputemp -t
+
+-T or --temperature_celsius
+Ex.:
+	cputemp -t
+
+Or just run cputemp

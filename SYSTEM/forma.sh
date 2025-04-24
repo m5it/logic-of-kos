@@ -53,29 +53,30 @@ PATH_VAL=true
 # Parse command line arguments
 source $PRE'pca.sh'
 #
-echo "ARG_IDENTIFY: "$ARG_IDENTIFY
-echo "ARG_UMOUNT: "$ARG_UMOUNT
-echo "ARG_FORMAT: "$ARG_FORMAT
-echo "ARG_CREATE: "$ARG_CREATE
-echo "ARG_PATH: "$ARG_PATH
+#echo "ARG_IDENTIFY: "$ARG_IDENTIFY
+#echo "ARG_UMOUNT: "$ARG_UMOUNT
+#echo "ARG_FORMAT: "$ARG_FORMAT
+#echo "ARG_CREATE: "$ARG_CREATE
+#echo "ARG_PATH: "$ARG_PATH
 
 #
-source $PRE'continue.sh'
 source $PRE'isadmin.sh'
 
 #--
 # (MAIN) Start the script
-# Check if ARG_PATH exists
-CHK=$(lsblk | grep $ARG_PATH)
-if [[ $CHK == "" ]]; then
-	echo "ERROR: path "$ARG_PATH" dont exists. Exiting."
-	exit
-fi
 
 #
 # Umount partition / directory
 if [[ $ARG_UMOUNT == true ]]; then
-	echo "umounting "$ARG_PATH
+	# Check if ARG_PATH exists
+	CHK=$(mount | grep $ARG_PATH)
+	if [[ $CHK == "" ]]; then
+		echo "ERROR: path "$ARG_PATH" dont exists. Exiting."
+		exit
+	fi
+	#
+	echo "Umounting "$ARG_PATH
+	source $PRE'continue.sh'
 	umount $ARG_PATH
 fi
 
@@ -89,15 +90,22 @@ if [[ $ARG_FORMAT != "" ]]; then
 		exit
 	fi
 	#
-	echo "formating "$ARG_PATH
+	echo "Formating "$ARG_FORMAT" "$ARG_PATH
+	source $PRE'continue.sh'
 	#tmp=$(yes | mkfs.$ARG_FORMAT $ARG_UMOUNT 2>&1 >/dev/null)
 	mkfs.$ARG_FORMAT $ARG_PATH
 fi
 
 # Create new bootable usb
 if [[ $ARG_CREATE != "" ]]; then
-	echo "Arg create: "$ARG_CREATE" on "$ARG_PATH
-	#
-	#dd if=$ARG_CREATE of=$ARG_PATH bs=4M status=progress
+	# Check if ARG_PATH exists
+	CHK=$(mount | grep $ARG_PATH)
+	if [[ $CHK != "" ]]; then
+		echo "ERROR: path "$ARG_PATH" is mounted. Umount first. Exiting."
+		exit
+	fi
+	echo "Create: "$ARG_CREATE" on "$ARG_PATH
+	source $PRE'continue.sh'
+	dd if=$ARG_CREATE of=$ARG_PATH bs=4M status=progress
 fi
 
