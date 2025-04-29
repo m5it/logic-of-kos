@@ -1,0 +1,14 @@
+
+-c or --create          # Create new group
+Ex.:
+	group -c groupName
+
+-aG or --add_group      # Add user to group
+Ex.:
+	group -aG groupName userName
+
+-V or --view            # View all groups
+Ex.:
+	group -V
+	group --view
+	group --view sudo

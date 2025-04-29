@@ -1,47 +1,66 @@
 #!/bin/bash
 #
-CREATED="by Blaz Kos"
-VERSION="Logic Of Kos - group.sh - v13.37"
 #
-#---
+#
+#--
+# Prepare global variables and data
+PRE=$(dirname $(realpath $0))"/../"
+source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 
+#--
+# Define variables for pca.sh ( parse command line arguments )
+#--
+# Display help if no args set...
+PCA_ON_NONE_HELP=true
+# Define array of available argument options
+# - (CREATE) create new group
+# - (ADDTO) user addto group
+PCA=("CREATE ADDTO VIEW")
+# Define variables where options are parsed as values
+ARG_CREATE=()
+ARG_ADDTO=()
+ARG_VIEW=()
+#-- forma - options
+# Options for arg CREATE
+CREATE_SHORT_ARG="-c"        #
+CREATE_ARG="--create"        #
+CREATE_VAL=true               # true | false ( if argument contain value )
+#
+ADDTO_SHORT_ARG="-aG"
+ADDTO_ARG="--add_group"
+ADDTO_VAL=true               # true | false ( if argument contain value )
+ADDTO_VNM=2                   # how many values have this arg (default 1)
+#
+VIEW_SHORT_ARG="-V"
+VIEW_ARG="--view"
+VIEW_VAL=true
 
+#--
+# Parse command line arguments
+source $PRE'pca.sh'
 #
-G=$1
+source $PRE'isadmin.sh'
+#echo "DEBUG ARGS: "
+#echo "ARG_ADDTO: "${ARG_ADDTO[2]}
+#echo "ARG_CREATE: "${ARG_CREATE[@]}
+#echo "ARG_VIEW: "${ARG_VIEW[@]}
 #
-if [[ $G == "" ]]; then
-	cat /etc/group
-else
-	if [[ $G == "-h" || $G == "--help" ]]; then
-		echo "Help for "$0
-		echo "--------------------------------------------------------------"
-		echo $CREATED
-		echo "--------------------------------------------------------------"
-		echo "-h        # Display all options for script"
-		echo "-a        # Create new group"
-		echo "-aG       # Add user to specific group"
-		exit
-	elif [[ $G == "-v" || $G == "--version" ]]; then
-		echo $VERSION
-		echo $CREATED
-		exit
-	elif [[ $G == "-a" ]]; then
-		if [[ $2 == "" ]]; then
-			echo "# Create new group"
-			echo "Usage: $0 -a groupName"
-			exit
-		fi
-		echo "Creating new group "$2
-		groupadd $2
-	elif [[ $G == "-aG" ]]; then
-		if [[ $2 == "" || $3 == "" ]]; then
-			echo "# Add user to specific group"
-			echo "Usage: $0 -aG groupName userName"
-			exit
-		fi
-		echo "Adding user "$3" to group "$2
-		usermod -aG $2 $3
+if [[ $ARG_VIEW != "" ]]; then
+	if [[ ${ARG_VIEW[0]} != true ]]; then
+		cat /etc/group | grep "${ARG_VIEW[0]}"
 	else
-		cat /etc/group | grep "$G"
+		cat /etc/group
 	fi
+fi
+#
+if [[ $ARG_CREATE != "" ]]; then
+	echo "Creating group "${ARG_CREATE[@]}
+	source $PRE'continue.sh'
+	groupadd ${ARG_CREATE[0]}
+fi
+#
+if [[ $ARG_ADDTO != "" ]]; then
+	echo "Adding user "${ARG_ADDTO[1]}" to group "${ARG_ADDTO[0]}
+	source $PRE'continue.sh'
+	usermod -aG ${ARG_ADDTO[0]} ${ARG_ADDTO[1]}
 fi

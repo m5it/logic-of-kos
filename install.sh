@@ -13,68 +13,75 @@ source $PRE'prepare.sh' # include prepared global variables like: realpath, file
 CNF_LOCATION=$(cat install.cnf | awk '/LOCATION/{print $2}')
 CNF_INSTALL="install.dbk"
 CNF_EXCLUDE=""
-# generate exclude if exists: exclude.cnf
-#IFS=$'\n'
-#while read -r tmp; do
-#cat 'exclude.cnf' | while read -r tmp; do
-#for tmp in `cat exclude.cnf`; do
-#	echo "tmp: "$tmp
-#	#CNF_EXCLUDE=$(echo -n $tmp' | ' && cat)
-#	#CNF_EXCLUDE=$CNF_EXCLUDE" | "$tmp" "
-#done
-#done <'exclude.cnf'
-#echo "CNF_EXCLUDE: "$CNF_EXCLUDE
-#exit
-#--
-# HANDLE ARGUMENTS & OPTIONS & CONFIGURATIONS
-ARG_ACTION="VIEW" # LINK | UNLINK
 #
-for arg in "$@"; do
-	if [[ $arg == "-h" || $arg == "--help" ]]; then
-        	echo "Help for "$B"...:"
-			cat $PRE'hr.txk'
-	        cat $PRE'created.txk'
-        	echo $V
-	        cat $PRE'hr.txk'
-	        if [[ -f $H ]]; then
-				cat $H
-			else
-				echo "\nSorry can not find documentation for this script.\n"
-			fi
-        	exit
-	elif [[ $arg == "-v" || $arg == "--version" ]]; then
-		echo $V
-		exit
-	elif [[ $arg == "-t" || $arg == "--link-to" ]]; then
-		echo "Changing link location from "$CNF_LOCATION
-        	read -r CNF_LOCATION
-	        echo "LOCATION "$CNF_LOCATION > install.cnf
-	elif [[ $arg == "-l" || $arg == "--action-link" ]]; then
-		ARG_ACTION="LINK"
-	elif [[ $arg == "-u" || $arg == "--action-unlink" ]]; then
-		ARG_ACTION="UNLINK"
-	fi
-done
+ARG_LINK=false
+ARG_UNLINK=false
+ARG_ACTION="VIEW" # LINK | UNLINK
+ARG_LOCATION=()
+#
+PCA_ON_NONE_HELP=true
+PCA=("LINK UNLINK LOCATION FIX")
+#
+LINK_SHORT_ARG="-l"
+LINK_ARG="--link"
+LINK_VAL=false
+LINK_FUNCTION(){
+	ARG_ACTION='LINK'
+}
+#
+UNLINK_SHORT_ARG="-u"
+UNLINK_ARG="--unlink"
+UNLINK_VAL=false
+UNLINK_FUNCTION(){
+	ARG_ACTION='UNLINK'
+}
+#
+LOCATION_SHORT_ARG="-L"
+LOCATION_ARG="--location"
+LOCATION_VAL=true
+#
+FIX_SHORT_ARG="-F"
+FIX_ARG="--fix_install"
+FIX_VAL=false
+FIX_FUNCTION(){
+	ARG_ACTION="FIX"
+}
+#--
+# Parse command line arguments
+source $PRE'pca.sh'
 
 #--
 # CHECK
 echo "Overview of setting: "
-echo "Action: "$ARG_ACTION
+echo "Action ARG_ACTION: "$ARG_ACTION
+echo "Action ARG_LOCATION: "$ARG_LOCATION
+echo "Action ARG_LINK: "$ARG_LINK
+echo "Action ARG_UNLINK: "$ARG_UNLINK
+echo "Action ARG_FIX: "$ARG_FIX
 echo "Location: "$CNF_LOCATION
+
+#--
+# Change location to install
+if [[ $ARG_LOCATION == true ]]; then
+	echo "Enter new install location: "
+	read -r ARG_LOCATION
+	echo "Changing link location from "$CNF_LOCATION" to "$ARG_LOCATION
+	source $PRE'continue.sh'
+	echo "LOCATION "$ARG_LOCATION > install.cnf
+	exit
+elif [[ $ARG_LOCATION != "" ]]; then
+	echo "Changing link location from "$CNF_LOCATION" to "${ARG_LOCATION[0]}
+	source $PRE'continue.sh'
+	echo "LOCATION "${ARG_LOCATION[0]} > install.cnf
+	exit
+fi
+
+
 #
 if [[ $ARG_ACTION == "LINK" && -f $CNF_INSTALL ]]; then # check if already installed
 	echo "First uninstall / unlink then reinstall. Thanks"
 	exit
 fi
-
-#
-if [[ $ARG_ACTION != "VIEW" ]]; then
-	#
-	source $PRE'isadmin.sh' # check if root
-fi
-
-#
-source $PRE'continue.sh' # check if continue
 
 #--
 # SET ACTION LOOP
@@ -83,8 +90,20 @@ if [[ $ARG_ACTION == 'UNLINK' ]]; then
 	rm $CNF_INSTALL
 else
 	ARRAY=$(find . ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$")
-	#ARRAY=$(find . $CNF_EXCLUDE | grep -P ".sh+$")
-	#ARRAY=`find . `$CNF_EXCLUDE` | grep -P ".sh+$"`
+fi
+
+#
+if [[ $ARG_ACTION != "VIEW" ]]; then
+	#
+	source $PRE'isadmin.sh' # check if root
+fi
+#
+source $PRE'continue.sh' # check if continue
+
+#
+if [[ $ARG_FIX == true ]]; then
+	echo "Fixing install.dbk"
+	rm $CNF_INSTALL
 fi
 
 #--
@@ -97,7 +116,10 @@ for file in $ARRAY; do
 	lfrom=$(pwd)"/"$file
 	lto=$CNF_LOCATION""$namx
 	#
-	if [[ $ARG_ACTION == "LINK" ]]; then
+	if [[ $ARG_ACTION == "FIX" ]]; then
+		echo "FIX "$file" -> "$lto
+		echo $file >> $CNF_INSTALL
+	elif [[ $ARG_ACTION == "LINK" ]]; then
 		if [[ -L $lto ]]; then
 			echo "WARNING LINKING: link exists "$namx
 		elif [[ -f $lto ]]; then
@@ -109,13 +131,13 @@ for file in $ARRAY; do
 		fi
 	elif [[ $ARG_ACTION == "UNLINK" ]]; then
 		if [[ -L $lto ]]; then
-                        echo "UNLINKING: "$lto
+			echo "UNLINKING: "$lto
 			rm $lto
-                elif [[ -f $lto ]]; then
-                        echo "ERROR UNLINKING: it is file "$lto
-                else
-                        echo "WARNING UNLINKING (missing): "$lto
-                fi
+		elif [[ -f $lto ]]; then
+			echo "ERROR UNLINKING: it is file "$lto
+		else
+			echo "WARNING UNLINKING (missing): "$lto
+		fi
 	else
 		echo $name
 	fi

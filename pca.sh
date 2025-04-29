@@ -22,12 +22,24 @@
 # - pca.sh
 #
 # Other global variables:
-# - $P, $B, $V, $H, $U, $PRE
+# - $P, $B, $V, $H, $U, $PRE, $APCA
+# - APCA define num of args
 #--
 #
+cnt_arg=0
 next_arg=""
 find_arg=false
-
+debug=false
+cnt_vnm=0
+chk_vnm=0
+#
+if [[ $APCA == "" ]]; then
+	APCA=$#
+fi
+#
+if [[ $NPCA == "" ]]; then
+	NPCA=0
+fi
 #
 function HELP(){
 	cat $PRE'hr.txk'
@@ -50,15 +62,35 @@ fi
 
 #
 for arg in "$@"; do
+	if [[ $arg == '-d' || $arg == '--debug' ]]; then
+		debug=true
+	fi
+done
+
+#
+for arg in "$@"; do
+	#echo "d0 size: "${#@}
 	if [[ $arg == "-h" || $arg == "--help" ]]; then
-			HELP
-        	exit
+		HELP
+		exit
 	elif [[ $arg == "-v" || $arg == "--version" ]]; then
 		echo $V
 		exit
 	elif [[ $next_arg != "" ]]; then
-		declare -gx "$next_arg"=$arg # Set value from STRING name!
-		next_arg=""
+		if [[ ${!next_arg} == "" ]]; then
+			declare -gx "$next_arg"="("$arg")" # Set value from STRING name!
+		else
+			declare "$next_arg"="("${!next_arg}" "$arg")"
+		fi
+		#
+		let cnt_vnm=cnt_vnm+1
+		if [[ $cnt_vnm -lt $chk_vnm ]]; then
+			continue
+		else
+			next_arg=""
+			cnt_vnm=0
+			chk_vnm=0
+		fi
 		find_arg=true
 	fi
 	#
@@ -68,22 +100,40 @@ for arg in "$@"; do
 		tmp_arg=$opca'_ARG'               # --some-arg
 		tmp_val=$opca'_VAL'               # true | false
 		tmp_fun=$opca'_FUNCTION'          # fireFunction
+		tmp_vnm=$opca'_VNM'
 		#
 		if [[ $arg == ${!tmp_short_arg} || $arg == ${!tmp_arg} ]]; then
 			#
+			let NPCA=NPCA+1
 			find_arg=true
+			#
+			if [[ ${!tmp_vnm} == '' ]]; then
+				declare -gx $tmp_vnm=1
+			fi
+			chk_vnm=${!tmp_vnm}
+			
 			# Argument contain value
 			if [[ ${!tmp_val} == true ]]; then
+				if [[ $debug == true ]]; then echo "PCA => Setting next_arg for "$opca; fi
 				next_arg="ARG_"$opca
-			# Argument fire function
-			elif [[ $(type -t $tmp_fun) == "function" ]]; then
-				$tmp_fun
+				#
+				if [[ $((cnt_arg + 1)) -eq ${#@} ]]; then
+					declare -gx "$next_arg"=true
+				fi
 			# Argument is set
 			else
+				if [[ $debug == true ]]; then echo "PCA => Declaring variable for "$opca; fi
 				declare -gx "ARG_"$opca=true # Set true if no value for argument
+			fi
+			
+			# Argument fire function
+			if [[ $(type -t $tmp_fun) == "function" ]]; then
+				if [[ $debug == true ]]; then echo "PCA => Running function for "$opca; fi
+				$tmp_fun
 			fi
 		fi
 	done
+	let cnt_arg=cnt_arg+1
 done
 
 # No action was specified, displaying help if exists...

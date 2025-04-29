@@ -1,5 +1,15 @@
 #--
-#examples of kos
+# Logic - Of - KOS | GrandeKOS
+#--
+# by t3ch -> B.Kos
+#--
+# Scripts people use every day! Scripts are made from system programs like dd, ls, lsblk, mount, umount, lspci, lsusb, find...
+#
+# Can capture informations from devices or /dev/...
+#
+# Meaning of framework/template is to view code better and to have already prepared templates for whatever project you like to start...
+#
+# So, help write! Thanks.
 #--
 # *.4.25 - updates with BASH FRAMEWORK - TEMPLATE
 # Script files: prepare.sh, pca.sh, isadmin.sh, continue.sh
