@@ -3,6 +3,12 @@
 # rsync refs:
 #   https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories
 #--
+# Just display action:
+# --dry-run OR -n
+# Other interesting options:
+# -v (verbose)
+# -vv (more verbose)
+#--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/../"
 source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
