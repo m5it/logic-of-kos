@@ -20,7 +20,7 @@ ARG_ACTION="VIEW" # LINK | UNLINK
 ARG_LOCATION=()
 #
 PCA_ON_NONE_HELP=true
-PCA=("LINK UNLINK LOCATION FIX")
+PCA=("LINK UNLINK LOCATION FIX DEBUG")
 #
 LINK_SHORT_ARG="-l"
 LINK_ARG="--link"
@@ -46,6 +46,13 @@ FIX_VAL=false
 FIX_FUNCTION(){
 	ARG_ACTION="FIX"
 }
+#
+DEBUG_SHORT_ARG="-d"
+DEBUG_ARG="--debug"
+DEBUG_VAL=false
+DEBUG_FUNCTION(){
+	ARG_ACTION="DEBUG"
+}
 #--
 # Parse command line arguments
 source $PRE'pca.sh'
@@ -58,6 +65,7 @@ echo "Action ARG_LOCATION: "$ARG_LOCATION
 echo "Action ARG_LINK: "$ARG_LINK
 echo "Action ARG_UNLINK: "$ARG_UNLINK
 echo "Action ARG_FIX: "$ARG_FIX
+echo "Action ARG_DEBUG: "$ARG_DEBUG
 echo "Location: "$CNF_LOCATION
 
 #--
@@ -89,17 +97,18 @@ if [[ $ARG_ACTION == 'UNLINK' ]]; then
 	ARRAY=$(cat $CNF_INSTALL)
 	rm $CNF_INSTALL
 else
-	ARRAY=$(find . ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$")
+	ARRAY=$(find . -maxdepth 2 ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$|*.py+$|*.php+$")
 fi
 
 #
-if [[ $ARG_ACTION != "VIEW" ]]; then
+if [[ $ARG_ACTION != "VIEW" && $ARG_ACTION != "DEBUG" ]]; then
 	#
 	source $PRE'isadmin.sh' # check if root
 fi
 #
-source $PRE'continue.sh' # check if continue
-
+if [[ $ARG_ACTION != "VIEW" && $ARG_ACTION != "DEBUG" ]]; then
+	source $PRE'continue.sh' # check if continue
+fi
 #
 if [[ $ARG_FIX == true ]]; then
 	echo "Fixing install.dbk"
@@ -116,9 +125,12 @@ for file in $ARRAY; do
 	lfrom=$(pwd)"/"$file
 	lto=$CNF_LOCATION""$namx
 	#
-	if [[ $ARG_ACTION == "FIX" ]]; then
+	if [[ $ARG_ACTION == "DEBUG" ]]; then
+		echo "DEBUG file: "$file", name: "$name", namx: "$namx", lfrom: "$lfrom", lto: "$lto
+	elif [[ $ARG_ACTION == "FIX" ]]; then
 		echo "FIX "$file" -> "$lto
 		echo $file >> $CNF_INSTALL
+	#
 	elif [[ $ARG_ACTION == "LINK" ]]; then
 		if [[ -L $lto ]]; then
 			echo "WARNING LINKING: link exists "$namx
@@ -129,6 +141,7 @@ for file in $ARRAY; do
 			ln -s $lfrom $lto
 			echo $file >> $CNF_INSTALL
 		fi
+	#
 	elif [[ $ARG_ACTION == "UNLINK" ]]; then
 		if [[ -L $lto ]]; then
 			echo "UNLINKING: "$lto
