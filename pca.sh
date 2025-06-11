@@ -68,9 +68,12 @@ for arg in "$@"; do
 done
 
 #
+#cnt=0
 for arg in "$@"; do
-	#echo "d0 size: "${#@}
+	#let cnt+=1
 	if [[ $arg == "-h" || $arg == "--help" ]]; then
+		#let cnt+=1
+		#echo "tmpc val: "${!cnt}
 		HELP
 		exit
 	elif [[ $arg == "-v" || $arg == "--version" ]]; then
