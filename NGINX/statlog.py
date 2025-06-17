@@ -365,7 +365,7 @@ def Save():
 	# Requests (uniq)
 	Write(fn_reqs, REQS)
 	# Remote ip addresses (uniq)
-	Write(fn_reqs, RIPS)
+	Write(fn_rips, RIPS)
 	# Statistics of Ips per day
 	for k in S1:
 		fn_ipday  = "{}ipday_{}_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS), k)
