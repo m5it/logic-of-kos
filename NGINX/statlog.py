@@ -79,6 +79,7 @@ ALL   = 0
 REFES = {} # refecrc=refe
 USERA = {} # useracrc=usera
 REQS  = {} # sreqcrc=sreq
+RIPS  = {} # ripcrc=rip
 #
 def getStartEndTS( dtStr, parseFormat="%d/%b/%Y:%H:%M:%S %z" ):
 	obj = datetime.strptime(dtStr, parseFormat)
@@ -93,7 +94,7 @@ def getStartEndTS( dtStr, parseFormat="%d/%b/%Y:%H:%M:%S %z" ):
 	return [dt.timestamp(),(dt+timedelta(days=1)).timestamp()]
 #
 def Run():
-	global S,ALL,USERA,REFES,S_TS,E_TS,REQS,S1
+	global S,ALL,USERA,REFES,S_TS,E_TS,REQS,S1,RIPS
 	print("Run() START! on file: {}".format( Options[crc32b('-f')]['value'] ))
 	cnt=0
 	#
@@ -222,6 +223,7 @@ def Run():
 				}
 				REFES[refecrc]  = refe
 				USERA[useracrc] = usera
+				RIPS[crc]       = ip
 			
 			#--
 			# statistics by day
@@ -339,7 +341,7 @@ def Run():
 
 #
 def Save():
-	global S,ALL,USERA,REFES,S_TS,E_TS,REQS,S1
+	global S,ALL,USERA,REFES,S_TS,E_TS,REQS,S1,RIPS
 	print("Save() START, S.len: {}, ALL: {}".format( len(S), ALL ))
 	# Ex. of S row: 
 	# 51.) 25|0|0|1 66.249.75.197, codes: {'200': 24, '404': 1} fdt: 02/Jun/2025:16:37:19 +0000, ldt: 04/Jun/2025:05:24:43 +0000, usera: {'37b3aaac': 7, '5f5c5f93': 17, 'ddb1781b': 1}, refes: {'97ddb3f8': 8, 'f6bdb1dd': 3, 'ac749338': 6, 'a6d76f77': 3, '17d2ffe5': 1, '671ce8e5': 2, '7eef89ed': 1, 'b21d881c': 1}
@@ -352,15 +354,18 @@ def Save():
 	fn_usera  = "{}usera_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
 	fn_refer  = "{}refer_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
 	fn_reqs   = "{}reqs_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
+	fn_rips   = "{}rips_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
 	
 	# Statistics all together by IP
 	Write(fn_ipdata, S)
-	# UserAgents
+	# UserAgents (uniq)
 	Write(fn_usera, USERA)
-	# Referers
+	# Referers (uniq)
 	Write(fn_refer, REFES)
-	# Requests
+	# Requests (uniq)
 	Write(fn_reqs, REQS)
+	# Remote ip addresses (uniq)
+	Write(fn_reqs, RIPS)
 	# Statistics of Ips per day
 	for k in S1:
 		fn_ipday  = "{}ipday_{}_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS), k)
