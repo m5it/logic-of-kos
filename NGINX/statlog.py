@@ -363,7 +363,7 @@ def Save():
 	Write(fn_reqs, REQS)
 	# Statistics of Ips per day
 	for k in S1:
-		fn_ipday  = "ipday_{}_{}_{}_{}.dbk".format(fnh, round(S_TS),round(E_TS), k)
+		fn_ipday  = "{}ipday_{}_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS), k)
 		Write(fn_ipday, S1[k])
 	
 	print("using fn: {}".format( fn_ipdata ))
