@@ -347,10 +347,11 @@ def Save():
 	# USERA is object or dict. Ex. row: 'uaCrc32b' : userAgent_unique
 	# REFES is object or dict. Ex. row: 'rfCrc32b' : reference_unique
 	fnh       = crc32b( Options[crc32b('-f')]['value'] )
-	fn_ipdata = "ipdata_{}_{}_{}.dbk".format(fnh, round(S_TS),round(E_TS))
-	fn_usera  = "usera_{}_{}_{}.dbk".format(fnh, round(S_TS),round(E_TS))
-	fn_refer  = "refer_{}_{}_{}.dbk".format(fnh, round(S_TS),round(E_TS))
-	fn_reqs   = "reqs_{}_{}_{}.dbk".format(fnh, round(S_TS),round(E_TS))
+	prx       = "{}".format( Options[crc32b('-o')]['value'] )
+	fn_ipdata = "{}ipdata_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
+	fn_usera  = "{}usera_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
+	fn_refer  = "{}refer_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
+	fn_reqs   = "{}reqs_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS))
 	
 	# Statistics all together by IP
 	Write(fn_ipdata, S)
