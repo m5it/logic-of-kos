@@ -106,7 +106,7 @@ def Run():
 			# ['192.168.1.35', '[14/Apr/2025:22:11:09 +0000]', '"GET / HTTP/1.0" 200 13 "-"', '"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"']
 			#a = pmatch(line,"([0-9\.]+)+\x20+(.*)+\x20(.*)+\x20+(\[.*\])\x20(\".*\")\x20(.*)")
 			# ['192.168.1.35', '-', '-', '14/Apr/2025:22:11:09 +0000', '"GET / HTTP/1.0" 200 13 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"']
-			a = pmatch(line,"([0-9\.]+)\x20([a-zA-Z0-9\-]+)\x20([a-zA-Z0-9\-]+)\x20\[+([0-9A-Za-z\/\:\x20\+]+)+\]\x20+(.*)")
+			a = pmatch(line,r"([0-9\.]+)\x20([a-zA-Z0-9\-]+)\x20([a-zA-Z0-9\-]+)\x20\[+([0-9A-Za-z\/\:\x20\+]+)+\]\x20+(.*)")
 			#print(a)
 			#
 			ip       = a[0]
