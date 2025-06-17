@@ -48,9 +48,9 @@ Options = {
 		'value':"",
 	},
 	crc32b('-o'):{ # write out - path
-		'name':'fileOut',
+		'name':'dataOut Save and load as cache.',
 		'short':'-o',
-		'long':'--file_out',
+		'long':'--data_out',
 		'accept':True, # accept value
 		'value':"statlog_output/",
 	},
