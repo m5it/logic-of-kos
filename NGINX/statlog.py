@@ -132,7 +132,7 @@ def Run():
 				cnt_unkn = 1
 			#--
 			# scrap request, response code, response size
-			a = pmatch(a[4],"\"(.*)\"+\x20+([\d+]+)+\x20([\d+]+)+\x20+\"(.*)\"")
+			a = pmatch(a[4],r"\"(.*)\"+\x20+([\d+]+)+\x20([\d+]+)+\x20+\"(.*)\"")
 			# ['GET /favicon.ico HTTP/1.0', '200', '4606', 'https://grandekos.com/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0']
 			ureq = a[0]  # GET / HTTP/1.0
 			code = a[1]  # HTTP code ex.: 200, 404, 305, 500...
@@ -140,13 +140,13 @@ def Run():
 			tmp  = a[3]  # continue parse
 			#--
 			# scrap ureq. Res: ['GET','/path_we_search']
-			a = pmatch(ureq,"(GET|POST|HEAD|OPTIONS|PROPFIND|[A-Z])\x20(.*)\x20HTTP.\d.\d")
+			a = pmatch(ureq,r"(GET|POST|HEAD|OPTIONS|PROPFIND|[A-Z])\x20(.*)\x20HTTP.\d.\d")
 			nreq = a[0] # GET | POST
 			sreq = a[1] # /path_we_search
 			sreqcrc = crc32b(sreq)
 			#--
 			# scrap referer and userAgent
-			a = pmatch(tmp,"([\-]|.*)\"\x20\"(.*)")
+			a = pmatch(tmp,r"([\-]|.*)\"\x20\"(.*)")
 			refe           = a[0]
 			refecrc        = crc32b(refe)
 			usera          = a[1]
