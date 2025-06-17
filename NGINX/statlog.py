@@ -375,6 +375,7 @@ def Load():
 
 #
 def Write(fn,Data):
+	print("statlog -> Write() START on {}".format( fn ))
 	#
 	with open(fn,"w+") as f:
 		#
