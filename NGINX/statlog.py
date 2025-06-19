@@ -64,6 +64,8 @@ Options = {
 }
 S1={}
 # Stats
+tmpS  = {} # temporaly to order S by cnt
+tmpSI = []
 S = {
 	#'ip_crc':{
 	#	'ip':'',    # ip string
@@ -92,6 +94,35 @@ def getStartEndTS( dtStr, parseFormat="%d/%b/%Y:%H:%M:%S %z" ):
 	# return array[0]=startTSOfDay, array[1]=endTSOfDay
 	#return [dt.timestamp(),dt.replace(day=dt.day+1).timestamp()]
 	return [dt.timestamp(),(dt+timedelta(days=1)).timestamp()]
+#
+def getStartEndTSFromTS( tsStr ):
+	obj = datetime.fromtimestamp( tsStr )
+	#print("getStartEndTSFromTS() obj {}".format( obj ))
+	tmp = "{}".format(obj) # 2025-04-22 20:55:22+00:00
+	tmp = tmp.split(" ")[0]
+	dt = datetime.strptime(tmp,"%Y-%m-%d")
+	#print("getStartEndTSFromTS() dt: {}".format(dt))
+	return [dt.timestamp(),(dt+timedelta(days=1)).timestamp()]
+
+#
+def SortS():
+	global S,tmpS,tmpSI
+	#
+	for k in S:
+		o = S[k]
+		if o['cnt'] not in tmpS:
+			tmpS[ o['cnt'] ] = []
+			tmpSI.append( o['cnt'] )
+		tmpS[ o['cnt'] ].append(o)
+	#
+	S={}
+	tmpSI.sort(reverse=True)
+	for cnt in tmpSI:
+		print("tmpSI cnt: {}".format( cnt ))
+		for o in tmpS[cnt]:
+			#print("k: {}".format( crc32b(o['ip']) ))
+			S[ crc32b(o['ip']) ] = o
+
 #
 def Run():
 	global S,ALL,USERA,REFES,S_TS,E_TS,REQS,S1,RIPS
@@ -311,22 +342,6 @@ def Run():
 					'lts'     :0,
 				}
 			ALL+=1
-	#--
-	#
-	#print("Stats... DONE.( All: {} | Refs: {} | UA: {} ): ".format( ALL,len(REFES),len(USERA) ))
-	#print(S)
-	cnt=0
-	for k in S:
-		o = S[k]
-		#if len(o['nreq'])>1:
-		print("{}.) ( {}|us:{}|rf:{}|er:{}|un:{} ) {}, codes: {} fdt: {}, ldt: {}, usera: {}, refes: {}, nreq: {}, sreq: {}".format( cnt, o['cnt'], o['cnt_user'],o['cnt_refe'],o['cnt_empty_refe'],o['cnt_unkn'], o['ip'], o['codes'], o['fdt'], o['ldt'], len(o['usera']), len(o['refes']), len(o['nreq']), len(o['sreq']) ))
-		cnt+=1
-	#
-	#for refe in REFES:
-	#	print("{}".format(REFES[refe]),end=', ')
-	#
-	#for usera in USERA:
-	#	print("{}".format(USERA[usera]),end=', ')
 	print("Stats... DONE.( All: {} | Refs: {} | UA: {} | Reqs: {} ): ".format( ALL,len(REFES),len(USERA), len(REQS) ))
 	cnt=0
 	for k in S1:
@@ -368,7 +383,14 @@ def Save():
 	Write(fn_rips, RIPS)
 	# Statistics of Ips per day
 	for k in S1:
-		fn_ipday  = "{}ipday_{}_{}_{}_{}.dbk".format(prx, fnh, round(S_TS),round(E_TS), k)
+		o={}
+		for k1 in S1[k]:
+			o = S1[k][k1]
+		#	print("k1: {} => {}".format(k1,o['fts']))
+			break
+		ots = getStartEndTSFromTS( o['fts'] )
+		#print("{} => {}, ots: {}".format(k, len(S1[k]), ots ))
+		fn_ipday  = "{}ipday_{}_{}_{}_{}.dbk".format(prx, fnh, round(ots[0]),round(ots[1]), k)
 		Write(fn_ipday, S1[k])
 	
 	print("using fn: {}".format( fn_ipdata ))
@@ -454,6 +476,7 @@ def Main(argv):
 		sys.exit(1)
 	#
 	Run()
+	SortS()
 	#
 	Save()
 
