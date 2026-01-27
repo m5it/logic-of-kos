@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# ---------------------------
+# Script arguments
+# ---------------------------
+
 # ---------------------------
 # Source Database Settings
 # ---------------------------
@@ -77,7 +82,7 @@ for T in $TABLES; do
 	#--
 	mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" -h "$DESTINATION_HOST" -P "3306" -Nse "
 	 INSERT IGNORE INTO \`$DESTINATION_DB\`.\`$T\`
-	 SELECT * FROM \`$SOURCE_HOST\`@\`$SOURCE_PORT`.\`$SOURCE_DB\`.\`$T\`
+	 SELECT * FROM $SOURCE_HOST@$SOURCE_PORT.\`$SOURCE_DB\`.$T
 	 WHERE $AC > $DESTINATION_LAST_ID
 	" --skip-ssl --verbose > sync.log 2>&1
 	
