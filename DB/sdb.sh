@@ -64,16 +64,27 @@ for T in $TABLES; do
 	echo "-----------------------------"
 	# ---------------------------
 	# Step 4: Sync data to destination using destination credentials
-	mariadb -u "$SOURCE_USER" -p"$SOURCE_PASS" -h "$SOURCE_HOST" -P "$SOURCE_PORT" -Nse "
-	  INSERT INTO \`$DESTINATION_DB\`.\`$T\` 
-	  SELECT * FROM \`$SOURCE_DB\`.\`$T\` 
-	  WHERE $AC > $SOURCE_LAST_ID
-	" --skip-ssl --verbose > sync.log 2>&1
+	#mariadb -u "$SOURCE_USER" -p"$SOURCE_PASS" -h "$SOURCE_HOST" -P "$SOURCE_PORT" -Nse "
+	#  INSERT INTO \`$DESTINATION_DB\`.\`$T\` 
+	#  SELECT * FROM \`$SOURCE_DB\`.\`$T\` 
+	#  WHERE $AC > $SOURCE_LAST_ID
+	#" --skip-ssl --verbose > sync.log 2>&1
 	#mariadb -u "$SOURCE_USER" -p"$SOURCE_PASS" -h "$SOURCE_HOST" -P "$SOURCE_PORT" -Nse "
 	# INSERT IGNORE INTO \`$DESTINATION_DB\`.\`$T\`
 	# SELECT * FROM \`$SOURCE_DB\`.\`$T\`
 	# WHERE $AC > $DESTINATION_LAST_ID
 	#" --skip-ssl --verbose > sync.log 2>&1
+	#--
+	#mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" -h "$DESTINATION_HOST" -P #"3306" -Nse "
+	# INSERT IGNORE INTO \`$DESTINATION_DB\`.\`$T\`
+	# SELECT * FROM \`$SOURCE_HOST\`@\`$SOURCE_PORT`.\`$SOURCE_DB\`.\`$T\`
+	# WHERE $AC > $DESTINATION_LAST_ID
+	#" --skip-ssl --verbose > sync.log 2>&1
+	mariadb -u "$DESTINATION_USER" \
+		-p"$DESTINATION_PASS" \
+		-h "$DESTINATION_HOST" \
+		-P 3306 \
+		-Nse "INSERT IGNORE INTO `$DESTINATION_DB`.$T SELECT * FROM `$SOURCE_HOST`:$SOURCE_PORT.$SOURCE_DB.$T WHERE $AC > $DESTINATION_LAST_ID" --skip-ssl --verbose >> sync.log &
 	#
 	COUNT_SYNCED=$((COUNT_SYNCED+1))
 done
