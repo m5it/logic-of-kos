@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Define credentials
+USER="pub4all"
+PASS="7gMeafZ"
+DB_NAME="dlokkal.com_myvents"
+TABLE_NAME="ads2"
+
+# Step 1: Get the auto-increment column name
+AC=$(mariadb -u "$USER" -p"$PASS" -h"lokkal.com" -P3307 -Nse "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = '$DB_NAME' AND TABLE_NAME = '$TABLE_NAME' AND EXTRA LIKE '%auto_increment%'" --skip-ssl)
+echo "AC: "$AC
+
+# Step 2: Handle case where no auto-increment column is found
+if [ -z "$AC" ]; then
+  echo "Error: No auto-increment column found in table '$TABLE_NAME'."
+  exit 1
+fi
+
+# Step 3: Use the retrieved column name in your query
+LD=$(mariadb -u "$USER" -p"$PASS" "$DB_NAME" -h"lokkal.com" -P3307 -Nse "SELECT MAX($AC) FROM $TABLE_NAME" --skip-ssl)
+echo "LD: "$LD
+# LD if NULL then table empty!
+
+# Step 4: Sync data using the dynamic column name
+#mariadb -u "$USER" -p"$PASS" "$DB_NAME" < <(
+#  mariadb -u "$USER" -p"$PASS" "$DB_NAME" -Nse "
+#    SELECT * FROM $TABLE_NAME WHERE $AUTO_INCREMENT_COL > $LAST_ID_DUMP
+#  "
+#)
