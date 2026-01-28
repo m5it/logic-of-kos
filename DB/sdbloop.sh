@@ -11,7 +11,7 @@ for DB in ${DBS[@]}; do
 	echo "SDB: $SDB"
 	echo "DDB: $DDB"
 	#
-	tmp=$(./sdb.sh "$SDB" "$DDB")
+	./sdb.sh "$SDB" "$DDB"
 	#if [[ "$tmp" == "exit" ]]; then
 	#	echo "Something is not right with sdb.config. Exiting."
 	#	break
