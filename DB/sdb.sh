@@ -75,7 +75,7 @@ for T in $TABLES; do
 	# SELECT * FROM $SOURCE_HOST@$SOURCE_PORT.\`$SOURCE_DB\`.$T
 	# WHERE $AC > $DESTINATION_LAST_ID
 	#" --skip-ssl --verbose > sync.log 2>&1
-	mariadb -u "$SOURCE_USER" -p"$SOURCE_PASS" "$SOURCE_DB" -h "$SOURCE_HOST" -P "$SOURCE_PORT" -Nse "mysqldump --no-create-info --where '$AC > $DESTINATION_LAST_ID' $SOURCE_DB.$T" --skip-ssl
+	mysqldump -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" -p"$SOURCE_PASS" --no-create-info --where '$AC > $DESTINATION_LAST_ID' "$DESTINATION_DB.$T" | mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB"
 	#
 	COUNT_SYNCED=$((COUNT_SYNCED+1))
 done
