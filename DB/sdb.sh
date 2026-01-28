@@ -97,13 +97,16 @@ for T in $TABLES; do
 		continue
 	fi
 	echo "Starting sync on table $T"
+	echo "Auto increment id: "$AC
 	echo "Source Last ID: "$SOURCE_LAST_ID
 	echo "Destination Last ID: "$DESTINATION_LAST_ID
 	echo "-----------------------------"
 	# ---------------------------
 	# Step 4: Sync data to destination using destination credentials
 	#--
-	mariadb-dump -h $SOURCE_HOST -P $SOURCE_PORT -u$SOURCE_USER -p$SOURCE_PASS $SOURCE_DB $T --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' | mariadb -u$DESTINATION_USER -p$DESTINATION_PASS $DESTINATION_DB
+	tt='$AC'
+	echo "tt: "$tt
+	#mariadb-dump -h $SOURCE_HOST -P $SOURCE_PORT -u$SOURCE_USER -p$SOURCE_PASS $SOURCE_DB $T #--no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' | mariadb #-u$DESTINATION_USER -p$DESTINATION_PASS $DESTINATION_DB
 	#
 	COUNT_SYNCED=$((COUNT_SYNCED+1))
 done
