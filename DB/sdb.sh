@@ -66,8 +66,6 @@ if [[ "USE_DESTINATION_DB" != "" ]]; then
 	echo "Using DESTINATION_DB: "$DESTINATION_DB
 fi
 
-exit
-
 # ---------------------------
 # Get list of tables from source DB
 TABLES=$(mariadb -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -P$SOURCE_PORT -N -s -e "use $SOURCE_DB;show tables;" --skip-ssl)
