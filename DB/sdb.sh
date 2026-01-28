@@ -26,27 +26,19 @@ DESTINATION_PASS=""
 DESTINATION_HOST=""
 DESTINATION_PORT=""
 DESTINATION_DB=""
+a=[]
 # Read config file
-while IFS= read -r line; do
-	if [[ $line =~ ^[[:space:]]*[^\#] ]]; then
-		# Remove leading/trailing whitespace
-		line=$(echo "$line" | xargs)
-		# Split into key and value
-		IFS='=' read -r K V <<< "$line"
-		#
-		if [[ "$K" == "SOURCE_USER" ]]; then SOURCE_USER=$V; fi
-		if [[ "$K" == "SOURCE_PASS" ]]; then SOURCE_PASS=$V; fi
-		if [[ "$K" == "SOURCE_HOST" ]]; then SOURCE_HOST=$V; fi
-		if [[ "$K" == "SOURCE_PORT" ]]; then SOURCE_PORT=$V; fi
-		if [[ "$K" == "SOURCE_DB" ]]; then SOURCE_DB=$V; fi
-		#
-		if [[ "$K" == "DESTINATION_USER" ]]; then DESTINATION_USER=$V; fi
-		if [[ "$K" == "DESTINATION_PASS" ]]; then DESTINATION_PASS=$V; fi
-		if [[ "$K" == "DESTINATION_HOST" ]]; then DESTINATION_HOST=$V; fi
-		if [[ "$K" == "DESTINATION_PORT" ]]; then DESTINATION_PORT=$V; fi
-		if [[ "$K" == "DESTINATION_DB" ]]; then DESTINATION_DB=$V; fi
-	fi
-done < sdb.config
+SOURCE_USER=$(cat sdb.config | awk -F'=' '/SOURCE_USER.*/{print $2}' | tr -d '"')
+SOURCE_PASS=$(cat sdb.config | awk -F'=' '/SOURCE_PASS.*/{print $2}' | tr -d '"')
+SOURCE_HOST=$(cat sdb.config | awk -F'=' '/SOURCE_HOST.*/{print $2}' | tr -d '"')
+SOURCE_PORT=$(cat sdb.config | awk -F'=' '/SOURCE_PORT.*/{print $2}' | tr -d '"')
+SOURCE_DB=$(cat sdb.config | awk -F'=' '/SOURCE_DB.*/{print $2}' | tr -d '"')
+#
+DESTINATION_USER=$(cat sdb.config | awk -F'=' '/DESTINATION_USER.*/{print $2}' | tr -d '"')
+DESTINATION_PASS=$(cat sdb.config | awk -F'=' '/DESTINATION_PASS.*/{print $2}' | tr -d '"')
+DESTINATION_HOST=$(cat sdb.config | awk -F'=' '/DESTINATION_HOST.*/{print $2}' | tr -d '"')
+DESTINATION_PORT=$(cat sdb.config | awk -F'=' '/DESTINATION_PORT.*/{print $2}' | tr -d '"')
+DESTINATION_DB=$(cat sdb.config | awk -F'=' '/DESTINATION_DB.*/{print $2}' | tr -d '"')
 #
 if [[ "$SOURCE_DB" == "" ]]; then
 	echo "exit"
