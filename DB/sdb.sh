@@ -1,4 +1,7 @@
 #!/bin/bash
+#-- POSSIBLE ERRORS ON STEP 4:
+# mariadb-dump: Error: 'Access denied; you need (at least one of) the PROCESS privilege(s) for this operation' when trying to dump tablespaces
+# mariadb-dump: Got error: 1044: "Access denied for user 'pub4all'@'%' to database 'lokkal.com_myvents.photo_event'" when selecting the database
 #
 # ---------------------------
 # Script arguments
@@ -75,7 +78,7 @@ for T in $TABLES; do
 	# SELECT * FROM $SOURCE_HOST@$SOURCE_PORT.\`$SOURCE_DB\`.$T
 	# WHERE $AC > $DESTINATION_LAST_ID
 	#" --skip-ssl --verbose > sync.log 2>&1
-	mariadb-dump -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" -p"$SOURCE_PASS" --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' "$DESTINATION_DB.$T" | mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB"
+	mariadb-dump -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" -p"$SOURCE_PASS" --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' "$SOURCE_DB.$T" | mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB"
 	#
 	COUNT_SYNCED=$((COUNT_SYNCED+1))
 done
