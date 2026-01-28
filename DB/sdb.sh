@@ -2,6 +2,10 @@
 #-- POSSIBLE ERRORS ON STEP 4:
 # mariadb-dump: Error: 'Access denied; you need (at least one of) the PROCESS privilege(s) for this operation' when trying to dump tablespaces
 # mariadb-dump: Got error: 1044: "Access denied for user 'pub4all'@'%' to database 'lokkal.com_myvents.photo_event'" when selecting the database
+#--
+# GRANT PROCESS ON *.* TO 'youruser'@'%';
+# FLUSH PRIVILEGES
+#--
 #
 # ---------------------------
 # Script arguments
@@ -78,7 +82,11 @@ for T in $TABLES; do
 	# SELECT * FROM $SOURCE_HOST@$SOURCE_PORT.\`$SOURCE_DB\`.$T
 	# WHERE $AC > $DESTINATION_LAST_ID
 	#" --skip-ssl --verbose > sync.log 2>&1
-	mariadb-dump -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" -p"$SOURCE_PASS" --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' "$SOURCE_DB.$T" | mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB"
+	#--
+	# mariadb-dump -h lokkal.com -P 3307 -upub4all -p7gMeafZ dlokkal.com_myvents photo_event --no-create-info --skip-ssl --where 'post_id > 14717'
+	#--
+	mariadb-dump -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
+	"$SOURCE_DB" "$T" --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' "$SOURCE_DB.$T" | mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB"
 	#
 	COUNT_SYNCED=$((COUNT_SYNCED+1))
 done
