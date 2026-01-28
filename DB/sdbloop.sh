@@ -12,9 +12,9 @@ for DB in ${DBS[@]}; do
 	echo "DDB: $DDB"
 	#
 	tmp=$(./sdb.sh "$SDB" "$DDB")
-	if [[ "$tmp" == "exit" ]]; then
-		echo "Something is not right with sdb.config. Exiting."
-		break
-	fi
+	#if [[ "$tmp" == "exit" ]]; then
+	#	echo "Something is not right with sdb.config. Exiting."
+	#	break
+	#fi
 done
 echo "Done!"
