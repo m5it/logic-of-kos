@@ -5,32 +5,69 @@
 #--
 # GRANT PROCESS ON *.* TO 'youruser'@'%';
 # FLUSH PRIVILEGES
-#--
-#
 # ---------------------------
 # Script arguments
 # ---------------------------
-
+USE_SOURCE_DB=$1
+USE_DESTINATION_DB=$2
 # ---------------------------
 # Source Database Settings
 # ---------------------------
-SOURCE_USER="pub4all"
-SOURCE_PASS="7gMeafZ"
-SOURCE_HOST="lokkal.com"
-SOURCE_PORT="3307"
-SOURCE_DB="dlokkal.com_myvents"
-
+SOURCE_USER=""
+SOURCE_PASS=""
+SOURCE_HOST=""
+SOURCE_PORT=""
+SOURCE_DB=""
 # ---------------------------
 # Destination Database Settings
 # ---------------------------
-DESTINATION_USER="pub4all"
-DESTINATION_PASS="7gMeafZ"
-DESTINATION_HOST="127.0.0.1"
-DESTINATION_PORT="3306"
-DESTINATION_DB="lokkal.com_myvents"
+DESTINATION_USER=""
+DESTINATION_PASS=""
+DESTINATION_HOST=""
+DESTINATION_PORT=""
+DESTINATION_DB=""
+# Read config file
+while IFS= read -r line; do
+	if [[ $line =~ ^[[:space:]]*[^\#] ]]; then
+		# Remove leading/trailing whitespace
+		line=$(echo "$line" | xargs)
+		# Split into key and value
+		IFS='=' read -r K V <<< "$line"
+		#
+		if [[ "$K" == "SOURCE_USER" ]]; then SOURCE_USER=$V; fi
+		if [[ "$K" == "SOURCE_PASS" ]]; then SOURCE_PASS=$V; fi
+		if [[ "$K" == "SOURCE_HOST" ]]; then SOURCE_HOST=$V; fi
+		if [[ "$K" == "SOURCE_PORT" ]]; then SOURCE_PORT=$V; fi
+		if [[ "$K" == "SOURCE_DB" ]]; then SOURCE_DB=$V; fi
+		#
+		if [[ "$K" == "DESTINATION_USER" ]]; then DESTINATION_USER=$V; fi
+		if [[ "$K" == "DESTINATION_PASS" ]]; then DESTINATION_PASS=$V; fi
+		if [[ "$K" == "DESTINATION_HOST" ]]; then DESTINATION_HOST=$V; fi
+		if [[ "$K" == "DESTINATION_PORT" ]]; then DESTINATION_PORT=$V; fi
+		if [[ "$K" == "DESTINATION_DB" ]]; then DESTINATION_DB=$V; fi
+	fi
+done < sdb.config
+#
+if [[ "$SOURCE_DB" == "" ]]; then
+	echo "exit"
+	exit
+fi
 #
 COUNT_SYNCED=0
 COUNT_N=0
+#--
+# 
+if [[ "USE_SOURCE_DB" != "" ]]; then
+	SOURCE_DB=$USE_SOURCE_DB;
+	echo "Using SOURCE_DB: "$SOURCE_DB
+fi
+if [[ "USE_DESTINATION_DB" != "" ]]; then
+	DESTINATION_DB=$USE_DESTINATION_DB;
+	echo "Using DESTINATION_DB: "$DESTINATION_DB
+fi
+
+exit
+
 # ---------------------------
 # Get list of tables from source DB
 TABLES=$(mariadb -h "$SOURCE_HOST" -u "$SOURCE_USER" -p"$SOURCE_PASS" -P$SOURCE_PORT -N -s -e "use $SOURCE_DB;show tables;" --skip-ssl)
@@ -60,8 +97,7 @@ for T in $TABLES; do
 	# Step 3: Get last ID from source
 	SOURCE_LAST_ID=$(mariadb -u "$SOURCE_USER" -p"$SOURCE_PASS" "$SOURCE_DB" -h "$SOURCE_HOST" -P "$SOURCE_PORT" -Nse "SELECT MAX($AC) FROM $T" --skip-ssl)
 	DESTINATION_LAST_ID=$(mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB" -h "$DESTINATION_HOST" -P "$DESTINATION_PORT" -Nse "SELECT MAX($AC) FROM $T" --skip-ssl)
-	#echo "Source Last ID: "$SOURCE_LAST_ID
-	#echo "Destination Last ID: "$DESTINATION_LAST_ID
+	#
 	if [[ "$SOURCE_LAST_ID" == "NULL" ]]; then
 		echo "Continuing.. Null."
 		continue
@@ -76,14 +112,6 @@ for T in $TABLES; do
 	echo "-----------------------------"
 	# ---------------------------
 	# Step 4: Sync data to destination using destination credentials
-	#--
-	#mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" -h "$DESTINATION_HOST" -P #"3306" -Nse "
-	# INSERT INTO \`$DESTINATION_DB\`.\`$T\`
-	# SELECT * FROM $SOURCE_HOST@$SOURCE_PORT.\`$SOURCE_DB\`.$T
-	# WHERE $AC > $DESTINATION_LAST_ID
-	#" --skip-ssl --verbose > sync.log 2>&1
-	#--
-	# [t3ch@kosgen DB]$ mariadb-dump -h lokkal.com -P 3307 -upub4all -p7gMeafZ dlokkal.com_myvents photo_event --no-create-info --skip-ssl --where 'post_id > 14717' | mariadb -upub4all -p7gMeafZ lokkal.com_myvents
 	#--
 	mariadb-dump -h $SOURCE_HOST -P $SOURCE_PORT -u$SOURCE_USER -p$SOURCE_PASS $SOURCE_DB $T --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' | mariadb -u$DESTINATION_USER -p$DESTINATION_PASS $DESTINATION_DB
 	#
