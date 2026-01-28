@@ -85,8 +85,8 @@ for T in $TABLES; do
 	#--
 	# mariadb-dump -h lokkal.com -P 3307 -upub4all -p7gMeafZ dlokkal.com_myvents photo_event --no-create-info --skip-ssl --where 'post_id > 14717'
 	#--
-	mariadb-dump -h "$SOURCE_HOST" -P "$SOURCE_PORT" -u "$SOURCE_USER" -p"$SOURCE_PASS" \
-	"$SOURCE_DB" "$T" --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' "$SOURCE_DB.$T" | mariadb -u "$DESTINATION_USER" -p"$DESTINATION_PASS" "$DESTINATION_DB"
+	mariadb-dump -h $SOURCE_HOST -P $SOURCE_PORT -u$SOURCE_USER -p$SOURCE_PASS \
+	$SOURCE_DB $T --no-create-info --skip-ssl --where '$AC > $DESTINATION_LAST_ID' "$SOURCE_DB.$T" | mariadb -u$DESTINATION_USER -p$DESTINATION_PASS $DESTINATION_DB $T
 	#
 	COUNT_SYNCED=$((COUNT_SYNCED+1))
 done
