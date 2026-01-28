@@ -1,0 +1,8 @@
+ERROR 1064 (42000) at line 2: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '@3307.`dlokkal.com_myvents`.photo_event
+	 WHERE post_id > 14717' at line 2
+--------------
+INSERT IGNORE INTO `lokkal.com_myvents`.`photo_event`
+	 SELECT * FROM lokkal.com@3307.`dlokkal.com_myvents`.photo_event
+	 WHERE post_id > 14717
+--------------
+
