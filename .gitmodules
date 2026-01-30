@@ -2,3 +2,6 @@
 	path = DB/sdbm
 	url = git@github.com:m5it/sdb.git
 	url = git@192.168.0.69:/home/git/sdb.git
+[submodule "DB/sdb"]
+	path = DB/sdb
+	url = git@192.168.0.69:/home/git/sdb.git
