@@ -5,7 +5,9 @@
 #--
 # MOTO: If is possible make it simpler... ;)
 #--
-##
+#
+source $(pwd)/sshmem.sh
+#
 eval $(ssh-agent -s)
 sleep 1
 ssh-add
