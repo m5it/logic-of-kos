@@ -1,0 +1,5 @@
+# preview chain with numbers
+iptables -L INPUT -n --line-numbers
+
+# delete row by number
+iptables -D INPUT 5
