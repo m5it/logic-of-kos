@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+
+#
+rcmd() {
+        arg1=$1
+        systemd-run --machine $MACHINE_NAME --pipe bash -c "$arg1" 1> a;
+        cat a
+        rm a
+}
