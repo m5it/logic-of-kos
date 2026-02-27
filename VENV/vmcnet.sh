@@ -8,6 +8,13 @@ fi
 HOST_IF="host0"                  # VHost interface
 MAST_IF="ve-"$MACHINE_NAME       # Master interface
 #
+f=$(readlink -f $0)
+n=$(basename $f)
+p=$(dirname $f)
+#echo "p: "$p
+#echo "n: "$n
+#echo "f: "$f
+
 if [[ "$MACHINE_NAME" == "" ]]; then
 	echo "Usage: "$0" machine.name"
 	exit 1
@@ -16,7 +23,7 @@ fi
 echo $0" Starting on machine: "$MACHINE_NAME". Sleeping 3s..."
 sleep 3
 #
-source "cmds.shi"
+source $p"/cmds.shi"
 # Check if host0 is up
 tmp=$(rcmd "ip addr list dev "$HOST_IF" | awk '/state UP/'")
 if [[ "$tmp" == "" ]]; then

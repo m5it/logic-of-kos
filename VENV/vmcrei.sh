@@ -1,10 +1,16 @@
 #!/bin/bash
 #
 
-SIZE=$((5 * 10240)) # Gb
-NAME="gits.raw"
-
-echo "Using size: "$SIZE
+#SIZE=$((5 * 10240)) # Gb
+#NAME="gits.raw"
+NAME=$1
+SIZE=10240  # 10240 = 10Gb
+#
+if [[ "$NAME" == "" ]]; then
+	echo "Usage: "$0" machine.name "$SIZE
+	exit 1
+fi
+echo "Using name: "$NAME", size: "$SIZE
 sleep 5
 
 dd if=/dev/zero of=$NAME bs=1M count=$SIZE status=progress;sync
