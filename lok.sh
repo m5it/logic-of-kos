@@ -1,15 +1,4 @@
 #!/bin/bash
-#
-#
-#
-#
-#
-#--
-#echo "PWD: "$(pwd)
-#echo "0: "$0
-#echo "0 real: "$(realpath $0)
-#echo "0 base: "$(basename $(realpath $0))
-#exit
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/"
@@ -18,7 +7,7 @@ source $PRE'prepare.sh' # include prepared global variables like: realpath, file
 #--
 # Configure PCA
 #
-CNF_INSTALL="install.dbk"
+CNF_INSTALL=$PRE"install.dbk"
 #
 #ARG_INSTALL=false
 #ARG_UNINSTALL=false
