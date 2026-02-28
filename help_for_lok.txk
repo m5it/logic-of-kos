@@ -1,5 +1,5 @@
 
 -u or --uninstall                        # Uninstall scripts
--l or --preview_available                # Preview available tools
--p or --preview_installed                # Preview installed tools
+-a or --available                        # Preview available tools
+-p or --preview                          # Preview installed tools
 -h or --help                             # What you are reading right now

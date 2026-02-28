@@ -64,7 +64,7 @@ elif [[ $ARG_PREVIEW == true ]]; then
 elif [[ $ARG_AVAILABLE == true ]]; then
 	echo "LOK => Available..."
 	#
-	find . -maxdepth 2 ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$|*.py+$|*.php+$"
+	find $PRE -maxdepth 2 ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$|*.py+$|*.php+$"
 else
 	echo "LOK => ELSE..."
 fi
