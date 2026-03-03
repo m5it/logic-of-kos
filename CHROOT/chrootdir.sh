@@ -31,11 +31,11 @@ fi
 if [[ $CHROOT_ACTION == 'MOUNT' ]]; then
 	echo "Running MOUNT"
 	mount --rbind /dev $CHROOT_DIR"/dev"
-#	mount --make-rslave $CHROOT_DIR"/dev"
+	mount --make-rslave $CHROOT_DIR"/dev"
 	mount --rbind /dev/pts $CHROOT_DIR"/dev/pts"
 	mount -t proc /proc $CHROOT_DIR"/proc"
 	mount --rbind /sys $CHROOT_DIR"/sys"
-#	mount --make-rslave $CHROOT_DIR"/sys"
+	mount --make-rslave $CHROOT_DIR"/sys"
 #	mount --rbind /tmp $CHROOT_DIR"/tmp"
 #	mount --bind /run $CHROOT_DIR"/run"
 elif [[ $CHROOT_ACTION == 'UMOUNT' ]]; then
