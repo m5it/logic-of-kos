@@ -57,7 +57,7 @@ function HELP(){
 #
 if [[ "$#" -eq 0 && $PCA_ON_NONE_HELP == true ]]; then
 	HELP
-	exit
+	exit 1
 fi
 
 #
@@ -75,10 +75,10 @@ for arg in "$@"; do
 		#let cnt+=1
 		#echo "tmpc val: "${!cnt}
 		HELP
-		exit
+		exit 1
 	elif [[ $arg == "-v" || $arg == "--version" ]]; then
 		echo $V
-		exit
+		exit 1
 	elif [[ $next_arg != "" ]]; then
 		if [[ ${!next_arg} == "" ]]; then
 			declare -gx "$next_arg"="("$arg")" # Set value from STRING name!
@@ -139,8 +139,22 @@ for arg in "$@"; do
 	let cnt_arg=cnt_arg+1
 done
 
+# 
+for line in $(ls -d *[A-Z]*); do 
+	if [[ -f $line ]]; then 
+		continue; 
+	fi;
+	line=$(echo $line|awk '{print toupper($0)}')
+	chek=$(echo $1|awk '{print toupper($0)}')
+	if [[ "$chek" == "$line" ]]; then
+		c1=$(echo $1|awk '{print toupper($0)}')
+		ls -l $PRE""$c1 | grep -E ".sh+$" | grep -v "^l"
+		exit
+	fi
+done
+
 # No action was specified, displaying help if exists...
 if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
 	HELP
-	exit
+	exit 1
 fi

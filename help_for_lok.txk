@@ -3,3 +3,8 @@
 -a or --available                        # Preview available tools
 -p or --preview                          # Preview installed tools
 -h or --help                             # What you are reading right now
+
+or you can use DIRECTORY commands.
+Ex.:
+lok git push # will fire GIT/gitp.sh
+

@@ -46,10 +46,8 @@ echo "ARG_AVAILABLE: "$ARG_AVAILABLE
 echo "ARG_HELP: "$ARG_HELP
 
 #--
-# MAin START
-#if [[ $ARG_INSTALL == true ]]; then
-#	echo "LOK => Installing"
-#	source $PRE'install.sh' -l
+# MAIN
+#--
 if [[ $ARG_UNINSTALL == true ]]; then
 	echo "LOK => Uninstalling..."
 	source $PRE'continue.sh' # check if continue
