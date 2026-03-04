@@ -10,6 +10,10 @@ if [[ "$NAME" == "" ]]; then
 	echo "Usage: "$0" machine.name "$SIZE
 	exit 1
 fi
+#
+if [[ "$2" != "" ]]; then
+	SIZE=$2
+fi
 echo "Using name: "$NAME", size: "$SIZE
 sleep 5
 
