@@ -2,26 +2,23 @@
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/"
-source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+echo "DEBUG d1 PRE: "$PRE
+source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 
 #--
 # Configure PCA
 #
 CNF_INSTALL=$PRE"install.dbk"
+#echo "DEBUG lok.sh => PRE: "$PRE", CNF_INSTALL: "$CNF_INSTALL
 #
 #ARG_INSTALL=false
-#ARG_UNINSTALL=false
+ARG_UNINSTALL=false
 ARG_PREVIEW=false
 ARG_AVAILABLE=false
 #
-#PCA=("INSTALL UNINSTALL PREVIEW")
 PCA=("AVAILABLE PREVIEW UNINSTALL")
 #
 PCA_ON_NONE_HELP=true
-#
-#INSTALL_SHORT_ARG="-i"
-#INSTALL_ARG="--install"
-#INSTALL_VAL=false
 #
 UNINSTALL_SHORT_ARG="-u"
 UNINSTALL_ARG="--uninstall"
@@ -35,8 +32,8 @@ AVAILABLE_SHORT_ARG="-a"
 AVAILABLE_ARG="--available"
 AVAILABLE_VAL=false
 
-# Parse command line arguments
-source $PRE"pca.sh"
+# PARSE command line arguments
+source $PRE"/src/pca.sh"
 
 echo "DEBUG args: "
 #echo "ARG_INSTALL: "$ARG_INSTALL

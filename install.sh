@@ -8,6 +8,8 @@
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/"
+echo "DEBUG PRE: "$PRE
+exit
 source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 #
 CNF_LOCATION=$(cat install.cnf | awk '/LOCATION/{print $2}')

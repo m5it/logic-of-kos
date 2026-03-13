@@ -1,9 +1,0 @@
-! -name "pca.sh"
-! -name "install.sh"
-! -name "isadmin.sh"
-! -name "continue.sh"
-! -name "prepare.sh"
-! -name "test*"
-! -name "test.sh"
-! -path './tests/*'
-! -path './tests*'

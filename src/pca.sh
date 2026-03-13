@@ -42,10 +42,10 @@ if [[ $NPCA == "" ]]; then
 fi
 #
 function HELP(){
-	cat $PRE'hr.txk'
+	cat $PRE'src/hr.txk'
 	echo $V
-	cat $PRE'created.txk'
-	cat $PRE'hr.txk'
+	cat $PRE'src/created.txk'
+	cat $PRE'src/hr.txk'
 	echo -ne "\nHelp for "$B"...:\n"
 	if [[ -f $H ]]; then
 		cat $H
@@ -56,6 +56,7 @@ function HELP(){
 
 #
 if [[ "$#" -eq 0 && $PCA_ON_NONE_HELP == true ]]; then
+	#echo "d1"
 	HELP
 	exit 1
 fi
@@ -139,22 +140,41 @@ for arg in "$@"; do
 	let cnt_arg=cnt_arg+1
 done
 
-# 
+echo "DEBUG ls PRE: "$PRE
+# SEARCH FOR DIR COMMANDS
+#for line in $(find . -maxdepth 1 -type d -name '[A-Z]*'); do 
 for line in $(ls -d *[A-Z]*); do 
 	if [[ -f $line ]]; then 
 		continue; 
 	fi;
 	line=$(echo $line|awk '{print toupper($0)}')
 	chek=$(echo $1|awk '{print toupper($0)}')
+	#echo "line: "$line" vs "$chek;
 	if [[ "$chek" == "$line" ]]; then
+		#echo "got cmd1: "$line" 1: "$1
 		c1=$(echo $1|awk '{print toupper($0)}')
+		#
 		ls -l $PRE""$c1 | grep -E ".sh+$" | grep -v "^l"
-		exit
+		#echo "DEBUG tmp: "$tmp
+		if [[ "$2" == "" ]]; then
+			#echo "No command "$c1
+			exit
+		fi
+		#echo "got cmd2: "$line" 2: "$2
+		#c2=$(echo $2|awk '{print toupper($0)}')
+		tmp=$(ls -l $PRE""$c1 | grep -E ".*sh+$" | grep -E "^l.*" | awk '{print $9}' | grep $2)
+		if [[ "$tmp" != "" ]]; then
+			echo "CMD "$2
+			exit
+		else
+			echo "tmp: "$tmp
+		fi
 	fi
 done
 
 # No action was specified, displaying help if exists...
 if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
+	#echo "d2"
 	HELP
 	exit 1
 fi
