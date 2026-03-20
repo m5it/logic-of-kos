@@ -35,12 +35,12 @@ IP_SHORT_ARG="-I"
 IP_ARG="--ip"
 IP_VAL=true               # true | false ( if argument contain value )
 #
-PREFIX_SHORT_ARG="-I"
-PREFIX_ARG="--ip"
+PREFIX_SHORT_ARG="-P"
+PREFIX_ARG="--prefix"
 PREFIX_VAL=true               # true | false ( if argument contain value )
 #
-ROUTE_SHORT_ARG="-I"
-ROUTE_ARG="--ip"
+ROUTE_SHORT_ARG="-R"
+ROUTE_ARG="--route"
 ROUTE_VAL=true               # true | false ( if argument contain value )
 
 #--

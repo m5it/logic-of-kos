@@ -22,8 +22,9 @@
 # - pca.sh
 #
 # Other global variables:
-# - $P, $B, $V, $H, $U, $PRE, $APCA
-# - APCA define num of args
+# - $P, $B, $V, $H, $U, $PRE, $APCA, $NPCA
+# - APCA => define num of args
+# - NPCA => 
 #--
 #
 cnt_arg=0
@@ -150,12 +151,14 @@ done
 #   lok NET calcnipp VIEW
 #   lok NET calcnipp RUN
 # SEARCH FOR DIR COMMANDS
+echo "DEBUG APCA: "$APCA
+echo "DEBUG NPCA: "$NPCA
 echo "DEBUG CMD ARGS( "$#" ): "
-#echo "1: "$1 # dirName Ex.: NET | VENV | SYS...
-#echo "2: "$2 # scriptName Ex.: cputemp | calcnipp...
-#echo "3: "$3 # SET | HELP | RUN | VIEW...
-#echo "4: "$4 # key | key=val
-#echo "5: "$5 # val
+echo "1: "$1 # dirName Ex.: NET | VENV | SYS...
+echo "2: "$2 # scriptName Ex.: cputemp | calcnipp...
+echo "3: "$3 # SET | HELP | RUN | VIEW...
+echo "4: "$4 # key | key=val
+echo "5: "$5 # val
 #for line in $(find . -maxdepth 1 -type d -name '[A-Z]*'); do 
 for line in $(ls -d "$PRE"*[A-Z]*); do 
 	if [[ -f $line ]]; then 
@@ -164,29 +167,50 @@ for line in $(ls -d "$PRE"*[A-Z]*); do
 	line=$(echo $line|awk '{print toupper($0)}')
 	line=$(basename $line)
 	chek=$(echo $1|awk '{print toupper($0)}')
-	echo "line: "$line" vs "$chek;
-	if [[ "$chek" == "$line" ]]; then
+	# Ex.: DEBUG line: VENV vs HELP
+	#echo "DEBUG line: "$line" vs "$chek;
+	if [[ $# == 0 ]]; then
+		echo "DEBUG $# is 0: "$line
+	elif [[ "$chek" == "HELP" ]]; then
+		echo "Displaying help for lok!"
+		HELP
+		exit 1
+	elif [[ "$chek" == "$line" ]]; then
 		#
-		ls -l $PRE""$chek | grep -E ".sh+$" | grep -v "^l"
-		if [[ "$2" == "" ]]; then
-			#echo "No command "$c1
-			exit
-		fi
-		#echo "got cmd2: "$line" 2: "$2
-		#c2=$(echo $2|awk '{print toupper($0)}')
-		tmp=$(ls -l $PRE""$c1 | grep -E ".*sh+$" | grep -E "^l.*" | awk '{print $9}' | grep $2)
-		if [[ "$tmp" != "" ]]; then
-			echo "CMD "$2
-			exit
-		else
+		#ls -l $PRE""$chek | grep -E ".sh+$" | grep -v "^l"
+		IFS=$'\n'
+		for tmp in $(ls -l $PRE""$chek | grep -E "^l.*"); do
 			echo "tmp: "$tmp
+			IFS=' ' read -ra elms <<< "$tmp"
+			#for elm in "${elms[@]}"; do
+			#	echo "elm: "$elm
+			#done
+			#echo "elms: "${#elms[@]}" - "${elms[8]}
+			#in_array "cputemp" "${elms[@]}"
+			
+			if [[ "${elms[8]}" == $2 ]]; then
+				RN=${elms[10]} # real name of script "script.sh" else "script"
+				echo "Got command: "$2
+				echo "Path: "$PRE
+				echo "line: "$line" vs chek: "$chek
+				SP=$PRE""$chek"/"$RN
+				echo "SP: "$SP
+				echo "RN: "$SP
+				#$($SP -h)
+				$SP -h
+				exit
+			fi
+		done
+		if [[ "$2" == "" ]]; then
+			echo "No command "$c1
+			exit 0
 		fi
 	fi
 done
 
 # No action was specified, displaying help if exists...
 if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
-	#echo "d2"
+	echo "d2"
 	HELP
 	exit 1
 fi

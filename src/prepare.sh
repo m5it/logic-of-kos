@@ -23,6 +23,29 @@ H=$(echo -n $B | sed 's/\.sh$//g' | (echo -n "help_for_" && cat) | (echo -n $P"/
 # echo "Value: "$v
 CONFIG_FILE=$P"/src/lok.conf"
 echo "DEBUG config.sh => Start, CONFIG_FILE: "$CONFIG_FILE
+
+#
+in_array() {
+    local value=$1
+    shift
+    local array=("$@")
+    i=0
+    echo "in_array() START, array: ${array[@]}, value: $value"
+ 
+    for val in "${array[@]}"; do
+        echo "in_array val: $val"
+        if [[ "$val" == "$value" ]]; then
+            echo "Value '$value' found in array"
+            return $i
+        fi
+        i=$((i+1))
+    done
+ 
+    echo "Value '$value' not found in array"
+    return -1
+}
+
+#--
 # Get a value
 #echo "$(config_get "MY_KEY")"
 #
