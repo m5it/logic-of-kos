@@ -1,0 +1,6 @@
+./pca.sh
+./install.sh
+./isadmin.sh
+./continue.sh
+./prepare.sh
+./test*
