@@ -53,6 +53,7 @@ function HELP(){
 	else
 		echo -ne "Sorry can not find documentation for $B.\n"
 	fi
+	echo "PCA: "$PCA
 }
 
 #
