@@ -33,7 +33,7 @@ AVAILABLE_ARG="--available"
 AVAILABLE_VAL=false
 
 # PARSE command line arguments
-source $PRE"/src/pca.sh"
+source $PRE"src/pca.sh"
 
 echo "DEBUG args: "
 #echo "ARG_INSTALL: "$ARG_INSTALL

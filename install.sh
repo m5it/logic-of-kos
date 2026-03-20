@@ -8,9 +8,9 @@
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/"
-echo "DEBUG PRE: "$PRE
-exit
-source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+#echo "DEBUG PRE: "$PRE
+#exit
+source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 #
 CNF_LOCATION=$(cat install.cnf | awk '/LOCATION/{print $2}')
 CNF_INSTALL="install.dbk"
@@ -57,7 +57,7 @@ DEBUG_FUNCTION(){
 }
 #--
 # Parse command line arguments
-source $PRE'pca.sh'
+source $PRE'src/pca.sh'
 
 #--
 # CHECK
@@ -105,11 +105,11 @@ fi
 #
 if [[ $ARG_ACTION != "VIEW" && $ARG_ACTION != "DEBUG" ]]; then
 	#
-	source $PRE'isadmin.sh' # check if root
+	source $PRE'src/isadmin.sh' # check if root
 fi
 #
 if [[ $ARG_ACTION != "VIEW" && $ARG_ACTION != "DEBUG" ]]; then
-	source $PRE'continue.sh' # check if continue
+	source $PRE'src/continue.sh' # check if continue
 fi
 #
 if [[ $ARG_FIX == true ]]; then
