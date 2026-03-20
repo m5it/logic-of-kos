@@ -56,7 +56,7 @@ function HELP(){
 
 #
 if [[ "$#" -eq 0 && $PCA_ON_NONE_HELP == true ]]; then
-	#echo "d1"
+	echo "d1"
 	HELP
 	exit 1
 fi
@@ -140,22 +140,34 @@ for arg in "$@"; do
 	let cnt_arg=cnt_arg+1
 done
 
-echo "DEBUG ls PRE: "$PRE
+#-- v0.2 UPDATE .. New Syntax Support.
+#-------------------------------------
+# Ex.: 
+#   lok NET calcnipp HELP
+#   lok NET calcnipp SET somekey=28
+#   lok NET calcnipp SET somekey 28
+#   lok NET calcnipp GET somekey
+#   lok NET calcnipp VIEW
+#   lok NET calcnipp RUN
 # SEARCH FOR DIR COMMANDS
+echo "DEBUG CMD ARGS( "$#" ): "
+#echo "1: "$1 # dirName Ex.: NET | VENV | SYS...
+#echo "2: "$2 # scriptName Ex.: cputemp | calcnipp...
+#echo "3: "$3 # SET | HELP | RUN | VIEW...
+#echo "4: "$4 # key | key=val
+#echo "5: "$5 # val
 #for line in $(find . -maxdepth 1 -type d -name '[A-Z]*'); do 
-for line in $(ls -d *[A-Z]*); do 
+for line in $(ls -d "$PRE"*[A-Z]*); do 
 	if [[ -f $line ]]; then 
 		continue; 
 	fi;
 	line=$(echo $line|awk '{print toupper($0)}')
+	line=$(basename $line)
 	chek=$(echo $1|awk '{print toupper($0)}')
-	#echo "line: "$line" vs "$chek;
+	echo "line: "$line" vs "$chek;
 	if [[ "$chek" == "$line" ]]; then
-		#echo "got cmd1: "$line" 1: "$1
-		c1=$(echo $1|awk '{print toupper($0)}')
 		#
-		ls -l $PRE""$c1 | grep -E ".sh+$" | grep -v "^l"
-		#echo "DEBUG tmp: "$tmp
+		ls -l $PRE""$chek | grep -E ".sh+$" | grep -v "^l"
 		if [[ "$2" == "" ]]; then
 			#echo "No command "$c1
 			exit

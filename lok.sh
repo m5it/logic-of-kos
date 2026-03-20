@@ -1,5 +1,23 @@
 #!/bin/bash
-#--
+# From v0.1 available syntax:
+#----------------------------
+# Ex.:
+# lok -l
+# lok -u
+# lok -p
+# cputemp
+# etc...
+#
+# From v0.2 available syntax:
+#----------------------------
+# Ex.: 
+#   lok NET calcnipp HELP
+#   lok NET calcnipp SET somekey=28
+#   lok NET calcnipp SET somekey 28
+#   lok NET calcnipp GET somekey
+#   lok NET calcnipp VIEW
+#   lok NET calcnipp RUN
+
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/"
 echo "DEBUG d1 PRE: "$PRE
@@ -18,7 +36,7 @@ ARG_AVAILABLE=false
 #
 PCA=("AVAILABLE PREVIEW UNINSTALL")
 #
-PCA_ON_NONE_HELP=true
+PCA_ON_NONE_HELP=false
 #
 UNINSTALL_SHORT_ARG="-u"
 UNINSTALL_ARG="--uninstall"
