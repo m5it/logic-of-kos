@@ -22,7 +22,7 @@ H=$(echo -n $B | sed 's/\.sh$//g' | (echo -n "help_for_" && cat) | (echo -n $P"/
 # v = config_get "MY_KEY"
 # echo "Value: "$v
 CONFIG_FILE=$P"/src/lok.conf"
-echo "DEBUG config.sh => Start, CONFIG_FILE: "$CONFIG_FILE
+#echo "DEBUG config.sh => Start, CONFIG_FILE: "$CONFIG_FILE
 
 #
 in_array() {
