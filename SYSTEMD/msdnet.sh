@@ -15,8 +15,8 @@ PCA=("MACHINE_NAME")
 #
 ARG_MACHINE_NAME=""           # ip address
 ARG_MACHINE_NAME_STRING=true
-MACHINE_NAME_SHORT_ARG="-I"
-MACHINE_NAME_ARG="--ip"
+MACHINE_NAME_SHORT_ARG="-M"
+MACHINE_NAME_ARG="--machine_name"
 MACHINE_NAME_VAL=true               # true | false ( if argument contain value )
 #--
 # Parse command line arguments
