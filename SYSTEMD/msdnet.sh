@@ -22,7 +22,7 @@ MACHINE_NAME_VAL=true               # true | false ( if argument contain value )
 # Parse command line arguments
 source $PRE'src/pca.sh'
 #
-MACHINE_NAME=ARG_MACHINE_NAME
+MACHINE_NAME=$ARG_MACHINE_NAME
 #
 #if [[ $# == 0 || "$MACHINE_NAME" == "" ]]; then
 #	echo "Usage: "$0" [machineName]"
