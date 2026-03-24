@@ -24,12 +24,12 @@ source $PRE'src/pca.sh'
 #
 MACHINE_NAME=$ARG_MACHINE_NAME
 #
-echo "Deleting ips from interface: ve-"$MACHINE_NAME". Is correct? (Y / n)"
-read -r TMP
-if [[ "$TMP" != "Y" ]]; then
-	echo "Exiting..."
-	exit 1
-fi
+#echo "Deleting ips from interface: ve-"$MACHINE_NAME". Is correct? (Y / n)"
+#read -r TMP
+#if [[ "$TMP" != "Y" ]]; then
+#	echo "Exiting..."
+#	exit 1
+#fi
 
 echo "Continuing..."
 CNT=0
