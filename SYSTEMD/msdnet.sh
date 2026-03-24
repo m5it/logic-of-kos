@@ -24,18 +24,13 @@ source $PRE'src/pca.sh'
 #
 MACHINE_NAME=$ARG_MACHINE_NAME
 #
-#echo "Deleting ips from interface: ve-"$MACHINE_NAME". Is correct? (Y / n)"
-#read -r TMP
-#if [[ "$TMP" != "Y" ]]; then
-#	echo "Exiting..."
-#	exit 1
-#fi
 if [[ ! -n "$MACHINE_NAME" || "$MACHINE_NAME" == "" ]]; then
 	echo "Missing argument MACHINE_NAME"
 	exit 1
 fi
 echo "Continuing... Sleep 3s"
 sleep 3
+#
 CNT=0
 IFS=$'\n'
 for line in $(ip addr show "ve-"$MACHINE_NAME); do

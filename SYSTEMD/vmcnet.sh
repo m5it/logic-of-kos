@@ -1,10 +1,36 @@
 #!/bin/bash
 #
 #
-MACHINE_NAME=""           # Machine name. Machine / VHost is created with systemd-nspawn
-if [[ "$1" != ""  ]]; then
-	MACHINE_NAME=$1
+# Prepare global variables and data
+PRE=$(dirname $(realpath $0))"/../"
+#
+source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+#--
+# Define variables for pca.sh ( parse command line arguments )
+#--
+# Display help if no args set...
+PCA_ON_NONE_HELP=true
+# Define array of available argument options
+PCA=("MACHINE_NAME")
+#
+ARG_MACHINE_NAME=""           # ip address
+ARG_MACHINE_NAME_STRING=true
+MACHINE_NAME_SHORT_ARG="-M"
+MACHINE_NAME_ARG="--machine_name"
+MACHINE_NAME_VAL=true               # true | false ( if argument contain value )
+#--
+# Parse command line arguments
+source $PRE'src/pca.sh'
+#
+MACHINE_NAME=$ARG_MACHINE_NAME
+#
+if [[ ! -n "$MACHINE_NAME" || "$MACHINE_NAME" == "" ]]; then
+	echo "Missing argument MACHINE_NAME"
+	exit 1
 fi
+echo "Continuing... Sleep 3s"
+sleep 3
+#
 HOST_IF="host0"                  # VHost interface
 MAST_IF="ve-"$MACHINE_NAME       # Master interface
 #
