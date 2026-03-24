@@ -177,8 +177,8 @@ for arg in "$@"; do
 done
 
 # No action was specified, displaying help if exists...
-if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
-	echo "d2"
-	HELP
-	exit 2
-fi
+#if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
+#	echo "d2"
+#	HELP
+#	exit 2
+#fi
