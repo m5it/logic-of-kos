@@ -13,6 +13,12 @@ P=$(dirname $U | sed 's/^\.\///g') # basename, realpath, dirname
 #V=$(cat $P'/'$PRE'version.txk' | sed "s/\[\-\-\#SCRIPT\_NAME\#\-\-\]/"$B"/g")
 V=$(cat $PRE'version.txk' | sed "s/\[\-\-\#SCRIPT\_NAME\#\-\-\]/"$B"/g")
 H=$(echo -n $B | sed 's/\.sh$//g' | (echo -n "help_for_" && cat) | (echo -n $P"/" && cat) | sed 's/$/.txk/')
+if [[ "$HOME" =~ "root" ]]; then
+	#echo "Looks running as root..."$HOME
+	HOME=$(eval echo ~$SUDO_USER)
+	#echo "Fixed home: "$HOME
+	#exit 1
+fi
 D=$HOME"/.config/lok"
 DL=$D"/live"
 DS=$D"/saves"
