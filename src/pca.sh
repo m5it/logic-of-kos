@@ -47,13 +47,13 @@ function HELP(){
 	#
 	echo "Available options for "$B": "
 	for opt in ${PCA[@]}; do
-		echo $opt
-		#if [[ "$0" == "lok" ]]; then
-			#echo $opt
-		#else
-			#SHORT=$opt"_SHORT_ARG"
-			#echo $opt" -> short arg: "${!SHORT}
-		#fi
+		#echo $opt
+		if [[ "$B" == "lok" ]]; then
+			echo $opt
+		else
+			SHORT=$opt"_SHORT_ARG"
+			echo ${!SHORT}" # "$opt
+		fi
 	done
 	#
 	echo -ne "\nDocumentation for "$B": "
