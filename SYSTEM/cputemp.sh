@@ -14,7 +14,7 @@ source $PRE'src/prepare.sh' # include prepared global variables like: realpath, 
 # Display help if no args set...
 PCA_ON_NONE_HELP=false
 # Define array of available argument options
-PCA=("TEMPERATURE TEMPERATURE_CELSIUS")
+PCA=("TEMPERATURE TEMPERATURE_CELSIUS JUSTTEST")
 # Define variables where options are parsed as values
 ARG_TEMPERATURE=false           # true | false
 ARG_TEMPERATURE_CELSIUS=false   # true | false
@@ -32,7 +32,10 @@ TEMPERATURE_VAL=false               # true | false ( if argument contain value )
 TEMPERATURE_CELSIUS_SHORT_ARG="-T"
 TEMPERATURE_CELSIUS_ARG="--temperature_celsius"
 TEMPERATURE_CELSIUS_VAL=false
-
+#
+JUSTTEST_SHORT_ARG="-J"
+JUSTTEST_ARG="--just_test"
+JUSTTEST_VAL=false
 #--
 # Parse command line arguments
 source $PRE'src/pca.sh'
@@ -41,7 +44,10 @@ source $PRE'src/pca.sh'
 # DEBUG ARGS: 
 #echo "ARG_TEMPERATURE: "$ARG_TEMPERATURE
 #echo "ARG_TEMPERATURE_CELSIUS: "$ARG_TEMPERATURE_CELSIUS
-
+# ERROR Example:
+#echo $U" => Test error at ln: "$LINENO
+#echo $U" => Test Line 2"
+#exit 1
 #--
 # MAIN START
 #
@@ -56,4 +62,3 @@ elif [[ $ARG_TEMPERATURE_CELSIUS == true ]]; then
 else
 	echo "CPU temperature: "$((temp/1000))"/C"
 fi
-

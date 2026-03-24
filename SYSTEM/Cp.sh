@@ -11,7 +11,7 @@
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/../"
-source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 
 #--
 # Define variables for pca.sh ( parse command line arguments )
@@ -30,7 +30,7 @@ PROGRESS_VAL=false
 
 #--
 # Parse command line arguments
-source $PRE'pca.sh'
+source $PRE'src/pca.sh'
 #
 CMDS=""
 #

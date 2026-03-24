@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to delete all ips of vm machine on master host using veth type
+# Script to delete all ips of systemd-nspawn vm machine on master host using veth type
 #
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/../"
@@ -24,10 +24,6 @@ source $PRE'src/pca.sh'
 #
 MACHINE_NAME=$ARG_MACHINE_NAME
 #
-#if [[ $# == 0 || "$MACHINE_NAME" == "" ]]; then
-#	echo "Usage: "$0" [machineName]"
-#	exit 1
-#fi
 echo "Deleting ips from interface: ve-"$MACHINE_NAME". Is correct? (Y / n)"
 read -r TMP
 if [[ "$TMP" != "Y" ]]; then

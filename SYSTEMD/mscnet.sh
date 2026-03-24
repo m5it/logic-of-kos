@@ -76,19 +76,19 @@ if [[ ! -n "$ARG_ACTION" || ! -n "$ARG_IP" || ! -n "$ARG_PREFIX" || ! -n "$ARG_R
 fi
 # split ip into array
 IFS=. read -r -a arr <<< "$ARG_IP"
-echo "arr: "${arr[3]}
+#echo "arr: "${arr[3]}
+##
+#echo "PRE: "$PRE
+#echo "ARG_ACTION: "$ARG_ACTION
+#echo "ARG_IP: "$ARG_IP
+#echo "ARG_PREFIX..: "$ARG_PREFIX
+#echo "ARG_ROUTE: "$ARG_ROUTE
+#echo "ARG_BROADCAST: "$ARG_BROADCAST
+#echo "ARG_INTERFACE: "$ARG_INTERFACE
+#CAL_AVAILABLE_IPS=`calcnipp $ARG_PREFIX`
+#echo "CAL_AVAILABLE_IPS: "$CAL_AVAILABLE_IPS
 #
-echo "PRE: "$PRE
-echo "ARG_ACTION: "$ARG_ACTION
-echo "ARG_IP: "$ARG_IP
-echo "ARG_PREFIX..: "$ARG_PREFIX
-echo "ARG_ROUTE: "$ARG_ROUTE
-echo "ARG_BROADCAST: "$ARG_BROADCAST
-echo "ARG_INTERFACE: "$ARG_INTERFACE
-CAL_AVAILABLE_IPS=`calcnipp $ARG_PREFIX`
-echo "CAL_AVAILABLE_IPS: "$CAL_AVAILABLE_IPS
-#
-INTERFACE_CMD="up"
+INTERFACE_CMD="up" # up | down
 if [[ "$ARG_ACTION" == "delete" ]]; then
 	INTERFACE_CMD="down"
 fi
