@@ -250,10 +250,10 @@ if [[ $NPCA == 0 ]]; then
 				fi
 			done
 			#
-			if [[ "$2" == "" ]]; then
-				echo "No command "$chek
-				exit 0
-			fi
+			#if [[ "$2" == "" ]]; then
+			#	echo "No command "$chek
+			#	exit 0
+			#fi
 		fi
 	done
 fi
