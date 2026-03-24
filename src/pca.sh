@@ -93,16 +93,16 @@ for arg in "$@"; do
 		exit 1
 	# (integrated argument) Run with configuration defined by lok
 	elif [[ $arg == "-RR" || $arg == "--run_config" ]]; then
-		#echo "DEBUG -RR or --run_config START!"
+		echo "DEBUG -RR or --run_config START!"
 		tmpd=$DL"/"$(basename $P)
 		tmpf=$tmpd"/"$B"/config"
-		#echo "DEBUG config at tmpd: "$tmpf
+		echo "DEBUG config at tmpd: "$tmpf
 		for tmp in $(cat $tmpf); do
 			IFS=':' read -r -a arr <<< "$tmp"
 			next_arg="ARG_"${arr[0]}
-			#echo "DEBUG config next_arg: "$next_arg" = "${arr[1]}
+			echo "DEBUG config next_arg: "$next_arg" = "${arr[1]}
 			declare -gx "$next_arg"="${arr[1]}"
-			#echo "DEBUG config tmp: "${!next_arg}
+			echo "DEBUG config tmp: "${!next_arg}
 		done
 	# (script arguments) Run with default script arguments
 	elif [[ $next_arg != "" ]]; then
