@@ -222,6 +222,7 @@ if [[ $NPCA == 0 ]]; then
 					elif [[ "$3" == "DISABLE_HISTORY" ]]; then
 						echo "Firing DISABLE_HISTORY at "$4
 					elif [[ "$3" == "RUN" ]]; then
+						echo "Running: "$SP
 						atmp=$($SP -RR)
 						ERR=$?
 						IFS=$'\n'
