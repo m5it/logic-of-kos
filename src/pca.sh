@@ -67,6 +67,7 @@ function HELP(){
 
 #
 if [[ "$#" -eq 0 && $PCA_ON_NONE_HELP == true ]]; then
+	echo "d1"
 	HELP
 	exit 0
 fi
@@ -177,6 +178,7 @@ done
 
 # No action was specified, displaying help if exists...
 if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then
+	echo "d2"
 	HELP
 	exit 2
 fi
