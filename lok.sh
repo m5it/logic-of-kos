@@ -26,7 +26,7 @@ if [[ $# == 0 || $1 == "-h" ]]; then
 	echo ""
 	echo "You are using Logic Of Kos "$V" -> Collection of handy scripts for managing your XOS."
 	echo ""
-	cat 'src/icon.txt'
+	cat $PRE'src/icon.txt'
 	cat $PRE'src/hr.txk'
 	echo $(cat $PRE'src/created.txk')
 	echo ""
