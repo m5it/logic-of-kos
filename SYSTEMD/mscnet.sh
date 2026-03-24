@@ -74,6 +74,8 @@ if [[ ! -n "$ARG_ACTION" || ! -n "$ARG_IP" || ! -n "$ARG_PREFIX" || ! -n "$ARG_R
 	echo "Missing data!"
 	exit 1
 fi
+echo "Continuing... sleep 3s"
+sleep 3
 # split ip into array
 IFS=. read -r -a arr <<< "$ARG_IP"
 #echo "arr: "${arr[3]}
@@ -102,10 +104,17 @@ if ! ip addr $ARG_ACTION $ARG_IP"/"$ARG_PREFIX brd $ARG_BROADCAST dev $ARG_INTER
 	echo "ERROR: Setting IP "$ARG_IP"/"$ARG_PREFIX" brd "$ARG_BROADCAST" dev "$ARG_INTERFACE
 	exit 1
 fi
-# ip route add 192.168.78.240/28 dev ve-gits.raw src 192.168.78.241
-if ! ip addr $ARG_ACTION $ARG_ROUTE"/"$ARG_PREFIX dev $ARG_INTERFACE src $ARG_IP; then
-	echo "ERROR: Setting route "$ARG_ROUTE"/"$ARG_PREFIX" dev "$ARG_INTERFACE" src "$ARG_IP
-	exit 1
+sleep 1
+# 192.168.76.240/28 dev ve-gkpub.raw proto kernel scope link src 192.168.76.241
+# check if route exists
+if [[ "$(ip route | grep "$ARG_INTERFACE" | grep "$ARG_ROUTE")" != "" ]]; then
+	echo "Notice: Route already set."
+else
+	# ip route add 192.168.78.240/28 dev ve-gits.raw src 192.168.78.241
+	if ! ip addr $ARG_ACTION $ARG_ROUTE"/"$ARG_PREFIX dev $ARG_INTERFACE src $ARG_IP; then
+		echo "ERROR: Setting route "$ARG_ROUTE"/"$ARG_PREFIX" dev "$ARG_INTERFACE" src "$ARG_IP
+		exit 1
+	fi
 fi
 # Next run vmcnet to set hosts ip and route.
 echo "All looks fine, now configure veth for VM. Use vmcnet [machineName]"

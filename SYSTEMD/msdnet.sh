@@ -30,8 +30,12 @@ MACHINE_NAME=$ARG_MACHINE_NAME
 #	echo "Exiting..."
 #	exit 1
 #fi
-
-echo "Continuing..."
+if [[ ! -n "$MACHINE_NAME" || "$MACHINE_NAME" == "" ]]; then
+	echo "Missing argument MACHINE_NAME"
+	exit 1
+fi
+echo "Continuing... Sleep 3s"
+sleep 3
 CNT=0
 IFS=$'\n'
 for line in $(ip addr show "ve-"$MACHINE_NAME); do

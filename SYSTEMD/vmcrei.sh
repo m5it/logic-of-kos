@@ -14,7 +14,7 @@ fi
 if [[ "$2" != "" ]]; then
 	SIZE=$2
 fi
-echo "Using name: "$NAME", size: "$SIZE
+echo "Using name: "$NAME", size: "$SIZE"... Sleep 5s"
 sleep 5
 
 dd if=/dev/zero of=$NAME bs=1M count=$SIZE status=progress;sync
