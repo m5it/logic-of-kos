@@ -1,8 +1,5 @@
 #!/bin/bash
 #
-#
-#
-#
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/../"
@@ -52,6 +49,10 @@ source $PRE'src/pca.sh'
 # MAIN START
 #
 temp=$(cat /sys/class/thermal/thermal_zone0/temp)
+if [[ $? -ne 0 ]]; then
+	echo "ERROR: "$U" on line "$LINENO
+	exit 1
+fi
 #
 if [[ $ARG_TEMPERATURE == true ]]; then
 	echo $temp

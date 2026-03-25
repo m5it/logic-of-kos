@@ -252,8 +252,7 @@ if [[ $NPCA == 0 ]]; then
 					elif [[ "$3" == "DISABLE_HISTORY" ]]; then
 						echo "Firing DISABLE_HISTORY at "$4
 					elif [[ "$3" == "RUN" ]]; then
-						echo "Running: "$SP
-						atmp=$($SP -RR)
+						atmp=$($SP -RR 2>&1 > /dev/null)
 						ERR=$?
 						IFS=$'\n'
 						if [[ $ERR -ne 0 ]]; then
@@ -266,10 +265,19 @@ if [[ $NPCA == 0 ]]; then
 							echo $tmp
 						done
 						# Save history
+						#
 						if [[ ! -f "$livefile" ]]; then
-							exit 2
+							exit 0
 						fi
-						tmp=$(concat_lines "$livefile")
+						echo "d3"
+						#
+						tmp=$(concat_lines "$livefile" 2>&1 > /dev/null)
+						ERR=$?
+						if [[ $ERR -ne 0 ]]; then
+							echo "ERROR "$U"( "$ERR" ) line "$LINENO". More: "
+							echo $tmp
+							exit 1
+						fi
 						tmpdata=$(get_datetime)" | "$tmp
 						echo "Adding to history at "$historydir"/history.log "$tmpdata
 						echo $tmpdata >> $historydir"/history.log"

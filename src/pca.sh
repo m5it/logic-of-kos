@@ -94,17 +94,15 @@ for arg in "$@"; do
 		exit 1
 	# (integrated argument) Run with configuration defined by lok
 	elif [[ $arg == "-RR" || $arg == "--run_config" ]]; then
-		echo "DEBUG -RR or --run_config START!"
 		tmpd=$DL"/"$(basename $P)
 		tmpf=$tmpd"/"$B"/config"
-		echo "DEBUG config at tmpd: "$tmpf
-		for tmp in $(cat $tmpf); do
-			IFS=':' read -r -a arr <<< "$tmp"
-			next_arg="ARG_"${arr[0]}
-			echo "DEBUG config next_arg: "$next_arg" = "${arr[1]}
-			declare -gx "$next_arg"="${arr[1]}"
-			echo "DEBUG config tmp: "${!next_arg}
-		done
+		if [[ -f "$tmpf" ]]; then
+			for tmp in $(cat $tmpf); do
+				IFS=':' read -r -a arr <<< "$tmp"
+				next_arg="ARG_"${arr[0]}
+				declare -gx "$next_arg"="${arr[1]}"
+			done
+		fi
 	# (script arguments) Run with default script arguments
 	elif [[ $next_arg != "" ]]; then
 		ARG_OVERWRITE=$next_arg"_OVERWRITE"
@@ -112,14 +110,11 @@ for arg in "$@"; do
 		if [[ ${!next_arg} == "" || ${!ARG_OVERWRITE} ]]; then
 			# Here we will need to think which scripts require ARRAY or STRING and how to make an logic
 			if [[ ${!ARG_STRING} ]]; then
-				echo "d1, "$next_arg" = "$arg
 				declare -gx "$next_arg"=""$arg"" # Set value from STRING name!
 			else
-				echo "d2"
 				declare -gx "$next_arg"="("$arg")" # Set value from STRING name!
 			fi
 		else
-			echo "DEBUG "$0" Dx1"
 			declare "$next_arg"="("${!next_arg}" "$arg")"
 		fi
 		#

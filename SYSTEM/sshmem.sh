@@ -5,8 +5,23 @@
 #--
 # MOTO: If is possible make it simpler... ;)
 #--
+#!/bin/bash
 #
-source $(pwd)/sshmem.sh
+#--
+# Prepare global variables and data
+PRE=$(dirname $(realpath $0))"/../"
+#
+source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+#--
+# Define variables for pca.sh ( parse command line arguments )
+#--
+# Display help if no args set...
+PCA_ON_NONE_HELP=false
+# Define array of available argument options
+PCA=()
+#--
+# Parse command line arguments
+source $PRE'src/pca.sh'
 #
 eval $(ssh-agent -s)
 sleep 1

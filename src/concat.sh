@@ -12,13 +12,18 @@ concat_lines() {
 	# Read all lines and join them with a special delimiter
 	# Using a unique delimiter that shouldn't appear in the content
 	local delimiter="\x10"
-	local concatenated=$(paste -sd "$delimiter" "$input_file")
-	echo "$concatenated"
+	local tmp=$(paste -sd "$delimiter" "$input_file" 2>&1 > /dev/null)
+	ERR=$?
+	if [[ $ERR -ne 0 ]]; then
+		echo "ERROR: "$U" at line "$LINENO
+		exit 1
+	fi
+	echo "$tmp"
 }
  
 # Function to restore lines from concatenated format
 restore_lines() {
-	local concatenated=$*
+	local tmp=$*
 	local delimiter="\x10"
-	echo "$concatenated" | tr "$delimiter" "\n"
+	echo "$tmp" | tr "$delimiter" "\n"
 }
