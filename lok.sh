@@ -90,29 +90,58 @@ if [[ $NPCA == 0 ]]; then
 	if [[ $# == 0 ]]; then
 		echo "Available places: "
 	fi
-	for line in $(ls -d "$PRE"*[A-Z]*); do 
-		if [[ -f $line ]]; then 
+	HAVE_LINK=()
+	IFS=$'\n'
+	# Prepare available places, include links / exclude directories that contain link
+	for line in $(ls -dl "$PRE"*[A-Z]*); do
+		if [[ "$line" =~ ^l.* ]]; then
+			HAVE_LINK+=($(echo $line|awk '{print toupper($11)}'))
+		fi
+	done
+	#echo "HAVE_LINK: "$HAVE_LINK
+	#in_array "SYSTEM" "${HAVE_LINK[@]}"
+	#echo "HAVE_CHEK: "$?
+	# Display available places
+	for line in $(ls -dl "$PRE"*[A-Z]*); do 
+		#echo "line: "$line
+		full=$(echo $line|awk '{print $9}')
+		priv=$(echo $line|awk -F ' ' '{print $1}')
+		prog=$(basename $full|awk '{print toupper($0)}')
+		chek=$(echo $1|awk '{print toupper($0)}')
+		real=$chek
+		#echo "DEBUG chek: "$chek
+		#echo "DEBUG prog: "$prog
+		#echo "DEBUG APCA: "$APCA
+		#echo "DEBUG XX: "$#
+		#
+		if [[ $# -eq 0 && ( -f "$full" || $(in_array "$prog" "${HAVE_LINK[@]}") == "EXISTS" ) ]]; then
 			continue; 
 		fi;
-		line=$(echo $line|awk '{print toupper($0)}')
-		line=$(basename $line)
-		chek=$(echo $1|awk '{print toupper($0)}')
-		# Ex.: DEBUG line: VENV vs HELP
-		#echo "DEBUG line: "$line" vs "$chek;
+		#
+		if [[ "$priv" =~ ^l.* ]]; then
+			real=$(echo $line|awk '{print $11}')
+		fi
+		#
 		if [[ $# == 0 ]]; then
-			#echo "DEBUG lok.sh => $# is 0: "$line
-			echo $line
+			echo -n "$prog"
+			if [[ "$priv" =~ ^l.* ]]; then
+				echo " => "$real
+				chek=$real
+			else
+				echo ""
+			fi
 		elif [[ "$chek" == "HELP" ]]; then
 			echo "DEBUG lok.sh => Displaying help for lok!"
 			HELP
 			exit 1
-		elif [[ "$chek" == "$line" ]]; then
+		elif [[ "$chek" == "$prog" ]]; then
 			if [[ $# -eq 1 ]]; then
 				echo "Available scripts: "
 			fi
 			#
 			IFS=$'\n'
-			for tmp in $(ls -l $PRE""$chek | grep -E "^l.*"); do
+			for tmp in $(ls -l $PRE""$chek"/" | grep -E "^l.*"); do
+			#for tmp in $(ls -l $PRE""$chek); do
 				# tmp: lrwxrwxrwx 1 t3ch t3ch    9 mar 20 19:27 CREATE_IMG -> vmcrei.sh
 				if [[ -n "$DEBUG" ]]; then
 					echo "DEBUG lok.sh => tmp: "$tmp
@@ -120,15 +149,16 @@ if [[ $NPCA == 0 ]]; then
 				IFS=' ' read -ra elms <<< "$tmp"
 				if [[ $# -eq 1 ]]; then
 					echo ${elms[8]}
-					#in_array "cputemp" "${elms[@]}"
 				elif [[ "${elms[8]}" == $2 ]]; then
+					#
 					RN=${elms[10]}            # real name of script "script.sh" else "script"
 					SP=$PRE""$chek"/"$RN
 					SN=$(strip_file_type $RN)
-					livedir="$DL/$1/$SN"       # /home/t3ch/.config/lok/live/SYSTEMD/mscnet
+					#
+					livedir="$DL/$real/$SN"       # /home/t3ch/.config/lok/live/SYSTEMD/mscnet
 					livefile=$livedir"/config"  # /home/t3ch/.config/lok/live/SYSTEMD/mscnet/config
-					savesdir="$DS/$1/$SN"
-					historydir="$DH/$1/$SN"
+					savesdir="$DS/$real/$SN"
+					historydir="$DH/$real/$SN"
 					# Check if $1 directory dont exists then create it
 					if [[ ! -d "$livedir" ]]; then
 						if ! mkdir -p "$livedir"; then

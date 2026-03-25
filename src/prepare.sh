@@ -84,19 +84,19 @@ in_array() {
 	shift
 	local array=("$@")
 	i=0
-	echo "in_array() START, array: ${array[@]}, value: $value"
- 
 	for val in "${array[@]}"; do
-		echo "in_array val: $val"
 		if [[ "$val" == "$value" ]]; then
-			echo "Value '$value' found in array"
-			return $i
+			#echo "Value '$value' found in array"
+			#return $i
+			echo "EXISTS"
+			return
 		fi
 		i=$((i+1))
 	done
- 
-	echo "Value '$value' not found in array"
-	return -1
+	#echo "Value '$value' not found in array"
+	#return -1
+	echo "MISSING"
+	return
 }
 #
 get_datetime() {
