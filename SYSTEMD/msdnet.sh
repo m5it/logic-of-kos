@@ -36,7 +36,7 @@ IFS=$'\n'
 for line in $(ip addr show "ve-"$MACHINE_NAME); do
 	trim=$(echo $line | sed 's/^[[:space:]]*//')
 	# inet 169.254.119.99/16 metric 2048 brd 169.254.255.255 scope link ve-ldbp.raw
-	if [[ "$trim" =~ ^inet[[:space:]]+([0-9]{1,3}\.){3}.+([16|24|28|32]).+metric.+([0-9]).+brd.+([0-9{1,3}\.]+){3}.+scope.+link.+ve\-$MACHINE_NAME ]]; then
+	if [[ "$trim" =~ ^inet[[:space:]]+([0-9]{1,3}\.){3}.+([16|24|28|32]).+metric.+([0-9]).+brd.+([0-9{1,3}\.]+){3}.+scope.+link.+ve\-.* ]]; then
 		IFS=' ' read -r -a arr <<< "$trim"
 		if ! ip addr delete ${arr[1]} brd ${arr[5]} dev ${arr[8]}; then
 			echo "ERROR deleting ip "${arr[1]}" brd "${arr[5]}" dev "${arr[8]}
@@ -45,7 +45,7 @@ for line in $(ip addr show "ve-"$MACHINE_NAME); do
 			CNT=$((CNT += 1 ))
 		fi
 	# inet 192.168.216.113/28 brd 192.168.216.127 scope global ve-ldbp.raw
-	elif [[ "$trim" =~ ^inet[[:space:]]+([0-9]{1,3}\.){3}.+([16|24|28|32]).+scope.+global.+ve\-$MACHINE_NAME+$ ]]; then
+	elif [[ "$trim" =~ ^inet[[:space:]]+([0-9]{1,3}\.){3}.+([16|24|28|32]).+scope.+global.+ve\-.* ]]; then
 		IFS=' ' read -r -a arr <<< "$trim"
 		if ! ip addr delete ${arr[1]} brd ${arr[3]} dev ${arr[6]}; then
 			echo "ERROR deleting ip "${arr[1]}" brd "${arr[3]}" dev "${arr[6]}
