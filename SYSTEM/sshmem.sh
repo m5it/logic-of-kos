@@ -23,11 +23,14 @@ PCA=()
 # Parse command line arguments
 source $PRE'src/pca.sh'
 #
-start_ssh_agent() {
-	eval $(ssh-agent -s)
-	export SSH_AUTH_SOCK
-	export SSH_AGENT_PID
-}
-start_ssh_agent
-sleep 1
-ssh-add
+#start_ssh_agent() {
+#	eval $(ssh-agent -s)
+#	export SSH_AUTH_SOCK
+#	export SSH_AGENT_PID
+#}
+#start_ssh_agent
+#systemctl --user start ssh-agent.service
+#sleep 1
+#ssh-add
+echo "In progress..."
+exit 2

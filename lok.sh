@@ -252,7 +252,7 @@ if [[ $NPCA == 0 ]]; then
 					elif [[ "$3" == "DISABLE_HISTORY" ]]; then
 						echo "Firing DISABLE_HISTORY at "$4
 					elif [[ "$3" == "RUN" ]]; then
-						atmp=$($SP -RR 2>&1 > /dev/null)
+						atmp=$($SP -RR)
 						ERR=$?
 						IFS=$'\n'
 						if [[ $ERR -ne 0 ]]; then
@@ -271,7 +271,8 @@ if [[ $NPCA == 0 ]]; then
 						fi
 						echo "d3"
 						#
-						tmp=$(concat_lines "$livefile" 2>&1 > /dev/null)
+						#tmp=$(concat_lines "$livefile" 2>&1 > /dev/null)
+						tmp=$(concat_lines "$livefile")
 						ERR=$?
 						if [[ $ERR -ne 0 ]]; then
 							echo "ERROR "$U"( "$ERR" ) line "$LINENO". More: "
