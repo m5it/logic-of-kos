@@ -67,7 +67,6 @@ function HELP(){
 
 #
 if [[ "$#" -eq 0 && $PCA_ON_NONE_HELP == true ]]; then
-	echo "d1"
 	HELP
 	exit 0
 fi

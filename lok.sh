@@ -269,7 +269,6 @@ if [[ $NPCA == 0 ]]; then
 						if [[ ! -f "$livefile" ]]; then
 							exit 0
 						fi
-						echo "d3"
 						#
 						#tmp=$(concat_lines "$livefile" 2>&1 > /dev/null)
 						tmp=$(concat_lines "$livefile")

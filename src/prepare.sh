@@ -150,7 +150,6 @@ data_set() {
 	echo "tmpd: "$tmpd
 	#file=$D"/"$file
 	if [[ -f "$file" ]]; then
-		echo "d1"
 		# Create a temporary file
 		local tmp_file=$(mktemp)
 		local WAS_ADDED=false
