@@ -128,7 +128,7 @@ for arg in "$@"; do
 		find_arg=true
 	fi
 	#
-	for opca in $PCA; do
+	for opca in "${PCA[@]}"; do
 		#
 		tmp_short_arg=$opca'_SHORT_ARG'   # -sA | -s
 		tmp_arg=$opca'_ARG'               # --some-arg
@@ -136,6 +136,7 @@ for arg in "$@"; do
 		tmp_fun=$opca'_FUNCTION'          # fireFunction
 		tmp_vnm=$opca'_VNM'
 		#
+		[[ "$opca" =~ [[:space:]] ]] && continue
 		if [[ $arg == ${!tmp_short_arg} || $arg == ${!tmp_arg} ]]; then
 			#
 			let NPCA=NPCA+1

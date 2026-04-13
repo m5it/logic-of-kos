@@ -21,6 +21,7 @@
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/"
 source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+source $PRE'src/history.sh' # include history functionality
 #
 if [[ $# == 0 || $1 == "-h" ]]; then
 	echo ""
@@ -42,7 +43,7 @@ ARG_UNINSTALL=false
 ARG_PREVIEW=false
 ARG_AVAILABLE=false
 #
-PCA=("AVAILABLE PREVIEW UNINSTALL")
+PCA=("AVAILABLE" "PREVIEW" "UNINSTALL")
 #
 PCA_ON_NONE_HELP=false
 #
@@ -227,27 +228,19 @@ if [[ $NPCA == 0 ]]; then
 						echo "" > "$livefile"
 						echo $livefile" is empty!"
 					elif [[ "$3" == "HISTORY" ]]; then
-						if [[ ! -f "$historydir/history.log" ]]; then
-							echo "History yet dont exists."
-							exit 1
-						fi
-						#
-						cat $historydir"/history.log" | nl -v 1
-					elif [[ "$3" == "USE_HISTORY" ]]; then
-						if [[ ! -f "$historydir/history.log" ]]; then
-							echo "History yet dont exists."
-							exit 1
-						fi
-						#
-						line=$(sed -n $4'p' $historydir'/history.log')
+						history_init "$SN"
+						history_list "$4"
+					elif [[ "$3" == "USE_HISTORY" || "$3" == "USE" ]]; then
+						history_init "$SN"
+						line=$(history_get $4)
 						if [[ $? -ne 0 ]]; then
-							echo "Error occured at "$LINENO
-							echo "Error: "$line
+							echo "Error occurred at $LINENO"
+							echo "Error: $line"
 							exit 2
 						fi
-						echo "using line: "$line
-						IFS=" | " read -ra arr <<< "$line"
-						restore_lines "${arr[2]}" > "$livefile"
+						echo "using line: $line"
+						data="${line#* | }"
+						restore_lines "$data" > "$livefile"
 						exit 0
 					elif [[ "$3" == "DISABLE_HISTORY" ]]; then
 						echo "Firing DISABLE_HISTORY at "$4
@@ -270,7 +263,6 @@ if [[ $NPCA == 0 ]]; then
 							exit 0
 						fi
 						#
-						#tmp=$(concat_lines "$livefile" 2>&1 > /dev/null)
 						tmp=$(concat_lines "$livefile")
 						ERR=$?
 						if [[ $ERR -ne 0 ]]; then
@@ -278,13 +270,12 @@ if [[ $NPCA == 0 ]]; then
 							echo $tmp
 							exit 1
 						fi
-						tmpdata=$(get_datetime)" | "$tmp
-						echo "Adding to history at "$historydir"/history.log "$tmpdata
-						echo $tmpdata >> $historydir"/history.log"
+						history_init "$SN"
+						history_add "$tmp"
 						
 					else
 						echo "Available lok commands: "
-						echo "HELP SET GET DEL VIEW CLEAR RUN HISTORY USE_HISTORY DISABLE_HISTORY"
+						echo "HELP SET GET DEL VIEW CLEAR RUN HISTORY USE"
 					fi
 				fi
 			done
