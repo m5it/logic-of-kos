@@ -22,7 +22,7 @@ source $PRE'src/prepare.sh' # include prepared global variables like: realpath, 
 # Display help if no args set...
 PCA_ON_NONE_HELP=true
 # Define array of available argument options
-PCA=("IP PREFIX ROUTE BROADCAST INTERFACE ACTION")
+PCA=("IP" "PREFIX" "ROUTE" "BROADCAST" "INTERFACE" "ACTION")
 # Define variables where options are parsed as values
 ARG_IP=""           # ip address
 ARG_IP_STRING=true

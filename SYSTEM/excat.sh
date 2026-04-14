@@ -13,7 +13,7 @@ source $PRE'prepare.sh' # include prepared global variables like: realpath, file
 PCA_ON_NONE_HELP=true
 # Define array of available argument options
 # - (VOCABNAME)
-PCA=("VOCAB FROM1 FROM2 TO")
+PCA=("VOCAB" "FROM1" "FROM2" "TO")
 # Define variables where options are parsed as values
 ARG_VOCAB=()
 ARG_FROM1=()

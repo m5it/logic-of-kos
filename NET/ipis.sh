@@ -29,6 +29,10 @@ CLEAR_VAL=false
 
 source $PRE'src/pca.sh'
 
+for arg in "$@"; do
+	[[ ! "$arg" =~ ^- ]] && [[ -n "$arg" ]] && [[ "$IP_DEFAULT" == true ]] && [[ "$ARG_IP" == "" || "$ARG_IP" == "true" ]] && ARG_IP="$arg"
+done
+
 DATADIR="$D/NET/ipis"
 CACHE_DAYS=90
 
@@ -72,7 +76,61 @@ load_data() {
 	
 	[[ -n "$timestamp" && $((now - timestamp)) -gt $expiration ]] && return 2
 	
-	sed '1,/#.*$/d' "$file"
+	sed '/^#/d' "$file"
+	return 0
+}
+
+ip_to_num() {
+	local ip=$1
+	local num=0
+	IFS='.' read -ra octets <<< "$ip"
+	for oct in "${octets[@]}"; do
+		num=$((num * 256 + oct))
+	done
+	echo "$num"
+}
+
+load_data_new() {
+	local ip=$1
+	local ip_num=$(ip_to_num "$ip")
+	local found_file=""
+	
+	while read -r cache_file; do
+		[[ ! -f "$cache_file" ]] && continue
+		local full_key_path=$(echo "$cache_file" | sed "s|$DATADIR/||; s|\.txt$||")
+		local range_start=$(echo "$full_key_path" | grep -oE '[13]_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1 | cut -d'_' -f2)
+		local suffix_part=$(echo "$full_key_path" | grep -oE '%.*$' | head -1)
+		local range_prefix=24
+		
+		if [[ -n "$suffix_part" ]]; then
+			range_prefix=$(echo "${suffix_part#*_}" | cut -d'/' -f2)
+			[[ -z "$range_prefix" ]] && range_prefix=24
+		else
+			local range_end=$(echo "$full_key_path" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+			[[ -z "$range_end" ]] && continue
+		fi
+		
+		[[ -z "$range_start" ]] && continue
+		
+		local net_start=$(ip_to_num "$range_start")
+		local mask=$((0xFFFFFFFF << (32 - range_prefix) & 0xFFFFFFFF))
+		local net_end=$((net_start | (0xFFFFFFFF - mask)))
+		
+		if [[ $ip_num -ge $net_start && $ip_num -le $net_end ]]; then
+			found_file="$cache_file"
+			break
+		fi
+	done < <(find "$DATADIR" -name "*.txt" -type f 2>/dev/null)
+	
+	[[ -z "$found_file" ]] && return 1
+	
+	local timestamp=$(grep "^# TIMESTAMP:" "$found_file" | cut -d':' -f2 | tr -d ' ')
+	local now=$(date +%s)
+	local expiration=$((CACHE_DAYS * 24 * 60 * 60))
+	
+	[[ -n "$timestamp" && $((now - timestamp)) -gt $expiration ]] && return 2
+	
+	sed '/^#/d' "$found_file"
 	return 0
 }
 
@@ -99,12 +157,12 @@ build_cache_key() {
 	fi
 	
 	if [[ -n "$has_type4" ]]; then
-		[[ -n "$key" ]] && key+="%20"
-		key+="4_"
+		[[ -n "$key" ]] && key+="%2"
+		key+="_"
 		key+=$(echo "$has_type4" | awk '{print $2}')
 	elif [[ -n "$has_type2" ]]; then
-		[[ -n "$key" ]] && key+="%20"
-		key+="2_"
+		[[ -n "$key" ]] && key+="%2"
+		key+="_"
 		key+=$(echo "$has_type2" | awk '{print $2}')
 	fi
 	
@@ -117,7 +175,10 @@ save_data_new() {
 	local whois_data="$2"
 	local key=$(build_cache_key "$whois_data")
 	local file="$DATADIR/${key}.txt"
+	local dir=$(dirname "$file")
 	local timestamp=$(date +%s)
+	
+	[[ ! -d "$dir" ]] && mkdir -p "$dir"
 	
 	cat > "$file" <<EOF
 # IP: $ip
@@ -162,16 +223,16 @@ if [[ "$ARG_FORCE" == "true" ]]; then
 fi
 
 echo "Checking cache for $ARG_IP..."
-data=$(load_data "$ARG_IP")
+
+data=$(load_data_new "$ARG_IP")
 ret=$?
 
+if [[ $ret -ne 0 || -z "$data" ]]; then
+	data=$(load_data "$ARG_IP")
+	ret=$?
+fi
+
 if [[ $ret -eq 0 && -n "$data" ]]; then
-	echo "$data"
-	echo "(from OLD cache)"
-elif [[ $ret -eq 2 ]]; then
-	data=$(get_whois "$ARG_IP")
-	save_data "$ARG_IP" "$data"
-	save_data_new "$ARG_IP" "$data"
 	echo "$data"
 else
 	data=$(get_whois "$ARG_IP")

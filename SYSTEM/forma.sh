@@ -12,7 +12,7 @@ source $PRE'prepare.sh' # include prepared global variables like: realpath, file
 # Display help if no args set...
 PCA_ON_NONE_HELP=true
 # Define array of available argument options
-PCA=("IDENTIFY UMOUNT FORMAT CREATE PATH")
+PCA=("IDENTIFY" "UMOUNT" "FORMAT" "CREATE" "PATH")
 # Define variables where options are parsed as values
 ARG_IDENTIFY="" # defined value from command line arguments OR true
 ARG_UMOUNT=""   # /dev/sdb2...

@@ -15,7 +15,7 @@ PCA_ON_NONE_HELP=true
 # Define array of available argument options
 # - (CREATE) create new group
 # - (ADDTO) user addto group
-PCA=("CREATE ADDTO VIEW")
+PCA=("CREATE" "ADDTO" "VIEW")
 # Define variables where options are parsed as values
 ARG_CREATE=()
 ARG_ADDTO=()
