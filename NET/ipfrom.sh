@@ -118,18 +118,17 @@ get_hash() {
 
 save_data() {
 	local ip=$1
+	local data=$2
 	local hash=$(get_hash "$ip")
 	local file="$DATADIR/${hash}.txt"
 	local timestamp=$(date +%s)
 	
-	{
-		echo "# IP: $ip"
-		echo "# HASH: $hash"
-		echo "# TIMESTAMP: $timestamp"
-		echo "# TIMESTAMP_READABLE: $(date -d @$timestamp '+%Y-%m-%d %H:%M:%S')"
-		echo ""
-		cat
-	} > "$file"
+	echo "# IP: $ip" > "$file"
+	echo "# HASH: $hash" >> "$file"
+	echo "# TIMESTAMP: $timestamp" >> "$file"
+	echo "# TIMESTAMP_READABLE: $(date -d @$timestamp '+%Y-%m-%d %H:%M:%S')" >> "$file"
+	echo "" >> "$file"
+	echo "$data" >> "$file"
 }
 
 load_data() {
@@ -164,16 +163,15 @@ save_data_new() {
 	local key=$(build_cache_key "$whois_data")
 	local file="$DATADIR/${key}.txt"
 	local timestamp=$(date +%s)
+	debug_echo "save_data_new: file=$file"
 	
-	cat > "$file" <<EOF
-# IP: $ip
-# KEY: $key
-# TIMESTAMP: $timestamp
-# TIMESTAMP_READABLE: $(date -d @$timestamp '+%Y-%m-%d %H:%M:%S')
-
-$geo_data
-EOF
-	echo "New cache: $key"
+	echo "# IP: $ip" > "$file"
+	echo "# KEY: $key" >> "$file"
+	echo "# TIMESTAMP: $timestamp" >> "$file"
+	echo "# TIMESTAMP_READABLE: $(date -d @$timestamp '+%Y-%m-%d %H:%M:%S')" >> "$file"
+	echo "" >> "$file"
+	echo "$geo_data" >> "$file"
+	debug_echo "Saved new cache: $key"
 }
 
 load_data_new() {
@@ -309,7 +307,10 @@ fi
 debug_echo "Fetching fresh geo data..."
 geo_data=$(get_geo "$ARG_IP")
 debug_echo "geo_data=$geo_data"
+debug_echo "Calling save_data..."
 save_data "$ARG_IP" "$geo_data"
+debug_echo "Calling save_data_new..."
 save_data_new "$ARG_IP" "$whois_data" "$geo_data"
+debug_echo "All saves complete"
 echo "$geo_data"
 exit 0
