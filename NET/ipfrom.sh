@@ -16,7 +16,7 @@ which geoiplookup >/dev/null 2>&1 || {
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=true
-PCA=("IP" "FORCE" "CLEAR")
+PCA=("IP" "FORCE" "CLEAR" "DEBUG")
 
 ARG_IP=""
 ARG_IP_STRING=true
@@ -35,6 +35,11 @@ CLEAR_SHORT_ARG="-c"
 CLEAR_ARG="--clear"
 CLEAR_VAL=false
 
+ARG_DEBUG=false
+DEBUG_SHORT_ARG="-d"
+DEBUG_ARG="--debug"
+DEBUG_VAL=false
+
 source $PRE'src/pca.sh'
 
 for arg in "$@"; do
@@ -43,6 +48,10 @@ done
 
 DATADIR="$D/NET/ipcome"
 CACHE_DAYS=90  # 3 months
+
+debug_echo() {
+	[[ "$ARG_DEBUG" == "true" ]] && echo "[DEBUG] $*" >&2
+}
 
 mkdir -p "$DATADIR"
 
@@ -214,8 +223,16 @@ load_data_new() {
 
 get_whois() {
 	local ip=$1
-	local ipis_path="$(dirname "$PRE")/NET/ipis.sh"
+	local script_path
+	if [[ -L "$0" ]]; then
+		script_path=$(realpath "$0")
+	else
+		script_path="$0"
+	fi
+	local script_dir=$(dirname "$script_path")
+	local ipis_path="$(dirname "$script_dir")/NET/ipis.sh"
 	local data
+	debug_echo "get_whois: script_path=$script_path, script_dir=$script_dir, ipis_path=$ipis_path"
 	if [[ -x "$ipis_path" ]]; then
 		data=$("$ipis_path" "$ip" 2>/dev/null)
 	else
@@ -246,6 +263,8 @@ if [[ "$ARG_CLEAR" == "true" ]]; then
 	exit 0
 fi
 
+debug_echo "START: ARG_IP=$ARG_IP, ARG_FORCE=$ARG_FORCE, ARG_DEBUG=$ARG_DEBUG"
+
 if [[ -z "$ARG_IP" ]]; then
 	echo "Usage: $0 -i <ip> [-f] [-c]"
 	echo "  -i, --ip: IP address"
@@ -264,23 +283,32 @@ if [[ "$ARG_FORCE" == "true" ]]; then
 fi
 
 echo "Checking cache for $ARG_IP..."
+debug_echo "Calling get_whois..."
 
 whois_data=$(get_whois "$ARG_IP")
+debug_echo "whois_data len=${#whois_data}"
 key=$(build_cache_key "$whois_data")
+debug_echo "key=$key"
 cache_file="$DATADIR/${key}.txt"
+debug_echo "cache_file=$cache_file, exists=$(test -f "$cache_file" && echo yes || echo no)"
 
 if [[ -f "$cache_file" ]]; then
+	debug_echo "Cache file exists, checking timestamp..."
 	timestamp=$(grep "^# TIMESTAMP:" "$cache_file" | cut -d':' -f2 | tr -d ' ')
 	now=$(date +%s)
 	expiration=$((CACHE_DAYS * 24 * 60 * 60))
+	debug_echo "timestamp=$timestamp, now=$now, expiration=$expiration"
 	if [[ -n "$timestamp" && $((now - timestamp)) -lt $expiration ]]; then
+		debug_echo "Using cached geo data"
 		geo_data=$(sed '/^#/d' "$cache_file")
 		echo "$geo_data"
 		exit 0
 	fi
 fi
 
+debug_echo "Fetching fresh geo data..."
 geo_data=$(get_geo "$ARG_IP")
+debug_echo "geo_data=$geo_data"
 save_data "$ARG_IP" "$geo_data"
 save_data_new "$ARG_IP" "$whois_data" "$geo_data"
 echo "$geo_data"

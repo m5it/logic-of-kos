@@ -10,7 +10,7 @@ source $PRE'src/prepare.sh'
 command -v whois >/dev/null 2>&1 || { echo "whois not found."; echo "Install whois package:"; echo "  sudo apt install whois"; exit 1; }
 
 PCA_ON_NONE_HELP=true
-PCA=("IP" "FORCE" "CLEAR")
+PCA=("IP" "FORCE" "CLEAR" "DEBUG")
 
 ARG_IP=""
 ARG_IP_STRING=true
@@ -29,6 +29,11 @@ CLEAR_SHORT_ARG="-c"
 CLEAR_ARG="--clear"
 CLEAR_VAL=false
 
+ARG_DEBUG=false
+DEBUG_SHORT_ARG="-d"
+DEBUG_ARG="--debug"
+DEBUG_VAL=false
+
 source $PRE'src/pca.sh'
 
 for arg in "$@"; do
@@ -37,6 +42,10 @@ done
 
 DATADIR="$D/NET/ipis"
 CACHE_DAYS=90  # 3 months
+
+debug_echo() {
+	[[ "$ARG_DEBUG" == "true" ]] && echo "[DEBUG] $*" >&2
+}
 
 mkdir -p "$DATADIR"
 
@@ -204,6 +213,8 @@ get_whois() {
 
 [[ "$ARG_CLEAR" == "true" ]] && rm -rf "$DATADIR"/* && echo "Cleared all cache" && exit 0
 
+debug_echo "START: ARG_IP=$ARG_IP, ARG_FORCE=$ARG_FORCE, ARG_DEBUG=$ARG_DEBUG"
+
 if [[ -z "$ARG_IP" ]]; then
 	echo "Usage: $0 -i <ip> [-f] [-c]"
 	echo "  -i, --ip: IP address"
@@ -221,19 +232,26 @@ if [[ "$ARG_FORCE" == "true" ]]; then
 fi
 
 echo "Checking cache for $ARG_IP..."
+debug_echo "Checking cache..."
 
 data=$(load_data_new "$ARG_IP")
 ret=$?
+debug_echo "load_data_new ret=$ret, data_len=${#data}"
 
 if [[ $ret -ne 0 || -z "$data" ]]; then
+	debug_echo "Trying old cache..."
 	data=$(load_data "$ARG_IP")
 	ret=$?
+	debug_echo "load_data ret=$ret, data_len=${#data}"
 fi
 
 if [[ $ret -eq 0 && -n "$data" ]]; then
+	debug_echo "Using cached data"
 	echo "$data"
 else
+	debug_echo "Fetching fresh whois data..."
 	data=$(get_whois "$ARG_IP")
+	debug_echo "whois data_len=${#data}"
 	save_data "$ARG_IP" "$data"
 	save_data_new "$ARG_IP" "$data"
 	echo "$data"
