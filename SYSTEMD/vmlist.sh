@@ -4,19 +4,40 @@
 
 command -v machinectl >/dev/null 2>&1 || { echo "machinectl not found. Install systemd-container package."; exit 1; }
 
-MACHINE_DIR="/var/lib/machines"
-
 get_image_size() {
 	local img="$1"
-	local target
+	local target=""
+	local found=false
 	
-	if [[ -L "$MACHINE_DIR/$img" ]]; then
-		target=$(readlink -f "$MACHINE_DIR/$img" 2>/dev/null)
-		if [[ -e "$target" ]]; then
-			ls -lh "$target" 2>/dev/null | awk '{print $5}'
-			return
+	for dir in "/var/lib/machines" "/var/lib/machines/img" "/home/chroots"; do
+		if [[ -L "$dir/$img" ]]; then
+			target=$(readlink -f "$dir/$img" 2>/dev/null)
+			[[ -f "$target" ]] && found=true && break
+		elif [[ -f "$dir/$img" ]]; then
+			target="$dir/$img"
+			found=true
+			break
 		fi
+	done
+	
+	if ! $found; then
+		for dir in "/var/lib/machines" "/var/lib/machines/img" "/home/chroots"; do
+			if [[ -L "$dir/${img}.raw" ]]; then
+				target=$(readlink -f "$dir/${img}.raw" 2>/dev/null)
+				[[ -f "$target" ]] && found=true && break
+			elif [[ -f "$dir/${img}.raw" ]]; then
+				target="$dir/${img}.raw"
+				found=true
+				break
+			fi
+		done
 	fi
+	
+	if $found && [[ -n "$target" && -f "$target" ]]; then
+		ls -lh "$target" 2>/dev/null | awk '{print $5}'
+		return
+	fi
+	
 	echo "-"
 }
 
