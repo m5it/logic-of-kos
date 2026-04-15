@@ -3,7 +3,7 @@
 # Test script to verify history.sh functionality
 #
 
-PRE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"/"
+PRE=$(dirname $(realpath $0))"/../"
 
 source $PRE'src/prepare.sh'
 source $PRE'src/history.sh'

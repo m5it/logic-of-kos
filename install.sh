@@ -102,7 +102,14 @@ else
 	#ARRAY=$(find . -maxdepth 2 ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$|*.py+$|*.php+$")
 	# 25.3.2026 - Linked/Installed scripts are only .sh if you will to include .py or .php or any other extension should be prepared trough .sh script.
 	#ARRAY=$(find . -maxdepth 2 ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$")
-	ARRAY=$(find . -maxdepth 2 ! -name "src" ! -name "install.sh" ! -path './tests*' | grep -E "*.sh+$")
+	# Only scripts in uppercase directories (like NET, SYSTEMD, SYSTEM, etc.), exclude src and symlinks
+	ARRAY=""
+	for dir in $(ls -d [A-Z]* 2>/dev/null); do
+		[[ "$dir" == "src" ]] && continue
+		[[ -L "$dir" ]] && continue
+		[ -d "$dir" ] && for f in "$dir"/*.sh; do [ -f "$f" ] && ARRAY="$ARRAY $f"; done
+	done
+	ARRAY=$(echo "$ARRAY" | sed 's|^\./||')
 fi
 
 #
