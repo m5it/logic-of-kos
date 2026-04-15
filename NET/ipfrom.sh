@@ -182,22 +182,20 @@ load_data_new() {
 	while read -r cache_file; do
 		[[ ! -f "$cache_file" ]] && continue
 		
-		local full_path=$(echo "$cache_file" | sed "s|$DATADIR/||")
 		local key_name=$(basename "$cache_file" .txt)
 		local range_match=$(echo "$key_name" | grep -oE '[13]_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-		
 		[[ -z "$range_match" ]] && continue
 		
-		local range_start=$(echo "$range_match" | cut -d'_' -f2 | cut -d'-' -f1)
-		local suffix_part=$(echo "$key_name" | grep -oE '%.*$' | head -1)
+		local range_start_ip=$(echo "$range_match" | cut -d'_' -f2 | cut -d'-' -f1)
+		local suffix_part=$(echo "$key_name" | grep -oE '%[0-9]+_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9]+' | head -1)
 		local range_prefix=24
 		
 		if [[ -n "$suffix_part" ]]; then
-			range_prefix=$(echo "${suffix_part#*_}" | cut -d'/' -f2)
-			[[ -z "$range_prefix" ]] && range_prefix=24
+			range_prefix=$(echo "$suffix_part" | grep -oE '[0-9]+$' | head -1)
+			[[ -z "$range_prefix" || ! "$range_prefix" =~ ^[0-9]+$ ]] && range_prefix=24
 		fi
 		
-		local net_start=$(ip_to_num "$range_start")
+		local net_start=$(ip_to_num "$range_start_ip")
 		local mask=$((0xFFFFFFFF << (32 - range_prefix) & 0xFFFFFFFF))
 		local net_end=$((net_start | (0xFFFFFFFF - mask)))
 		

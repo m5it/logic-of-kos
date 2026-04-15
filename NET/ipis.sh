@@ -129,11 +129,11 @@ load_data_new() {
 		[[ -z "$range_match" ]] && continue
 		
 		local range_start_ip=$(echo "$range_match" | cut -d'_' -f2 | cut -d'-' -f1)
-		local suffix_part=$(echo "$key_name" | grep -oE '%[0-9]+_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9]+$' | head -1)
+		local suffix_part=$(echo "$key_name" | grep -oE '%[0-9]+_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9]+' | head -1)
 		local range_prefix=24
 		
 		if [[ -n "$suffix_part" ]]; then
-			range_prefix=$(echo "$suffix_part" | grep -oE '_[0-9]+$' | tr -d '_')
+			range_prefix=$(echo "$suffix_part" | grep -oE '[0-9]+$' | head -1)
 			[[ -z "$range_prefix" || ! "$range_prefix" =~ ^[0-9]+$ ]] && range_prefix=24
 		fi
 		
@@ -141,8 +141,11 @@ load_data_new() {
 		local mask=$((0xFFFFFFFF << (32 - range_prefix) & 0xFFFFFFFF))
 		local net_end=$((net_start | (0xFFFFFFFF - mask)))
 		
+		debug_echo "Checking range $range_start_ip/$range_prefix vs ip $ip ($ip_num), range=$net_start-$net_end"
+		
 		if [[ $ip_num -ge $net_start && $ip_num -le $net_end ]]; then
 			found_file="$cache_file"
+			debug_echo "Found matching cache: $key_name"
 			break
 		fi
 	done < <(find "$DATADIR" -name "*.txt" -type f 2>/dev/null)
