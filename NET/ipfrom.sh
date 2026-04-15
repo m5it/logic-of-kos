@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Script to get IP geo info with caching using geoiplookup
-# Uses whois to determine range (like ipis), geoiplookup for data
+# Uses ipis to determine range (with caching), geoiplookup for data
 #
 
 PRE=$(dirname $(realpath $0))"/../"
@@ -42,7 +42,7 @@ for arg in "$@"; do
 done
 
 DATADIR="$D/NET/ipcome"
-CACHE_DAYS=90
+CACHE_DAYS=90  # 3 months
 
 mkdir -p "$DATADIR"
 
@@ -91,6 +91,8 @@ build_cache_key() {
 		key+="_"
 		key+=$(echo "$has_type2" | awk '{print $2}')
 	fi
+	
+	key=$(echo "$key" | tr '/' '_')
 	
 	[[ -z "$key" ]] && key="unknown"
 	echo "$key"
@@ -152,10 +154,7 @@ save_data_new() {
 	local geo_data="$3"
 	local key=$(build_cache_key "$whois_data")
 	local file="$DATADIR/${key}.txt"
-	local dir=$(dirname "$file")
 	local timestamp=$(date +%s)
-	
-	[[ ! -d "$dir" ]] && mkdir -p "$dir"
 	
 	cat > "$file" <<EOF
 # IP: $ip
@@ -215,7 +214,14 @@ load_data_new() {
 
 get_whois() {
 	local ip=$1
-	echo "$ip" | grep -qE '^([0-9]{1,3}\.){3}[0-9]{1,3}$' && whois "$ip" 2>/dev/null
+	local ipis_path="$(dirname "$PRE")/NET/ipis.sh"
+	local data
+	if [[ -x "$ipis_path" ]]; then
+		data=$("$ipis_path" "$ip" 2>/dev/null)
+	else
+		data=$(whois "$ip" 2>/dev/null)
+	fi
+	echo "$data" | grep -v "^Checking cache"
 }
 
 get_geo() {
@@ -234,18 +240,18 @@ get_geo() {
 	fi
 }
 
+if [[ "$ARG_CLEAR" == "true" ]]; then
+	rm -rf "$DATADIR"/*.txt
+	echo "Cleared all cache"
+	exit 0
+fi
+
 if [[ -z "$ARG_IP" ]]; then
 	echo "Usage: $0 -i <ip> [-f] [-c]"
 	echo "  -i, --ip: IP address"
 	echo "  -f, --force: Force refresh"
 	echo "  -c, --clear: Clear cached data"
 	exit 1
-fi
-
-if [[ "$ARG_CLEAR" == "true" ]]; then
-	rm -rf "$DATADIR"/*.txt
-	echo "Cleared all cache"
-	exit 0
 fi
 
 if [[ "$ARG_FORCE" == "true" ]]; then

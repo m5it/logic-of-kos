@@ -7,6 +7,8 @@ PRE=$(dirname $(realpath $0))"/../"
 
 source $PRE'src/prepare.sh'
 
+command -v whois >/dev/null 2>&1 || { echo "whois not found."; echo "Install whois package:"; echo "  sudo apt install whois"; exit 1; }
+
 PCA_ON_NONE_HELP=true
 PCA=("IP" "FORCE" "CLEAR")
 
@@ -34,7 +36,7 @@ for arg in "$@"; do
 done
 
 DATADIR="$D/NET/ipis"
-CACHE_DAYS=90
+CACHE_DAYS=90  # 3 months
 
 mkdir -p "$DATADIR"
 
@@ -80,6 +82,24 @@ load_data() {
 	return 0
 }
 
+save_data_new() {
+	local ip="$1"
+	local whois_data="$2"
+	local key=$(build_cache_key "$whois_data")
+	local file="$DATADIR/${key}.txt"
+	local timestamp=$(date +%s)
+	
+	cat > "$file" <<EOF
+# IP: $ip
+# KEY: $key
+# TIMESTAMP: $timestamp
+# TIMESTAMP_READABLE: $(date -d @$timestamp '+%Y-%m-%d %H:%M:%S')
+
+$whois_data
+EOF
+	echo "New cache: $key"
+}
+
 ip_to_num() {
 	local ip=$1
 	local num=0
@@ -97,22 +117,20 @@ load_data_new() {
 	
 	while read -r cache_file; do
 		[[ ! -f "$cache_file" ]] && continue
-		local full_key_path=$(echo "$cache_file" | sed "s|$DATADIR/||; s|\.txt$||")
-		local range_start=$(echo "$full_key_path" | grep -oE '[13]_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1 | cut -d'_' -f2)
-		local suffix_part=$(echo "$full_key_path" | grep -oE '%.*$' | head -1)
+		local key_name=$(basename "$cache_file" .txt)
+		local range_match=$(echo "$key_name" | grep -oE '[13]_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+		[[ -z "$range_match" ]] && continue
+		
+		local range_start_ip=$(echo "$range_match" | cut -d'_' -f2 | cut -d'-' -f1)
+		local suffix_part=$(echo "$key_name" | grep -oE '%[0-9]+_[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9]+$' | head -1)
 		local range_prefix=24
 		
 		if [[ -n "$suffix_part" ]]; then
-			range_prefix=$(echo "${suffix_part#*_}" | cut -d'/' -f2)
-			[[ -z "$range_prefix" ]] && range_prefix=24
-		else
-			local range_end=$(echo "$full_key_path" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
-			[[ -z "$range_end" ]] && continue
+			range_prefix=$(echo "$suffix_part" | grep -oE '_[0-9]+$' | tr -d '_')
+			[[ -z "$range_prefix" || ! "$range_prefix" =~ ^[0-9]+$ ]] && range_prefix=24
 		fi
 		
-		[[ -z "$range_start" ]] && continue
-		
-		local net_start=$(ip_to_num "$range_start")
+		local net_start=$(ip_to_num "$range_start_ip")
 		local mask=$((0xFFFFFFFF << (32 - range_prefix) & 0xFFFFFFFF))
 		local net_end=$((net_start | (0xFFFFFFFF - mask)))
 		
@@ -166,43 +184,25 @@ build_cache_key() {
 		key+=$(echo "$has_type2" | awk '{print $2}')
 	fi
 	
-	[[ -z "$key" ]] && key="unknown"
+	# Replace / with _ in key to avoid directory creation
+	key=$(echo "$key" | tr '/' '_')
+	
+[[ -z "$key" ]] && key="unknown"
 	echo "$key"
 }
 
-save_data_new() {
-	local ip="$1"
-	local whois_data="$2"
-	local key=$(build_cache_key "$whois_data")
-	local file="$DATADIR/${key}.txt"
-	local dir=$(dirname "$file")
-	local timestamp=$(date +%s)
-	
-	[[ ! -d "$dir" ]] && mkdir -p "$dir"
-	
-	cat > "$file" <<EOF
-# IP: $ip
-# KEY: $key
-# TIMESTAMP: $timestamp
-# TIMESTAMP_READABLE: $(date -d @$timestamp '+%Y-%m-%d %H:%M:%S')
-
-$whois_data
-EOF
-	echo "New cache: $key"
-}
-
-#============================================================
-# get_whois
-#============================================================
-
 get_whois() {
 	local ip=$1
-	echo "$ip" | grep -qE '^([0-9]{1,3}\.){3}[0-9]{1,3}$' && whois "$ip" 2>/dev/null
+	local data
+	echo "$ip" | grep -qE '^([0-9]{1,3}\.){3}[0-9]{1,3}$' && data=$(whois "$ip" 2>/dev/null)
+	echo "$data" | grep -v "^Checking cache"
 }
 
 #============================================================
 # MAIN
 #============================================================
+
+[[ "$ARG_CLEAR" == "true" ]] && rm -rf "$DATADIR"/* && echo "Cleared all cache" && exit 0
 
 if [[ -z "$ARG_IP" ]]; then
 	echo "Usage: $0 -i <ip> [-f] [-c]"
@@ -211,8 +211,6 @@ if [[ -z "$ARG_IP" ]]; then
 	echo "  -c, --clear: Clear all cache"
 	exit 1
 fi
-
-[[ "$ARG_CLEAR" == "true" ]] && rm -f "$DATADIR"/*.txt && echo "Cleared" && exit 0
 
 if [[ "$ARG_FORCE" == "true" ]]; then
 	data=$(get_whois "$ARG_IP")
