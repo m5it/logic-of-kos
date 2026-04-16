@@ -1,10 +1,20 @@
+cputemp - show CPU temperature
 
--t or --temperature
-Ex.:
-	cputemp -t
+USAGE:
+    cputemp [OPTIONS]
 
--T or --temperature_celsius
-Ex.:
-	cputemp -t
+OPTIONS:
+    -a, --all     Show all temperature sensors (requires sudo)
+    -t, --temperature  Show basic CPU temperature
+    -d, --debug   Show debug information
+    -h, --help    Show this help
+    -v, --version Show version
 
-Or just run cputemp
+EXAMPLES:
+    cputemp              # Basic CPU temp
+    cputemp -a           # All sensors (needs sudo)
+    sudo cputemp -a       # Run with sudo for all sensors
+    cputemp -d -t        # Debug output with basic temp
+
+NOTE:
+    The -a (--all) option requires sudo to access all thermal sensors.

@@ -8,7 +8,7 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=false
-PCA=("TEMPERATURE" "CELSIUS" "ALL")
+PCA=("TEMPERATURE" "CELSIUS" "ALL" "DEBUG")
 
 ARG_TEMPERATURE=false
 ARG_TEMPERATURE_CELSIUS=false
@@ -26,7 +26,16 @@ ALL_SHORT_ARG="-a"
 ALL_ARG="--all"
 ALL_VAL=false
 
+ARG_DEBUG=false
+DEBUG_SHORT_ARG="-d"
+DEBUG_ARG="--debug"
+DEBUG_VAL=false
+
 source $PRE'src/pca.sh'
+
+debug_echo() {
+	[[ "$ARG_DEBUG" == "true" ]] && echo "[DEBUG] $*" >&2
+}
 
 print_thermal_zones() {
 	local found=0
@@ -137,12 +146,23 @@ check_gpu() {
 }
 
 main() {
+	debug_echo "Running main() with ARG_ALL=$ARG_ALL"
+
 	if [[ "$ARG_ALL" == "true" ]]; then
+		if [[ $EUID -ne 0 ]]; then
+			echo "Warning: -a may need sudo for full sensor access"
+		fi
+		debug_echo "Running check_amd_ryzen"
 		check_amd_ryzen
+		debug_echo "Running print_hwmon_temps"
 		print_hwmon_temps
+		debug_echo "Running print_cooling_devices"
 		print_cooling_devices
+		debug_echo "Running check_nvme"
 		check_nvme
+		debug_echo "Running check_gpu"
 		check_gpu
+		debug_echo "Running print_rapl"
 		print_rapl
 		return 0
 	fi
@@ -150,8 +170,10 @@ main() {
 	local total=0
 	local count=0
 
+	debug_echo "Scanning hwmon sensors..."
 	for h in /sys/class/hwmon/hwmon*; do
 		local name=$(cat "$h/name" 2>/dev/null)
+		debug_echo "Checking hwmon: $h ($name)"
 		for t in "$h"/temp1_input; do
 			if [[ -f "$t" ]]; then
 				local temp=$(cat "$t" 2>/dev/null)
