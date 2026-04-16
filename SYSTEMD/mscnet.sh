@@ -37,6 +37,8 @@ ARG_INTERFACE_STRING=true
 ARG_ACTION="add"    # add | delete
 ARG_ACTION_OVERWRITE=true
 ARG_ACTION_STRING=true
+
+ARG_PREFIX="28"    # default prefix
 #--
 CAL_AVAILABLE_IPS=0 # calculate available ips with NET/calcnipp.sh [prefix]
 #-- forma - options

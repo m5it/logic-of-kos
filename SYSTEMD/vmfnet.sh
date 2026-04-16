@@ -56,6 +56,7 @@ msdnet -M $MACHINE_NAME
 
 # 2.) Create new ip, route, broadcast for VM Master Interface
 /usr/local/bin/lok syd CREATE_MASTER_NET SET IP=192.168.$THIRD_OCT.241
+/usr/local/bin/lok syd CREATE_MASTER_NET SET PREFIX=28
 /usr/local/bin/lok syd CREATE_MASTER_NET SET ROUTE=192.168.$THIRD_OCT.240
 /usr/local/bin/lok syd CREATE_MASTER_NET SET BROADCAST=192.168.$THIRD_OCT.255
 /usr/local/bin/lok syd CREATE_MASTER_NET SET INTERFACE=ve-$MACHINE_NAME
