@@ -4,6 +4,32 @@
 
 command -v machinectl >/dev/null 2>&1 || { echo "machinectl not found. Install systemd-container package."; exit 1; }
 
+PRE=$(dirname $(realpath $0))"/../"
+source $PRE'src/prepare.sh'
+
+PCA_ON_NONE_HELP=true
+PCA=("SIZE" "LOOP" "ALL")
+
+ARG_SIZE=""
+ARG_SIZE_STRING=false
+SIZE_SHORT_ARG="-s"
+SIZE_ARG="--size"
+SIZE_VAL=false
+
+ARG_LOOP=""
+ARG_LOOP_STRING=false
+LOOP_SHORT_ARG="-l"
+LOOP_ARG="--loop"
+LOOP_VAL=false
+
+ARG_ALL=""
+ARG_ALL_STRING=false
+ALL_SHORT_ARG="-a"
+ALL_ARG="--all"
+ALL_VAL=false
+
+source $PRE'src/pca.sh'
+
 get_image_size() {
 	local img="$1"
 	local target=""
@@ -71,7 +97,14 @@ get_loop_info() {
 	fi
 	
 	if $found && [[ -n "$target" ]]; then
-		losetup -l 2>/dev/null | grep "$target" | awk '{print $1, $5}'
+		if command -v losetup >/dev/null 2>&1; then
+			sudo losetup -j "$target" 2>/dev/null | awk '{print $1}' | sed 's/.*loop//' | sed 's/:.*//' | while read -r dev; do
+				[[ -n "$dev" ]] && echo "/dev/loop$dev $target"
+			done
+			[[ -z "$(sudo losetup -j "$target" 2>/dev/null)" ]] && echo "- $target"
+		else
+			echo "- $target"
+		fi
 		return
 	fi
 	
@@ -81,13 +114,9 @@ get_loop_info() {
 SHOW_SIZE=false
 SHOW_LOOP=false
 
-for arg in "$@"; do
-	case "$arg" in
-		-s|--size) SHOW_SIZE=true ;;
-		-l|--loop) SHOW_LOOP=true ;;
-		-a|--all) SHOW_SIZE=true; SHOW_LOOP=true ;;
-	esac
-done
+[[ "$ARG_SIZE" == "true" ]] && SHOW_SIZE=true
+[[ "$ARG_LOOP" == "true" ]] && SHOW_LOOP=true
+[[ "$ARG_ALL" == "true" ]] && SHOW_SIZE=true && SHOW_LOOP=true
 
 if $SHOW_SIZE && $SHOW_LOOP; then
 	while read -r line; do

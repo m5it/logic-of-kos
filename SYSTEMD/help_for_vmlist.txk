@@ -1,0 +1,17 @@
+vmlist - list systemd-nspawn virtual machines
+
+USAGE:
+    vmlist [OPTIONS]
+
+OPTIONS:
+    -s, --size    Show image size
+    -l, --loop    Show loop device and location
+    -a, --all     Show size and loop info (all info)
+    -h, --help    Show this help
+    -v, --version Show version
+
+EXAMPLES:
+    vmlist              # Basic list
+    vmlist -s           # With image sizes
+    vmlist -l           # With loop device info
+    vmlist -a           # Show all info
