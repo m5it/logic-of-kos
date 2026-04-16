@@ -97,7 +97,7 @@ if [[ "$tmp" == "" ]]; then
 #	for elem in "${arr[@]}"; do
 #		echo "Element: $elem"
 #	done
-	echo $nip > /home/t3ch/script/vms/$MACHINE_NAME
+#	echo $nip > /home/t3ch/script/vms/$MACHINE_NAME
 else
 	echo "IP is set already: "$tmp
 fi
