@@ -52,7 +52,7 @@ if [[ ! -n "$THIRD_OCT" || "$THIRD_OCT" == "" ]]; then
 fi
 
 # 1.) Delete VM Master Interface IPs
-msdnet -M $MACHINE_NAME
+/usr/local/bin/msdnet -M $MACHINE_NAME -Y
 
 # 2.) Create new ip, route, broadcast for VM Master Interface
 /usr/local/bin/lok syd CREATE_MASTER_NET SET IP=192.168.$THIRD_OCT.241
@@ -75,9 +75,9 @@ fi
 /usr/local/bin/lok syd CREATE_MASTER_NET RUN
 
 # 3.) Delete VM IPs
-/usr/local/bin/vmdnet -M $MACHINE_NAME
+/usr/local/bin/vmdnet -M $MACHINE_NAME -Y
 
 # 4.) Create VM IPs
-/usr/local/bin/vmcnet -M $MACHINE_NAME
+/usr/local/bin/vmcnet -M $MACHINE_NAME -Y
 
 echo "Done..."

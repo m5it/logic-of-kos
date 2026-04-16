@@ -11,14 +11,20 @@ source $PRE'src/prepare.sh' # include prepared global variables like: realpath, 
 # Display help if no args set...
 PCA_ON_NONE_HELP=true
 # Define array of available argument options
-PCA=("MACHINE_NAME")
-#
+PCA=("MACHINE_NAME" "YES")
+
 ARG_MACHINE_NAME=""           # ip address
 ARG_MACHINE_NAME_STRING=true
 MACHINE_NAME_SHORT_ARG="-M"
 MACHINE_NAME_ARG="--machine_name"
-MACHINE_NAME_VAL=true               # true | false ( if argument contain value )
-#--
+MACHINE_NAME_VAL=true
+
+ARG_YES=""
+ARG_YES_STRING=false
+YES_SHORT_ARG="-Y"
+YES_ARG="--yes"
+YES_VAL=false
+
 # Parse command line arguments
 source $PRE'src/pca.sh'
 #
@@ -28,8 +34,11 @@ if [[ ! -n "$MACHINE_NAME" || "$MACHINE_NAME" == "" ]]; then
 	echo "Missing argument MACHINE_NAME"
 	exit 1
 fi
-echo "Continuing... Sleep 3s"
-sleep 3
+
+if [[ "$ARG_YES" != "true" ]]; then
+	echo "Continuing... Sleep 3s"
+	sleep 3
+fi
 #
 CNT=0
 IFS=$'\n'

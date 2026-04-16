@@ -76,8 +76,11 @@ if [[ ! -n "$ARG_ACTION" || ! -n "$ARG_IP" || ! -n "$ARG_PREFIX" || ! -n "$ARG_R
 	echo "Missing data!"
 	exit 1
 fi
-echo "Continuing... sleep 3s"
-sleep 3
+
+if [[ "$ARG_YES" != "true" ]]; then
+	echo "Continuing... sleep 3s"
+	sleep 3
+fi
 # split ip into array
 IFS=. read -r -a arr <<< "$ARG_IP"
 #echo "arr: "${arr[3]}
