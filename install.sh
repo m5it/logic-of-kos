@@ -109,6 +109,8 @@ else
 		[[ -L "$dir" ]] && continue
 		[ -d "$dir" ] && for f in "$dir"/*.sh; do [ -f "$f" ] && ARRAY="$ARRAY $f"; done
 	done
+	# Also include lok.sh from root
+	[[ -f "lok.sh" ]] && ARRAY="$ARRAY lok.sh"
 	ARRAY=$(echo "$ARRAY" | sed 's|^\./||')
 fi
 
@@ -136,7 +138,10 @@ for file in $ARRAY; do
 	namx=$(echo -n $name | sed "s/\.sh//g")
 	lfrom=$(pwd)"/"$file
 	lto=$CNF_LOCATION""$namx
-	#
+	
+	# Special case: lok.sh -> lok (without .sh)
+	[[ "$namx" == "lok" ]] && lto=$CNF_LOCATION"lok"
+	
 	if [[ $ARG_ACTION == "DEBUG" ]]; then
 		echo "DEBUG file: "$file", name: "$name", namx: "$namx", lfrom: "$lfrom", lto: "$lto
 	elif [[ $ARG_ACTION == "FIX" ]]; then

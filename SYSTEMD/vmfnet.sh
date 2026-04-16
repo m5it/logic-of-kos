@@ -40,7 +40,6 @@ source $PRE'src/pca.sh'
 
 MACHINE_NAME=$ARG_MACHINE_NAME
 THIRD_OCT=$ARG_THIRD_OCT
-YES_FLAG=$ARG_YES
 
 if [[ ! -n "$MACHINE_NAME" || "$MACHINE_NAME" == "" ]]; then
 	echo "Missing argument MACHINE_NAME"
@@ -56,13 +55,13 @@ fi
 msdnet -M $MACHINE_NAME
 
 # 2.) Create new ip, route, broadcast for VM Master Interface
-lok syd CREATE_MASTER_NET SET IP=192.168.$THIRD_OCT.241
-lok syd CREATE_MASTER_NET SET ROUTE=192.168.$THIRD_OCT.240
-lok syd CREATE_MASTER_NET SET BROADCAST=192.168.$THIRD_OCT.255
-lok syd CREATE_MASTER_NET SET INTERFACE=ve-$MACHINE_NAME
+/usr/local/bin/lok syd CREATE_MASTER_NET SET IP=192.168.$THIRD_OCT.241
+/usr/local/bin/lok syd CREATE_MASTER_NET SET ROUTE=192.168.$THIRD_OCT.240
+/usr/local/bin/lok syd CREATE_MASTER_NET SET BROADCAST=192.168.$THIRD_OCT.255
+/usr/local/bin/lok syd CREATE_MASTER_NET SET INTERFACE=ve-$MACHINE_NAME
 
-if [[ "$YES_FLAG" != "true" ]]; then
-	lok syd CREATE_MASTER_NET VIEW
+if [[ "$ARG_YES" != "true" ]]; then
+	/usr/local/bin/lok syd CREATE_MASTER_NET VIEW
 	echo "Is this correct? (Y/n...)"
 	read TMP
 	if [[ "$TMP" != "Y" ]]; then
@@ -72,12 +71,12 @@ if [[ "$YES_FLAG" != "true" ]]; then
 	echo "Continue.."
 fi
 
-lok syd CREATE_MASTER_NET RUN
+/usr/local/bin/lok syd CREATE_MASTER_NET RUN
 
 # 3.) Delete VM IPs
-vmdnet -M $MACHINE_NAME
+/usr/local/bin/vmdnet -M $MACHINE_NAME
 
 # 4.) Create VM IPs
-vmcnet -M $MACHINE_NAME
+/usr/local/bin/vmcnet -M $MACHINE_NAME
 
 echo "Done..."
