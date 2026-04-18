@@ -1,0 +1,24 @@
+vmnup - start/stop VM network interfaces
+
+USAGE:
+    vmnup [OPTIONS]
+
+OPTIONS:
+    -M, --machine_name   VM name (required)
+    -a, --action         Action: up or down (default: up)
+    -w, --which          Which: vm, master, or both (default: both)
+    -d, --debug          Show debug info
+    -h, --help           Show this help
+    -v, --version        Show version
+
+EXAMPLES:
+    vmnup -M base.raw                    # Start both interfaces
+    vmnup -M base.raw -a up              # Explicit up
+    vmnup -M base.raw -a down            # Stop both interfaces
+    vmnup -M base.raw -w master          # Only master interface
+    vmnup -M base.raw -w vm              # Only VM interface
+    vmnup -M base.raw -a down -w vm      # Stop only VM interface
+    vmnup -M base.raw -d                 # Debug output
+
+NOTE:
+    Requires root privileges to set network interfaces.
