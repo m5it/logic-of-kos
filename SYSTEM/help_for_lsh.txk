@@ -1,0 +1,16 @@
+lsh - list hidden files
+
+USAGE:
+    lsh [OPTIONS]
+
+OPTIONS:
+    -p, --path   Path to list (default: current directory)
+    -d, --debug  Show debug info
+    -h, --help   Show this help
+    -v, --version Show version
+
+EXAMPLES:
+    lsh              # List hidden files in current dir
+    lsh -p ~         # List hidden files in home
+    lsh -p /var      # List hidden files in /var
+    lsh -p .config   # List hidden files in .config dir

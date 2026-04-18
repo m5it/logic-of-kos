@@ -7,7 +7,7 @@ command -v machinectl >/dev/null 2>&1 || { echo "machinectl not found. Install s
 PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
-PCA_ON_NONE_HELP=true
+PCA_ON_NONE_HELP=false
 PCA=("SIZE" "LOOP" "ALL")
 
 ARG_SIZE=""
