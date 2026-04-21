@@ -55,8 +55,14 @@ TO_IP="${ARG_TO_IP}"
 TO_PORT="${ARG_TO_PORT:-8080}"
 YES="${ARG_YES:-false}"
 
+if [[ "$TO_IP" == "" && "$1" == "-h" ]]; then
+	$0 -h
+	exit 0
+fi
+
 if [[ "$TO_IP" == "" ]]; then
 	echo "ERROR: -t (--to-ip) is required"
+	echo "Use '$0 -h' for help"
 	exit 1
 fi
 

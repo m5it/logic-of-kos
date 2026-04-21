@@ -43,6 +43,7 @@ YES="${ARG_YES:-false}"
 
 if [[ "$FROM_IF" == "" || "$TO_IF" == "" ]]; then
 	echo "ERROR: Both -f (--from-if) and -t (--to-if) are required"
+	echo "Use '$0 -h' for help"
 	exit 1
 fi
 
