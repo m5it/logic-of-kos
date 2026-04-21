@@ -22,6 +22,7 @@
 PRE=$(dirname $(realpath $0))"/"
 source $PRE'src/prepare.sh' # include prepared global variables like: realpath, filenick, filename..
 source $PRE'src/history.sh' # include history functionality
+source $PRE'src/lok/commands.sh' # include modular commands
 #
 if [[ $# == 0 || $1 == "-h" ]]; then
 	echo ""
@@ -194,88 +195,27 @@ if [[ $NPCA == 0 ]]; then
 						echo "DEBUG lok.sh => historydir: "$historydir
 					fi
 					# Fire help
-					if [[ $APCA == 2 || "$3" == "HELP" || "$3" == "help" || "${3^^}" == "HELP" ]]; then
-						# Fire Help
-						$SP -h
-						#
-						echo -e "\nAvailable lok commands: "
-						echo "HELP SET GET SAVE CLEAR RUN VIEW HISTORY USE"
+					if [[ $APCA == 2 || "${3^^}" == "HELP" ]]; then
+						cmd_help
 					elif [[ "${3^^}" == "SET" ]]; then
-						#
-						# Calculate actual arg count for SET command (total args - 3: dir, script, SET)
 						SETARGS=$(( $# - 3 ))
-						if [[ $SETARGS == 2 ]]; then
-							# key=$4, val=$5
-							data_set "$livefile" "$4" "$5"
-						elif [[ $SETARGS == 1 ]]; then
-							# split KEY=VAL
-							IFS='=' read -ra arr <<< "$4"
-							data_set "$livefile" "${arr[0]}" "${arr[1]}"
-						else
-							echo "Warning: SET requires 1 or 2 arguments (key=val or key val)"
-							echo "Use '$0 -h' for help"
-							exit 1
-						fi
+						cmd_set "$livefile" "$4" "$5" "$SETARGS"
 					elif [[ "${3^^}" == "GET" ]]; then
-						echo "Firing GET KEY"$4
+						cmd_get "$4"
 					elif [[ "${3^^}" == "DEL" ]]; then
-						echo "Firing DEL KEY"$4
+						cmd_del "$4"
 					elif [[ "${3^^}" == "VIEW" ]]; then
-						if [[ ! -f "$livefile" ]]; then
-							echo $livefile" dont exists yet! Use SET to configure it."
-							exit 1
-						fi
-						cat "$livefile"
-					# clear life file / config
+						cmd_view "$livefile"
 					elif [[ "${3^^}" == "CLEAR" ]]; then
-						echo "" > "$livefile"
-						echo $livefile" is empty!"
+						cmd_clear "$livefile"
 					elif [[ "${3^^}" == "HISTORY" ]]; then
-						history_init "$SN"
-						history_list "$4"
+						cmd_history "$SN" "$4"
 					elif [[ "${3^^}" == "USE_HISTORY" || "${3^^}" == "USE" ]]; then
-						history_init "$SN"
-						line=$(history_get $4)
-						if [[ $? -ne 0 ]]; then
-							echo "Error occurred at $LINENO"
-							echo "Error: $line"
-							exit 2
-						fi
-						echo "using line: $line"
-						data="${line#* | }"
-						restore_lines "$data" > "$livefile"
-						exit 0
+						cmd_use "$SN" "$4" "$livefile"
 					elif [[ "${3^^}" == "DISABLE_HISTORY" ]]; then
-						echo "Firing DISABLE_HISTORY at "$4
+						cmd_disable_history "$4"
 					elif [[ "${3^^}" == "RUN" ]]; then
-						atmp=$($SP -RR)
-						ERR=$?
-						IFS=$'\n'
-						if [[ $ERR -ne 0 ]]; then
-							echo "ERROR "$U"( "$ERR" ) line "$LINENO". More: "
-							print_array "${atmp[@]}"
-							exit 1
-						fi
-						#
-						for tmp in ${atmp[@]}; do
-							echo $tmp
-						done
-						# Save history
-						#
-						if [[ ! -f "$livefile" ]]; then
-							exit 0
-						fi
-						#
-						tmp=$(concat_lines "$livefile")
-						ERR=$?
-						if [[ $ERR -ne 0 ]]; then
-							echo "ERROR "$U"( "$ERR" ) line "$LINENO". More: "
-							echo $tmp
-							exit 1
-						fi
-						history_init "$SN"
-						history_add "$tmp"
-						
+						cmd_run "$SP" "$livefile" "$SN"
 					else
 						echo "Available lok commands: "
 						echo "HELP SET GET DEL VIEW CLEAR RUN HISTORY USE"

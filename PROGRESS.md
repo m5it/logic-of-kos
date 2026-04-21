@@ -7,10 +7,11 @@
 ## Recently Fixed/Updated
 
 ### lok.sh (Framework)
-- Fixed SET command: Changed from `$APCA` (count of PCA options) to `$(( $# - 3 ))` for actual argument count
-- Fixed case-insensitive script matching: Added `|| "${elms[8]}" == "$2"` for lowercase support
-- `lok NET br set name=br1` now works correctly
-- `lok NET br VIEW` shows saved config correctly
+- Refactored commands to `src/lok/commands.sh` for modularity
+- All commands now case-insensitive (lowercase/uppercase)
+- Fixed SET command: Changed from `$APCA` to `$(( $# - 3 ))` for actual arg count
+- Fixed case-insensitive script matching
+- `lok NET br set name=br1` and `lok NET br VIEW` work correctly
 
 ### vmlist.sh (SYSTEMD)
 
