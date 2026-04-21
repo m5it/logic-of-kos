@@ -1,10 +1,18 @@
 # LoK Progress Summary
 
-## Date: 2026-04-16
+## Date: 2026-04-21
 
 ---
 
 ## Recently Fixed/Updated
+
+### lok.sh (Framework)
+- Fixed SET command: Changed from `$APCA` (count of PCA options) to `$(( $# - 3 ))` for actual argument count
+- Fixed case-insensitive script matching: Added `|| "${elms[8]}" == "$2"` for lowercase support
+- `lok NET br set name=br1` now works correctly
+- `lok NET br VIEW` shows saved config correctly
+
+### vmlist.sh (SYSTEMD)
 
 ### vmlist.sh (SYSTEMD)
 - Uses pca.sh framework with -h/-v built-in

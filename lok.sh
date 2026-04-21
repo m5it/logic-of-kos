@@ -150,7 +150,7 @@ if [[ $NPCA == 0 ]]; then
 				IFS=' ' read -ra elms <<< "$tmp"
 				if [[ $# -eq 1 ]]; then
 					echo ${elms[8]}
-				elif [[ "${elms[8]}" == $2 ]]; then
+				elif [[ "${elms[8]}" == "${2^^}" || "${elms[8]}" == "$2" ]]; then
 					#
 					RN=${elms[10]}            # real name of script "script.sh" else "script"
 					SP=$PRE""$chek"/"$RN
@@ -194,23 +194,26 @@ if [[ $NPCA == 0 ]]; then
 						echo "DEBUG lok.sh => historydir: "$historydir
 					fi
 					# Fire help
-					if [[ $APCA == 2 || $3 == "HELP" || $3 == "help" ]]; then
+					if [[ $APCA == 2 || "$3" == "HELP" || "$3" == "help" || "${3^^}" == "HELP" ]]; then
 						# Fire Help
 						$SP -h
 						#
 						echo -e "\nAvailable lok commands: "
 						echo "HELP SET GET SAVE CLEAR RUN VIEW HISTORY USE"
-					elif [[ "$3" == "SET" ]]; then
+					elif [[ "${3^^}" == "SET" ]]; then
 						#
-						if [[ $APCA == 5 ]]; then
+						# Calculate actual arg count for SET command (total args - 3: dir, script, SET)
+						SETARGS=$(( $# - 3 ))
+						if [[ $SETARGS == 2 ]]; then
 							# key=$4, val=$5
 							data_set "$livefile" "$4" "$5"
-						elif [[ $APCA == 4 ]]; then
+						elif [[ $SETARGS == 1 ]]; then
 							# split KEY=VAL
 							IFS='=' read -ra arr <<< "$4"
 							data_set "$livefile" "${arr[0]}" "${arr[1]}"
 						else
-							echo "Warning: Something went wrong!"
+							echo "Warning: SET requires 1 or 2 arguments (key=val or key val)"
+							echo "Use '$0 -h' for help"
 							exit 1
 						fi
 					elif [[ "$3" == "GET" ]]; then
