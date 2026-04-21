@@ -6,7 +6,13 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=false
-PCA=("NAME" "ROUTE" "PREFIX" "YES" "DEBUG")
+PCA=("ACTION" "NAME" "ROUTE" "PREFIX" "YES" "DEBUG")
+
+ARG_ACTION=""
+ARG_ACTION_STRING=true
+ACTION_SHORT_ARG="-a"
+ACTION_ARG="--action"
+ACTION_VAL=true
 
 ARG_NAME=""
 ARG_NAME_STRING=true
@@ -43,14 +49,15 @@ debug_echo() {
 	[[ "$ARG_DEBUG" == "true" ]] && echo "[DEBUG] $*" >&2
 }
 
+ACTION="${ARG_ACTION:-ADD}"
 NAME="${ARG_NAME:-br0}"
 ROUTE="${ARG_ROUTE:-192.168.3.1}"
 PREFIX="${ARG_PREFIX:-24}"
 YES="${ARG_YES:-false}"
 
-debug_echo "NAME=$NAME, ROUTE=$ROUTE, PREFIX=$PREFIX"
+debug_echo "ACTION=$ACTION, NAME=$NAME, ROUTE=$ROUTE, PREFIX=$PREFIX"
 
-echo "Bridge configuration:"
+echo "Bridge $ACTION:"
 echo "  Name: $NAME"
 echo "  Route: $ROUTE/$PREFIX"
 
@@ -64,10 +71,20 @@ if [[ "$YES" != "true" ]]; then
 	fi
 fi
 
-debug_echo "Creating bridge $NAME with $ROUTE/$PREFIX"
-
-ip link add "$NAME" type bridge
-ip addr add "$ROUTE/$PREFIX" brd + dev "$NAME"
-ip link set "$NAME" up
-
-echo "Done. Bridge $NAME created at $ROUTE/$PREFIX"
+if [[ "${ACTION^^}" == "ADD" ]]; then
+	debug_echo "Creating bridge $NAME with $ROUTE/$PREFIX"
+	ip link add "$NAME" type bridge
+	ip addr add "$ROUTE/$PREFIX" brd + dev "$NAME"
+	ip link set "$NAME" up
+	echo "Done. Bridge $NAME created at $ROUTE/$PREFIX"
+elif [[ "${ACTION^^}" == "DELETE" || "${ACTION^^}" == "DEL" ]]; then
+	debug_echo "Deleting bridge $NAME"
+	ip link set "$NAME" down
+	ip addr del "$ROUTE/$PREFIX" dev "$NAME"
+	ip link delete "$NAME"
+	echo "Done. Bridge $NAME deleted"
+else
+	echo "ERROR: Invalid action '$ACTION'. Use ADD or DELETE"
+	echo "Use '$0 -h' for help"
+	exit 1
+fi

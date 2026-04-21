@@ -199,8 +199,7 @@ if [[ $NPCA == 0 ]]; then
 					if [[ $APCA == 2 || "${3^^}" == "HELP" ]]; then
 						cmd_help
 					elif [[ "${3^^}" == "SET" ]]; then
-						SETARGS=$(( $# - 3 ))
-						cmd_set "$livefile" "$4" "$5" "$SETARGS"
+						cmd_set "$livefile" "${@:4}"
 					elif [[ "${3^^}" == "GET" ]]; then
 						cmd_get "$4"
 					elif [[ "${3^^}" == "DEL" ]]; then

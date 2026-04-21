@@ -3,7 +3,9 @@
 	netbr -h
 	netbr -Y
 	netbr -n br0 -p 24 -r 192.168.3.1
+	netbr -a DELETE -n br0
 
   * ABOUT =>
-	Script create bridge interface and accept DHCP service port.
+	Script create or delete bridge interface.
+	Use -a ADD or -a DELETE to add or remove bridge.
 

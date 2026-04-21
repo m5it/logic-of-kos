@@ -9,9 +9,15 @@
 ### lok.sh (Framework)
 - Refactored commands to `src/lok/commands.sh` for modularity
 - All commands now case-insensitive (lowercase/uppercase)
-- Fixed SET command: Changed from `$APCA` to `$(( $# - 3 ))` for actual arg count
-- Fixed case-insensitive script matching
-- `lok NET br set name=br1` and `lok NET br VIEW` work correctly
+- SET now supports multiple key=value pairs: `lok br SET name=br0 route=192.168.3.1`
+
+### netbr.sh
+- Added ACTION option: -a ADD or -a DELETE
+- Supports delete bridge functionality
+
+### netfromto.sh
+- Added ACTION option: -a ADD or -a DELETE
+- Supports delete DNAT rule functionality
 
 ### vmlist.sh (SYSTEMD)
 

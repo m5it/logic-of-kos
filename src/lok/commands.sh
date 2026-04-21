@@ -8,23 +8,27 @@ cmd_help() {
 	echo "HELP SET GET DEL VIEW CLEAR RUN HISTORY USE"
 }
 
-# SET command - expects livefile, arg4, arg5, argcount
+# SET command - expects livefile and remaining args (key=val or key val)
 cmd_set() {
 	local livefile=$1
-	local arg4=$2
-	local arg5=$3
-	local argcount=$4
+	shift
+	local args=("$@")
 
-	if [[ $argcount == 2 ]]; then
-		data_set "$livefile" "$arg4" "$arg5"
-	elif [[ $argcount == 1 ]]; then
-		IFS='=' read -ra arr <<< "$arg4"
-		data_set "$livefile" "${arr[0]}" "${arr[1]}"
-	else
-		echo "Warning: SET requires 1 or 2 arguments (key=val or key val)"
+	if [[ ${#args[@]} -eq 0 ]]; then
+		echo "Warning: SET requires at least 1 argument (key=val or key val)"
 		echo "Use '$0 -h' for help"
 		exit 1
 	fi
+
+	for arg in "${args[@]}"; do
+		if [[ "$arg" == *"="* ]]; then
+			IFS='=' read -ra arr <<< "$arg"
+			data_set "$livefile" "${arr[0]}" "${arr[1]}"
+		else
+			echo "Warning: Invalid argument '$arg'. Use key=value format"
+			exit 1
+		fi
+	done
 }
 
 # GET command
