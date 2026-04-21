@@ -1,0 +1,8 @@
+
+
+  * USAGE =>
+	ipis 8.8.8.8
+
+  * ABOUT =>
+	Script use `whois` to receive information on specific IP address. Script use it own caching so we minimize requests as possible.
+

@@ -1,0 +1,9 @@
+
+  * USAGE =>
+	netmasq -h
+	netmasq -f enp1s0 -t enp2s0
+	netmasq -f enp1s0 -t enp2s0 -Y
+
+  * ABOUT =>
+	Script masquerade network connection from - to interface.
+

@@ -1,0 +1,9 @@
+
+  * USAGE =>
+	netfromto -h
+	netfromto -i enp2s0 -f 8080 -t 192.168.72.242 -o 8080
+	netfromto -i enp2s0 -f 8080 -t 192.168.72.242 -o 8080 -Y
+
+  * ABOUT =>
+	Script forward network from port to ip:port.
+

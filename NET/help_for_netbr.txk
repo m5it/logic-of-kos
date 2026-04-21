@@ -1,0 +1,9 @@
+
+  * USAGE =>
+	netbr -h
+	netbr -Y
+	netbr -n br0 -p 24 -r 192.168.3.1
+
+  * ABOUT =>
+	Script create bridge interface and accept DHCP service port.
+
