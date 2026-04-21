@@ -216,24 +216,24 @@ if [[ $NPCA == 0 ]]; then
 							echo "Use '$0 -h' for help"
 							exit 1
 						fi
-					elif [[ "$3" == "GET" ]]; then
+					elif [[ "${3^^}" == "GET" ]]; then
 						echo "Firing GET KEY"$4
-					elif [[ "$3" == "DEL" ]]; then
+					elif [[ "${3^^}" == "DEL" ]]; then
 						echo "Firing DEL KEY"$4
-					elif [[ "$3" == "VIEW" ]]; then
+					elif [[ "${3^^}" == "VIEW" ]]; then
 						if [[ ! -f "$livefile" ]]; then
 							echo $livefile" dont exists yet! Use SET to configure it."
 							exit 1
 						fi
 						cat "$livefile"
 					# clear life file / config
-					elif [[ "$3" == "CLEAR" ]]; then
+					elif [[ "${3^^}" == "CLEAR" ]]; then
 						echo "" > "$livefile"
 						echo $livefile" is empty!"
-					elif [[ "$3" == "HISTORY" ]]; then
+					elif [[ "${3^^}" == "HISTORY" ]]; then
 						history_init "$SN"
 						history_list "$4"
-					elif [[ "$3" == "USE_HISTORY" || "$3" == "USE" ]]; then
+					elif [[ "${3^^}" == "USE_HISTORY" || "${3^^}" == "USE" ]]; then
 						history_init "$SN"
 						line=$(history_get $4)
 						if [[ $? -ne 0 ]]; then
@@ -245,9 +245,9 @@ if [[ $NPCA == 0 ]]; then
 						data="${line#* | }"
 						restore_lines "$data" > "$livefile"
 						exit 0
-					elif [[ "$3" == "DISABLE_HISTORY" ]]; then
+					elif [[ "${3^^}" == "DISABLE_HISTORY" ]]; then
 						echo "Firing DISABLE_HISTORY at "$4
-					elif [[ "$3" == "RUN" ]]; then
+					elif [[ "${3^^}" == "RUN" ]]; then
 						atmp=$($SP -RR)
 						ERR=$?
 						IFS=$'\n'
