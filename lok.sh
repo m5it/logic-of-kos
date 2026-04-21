@@ -149,9 +149,10 @@ if [[ $NPCA == 0 ]]; then
 					echo "DEBUG lok.sh => tmp: "$tmp
 				fi
 				IFS=' ' read -ra elms <<< "$tmp"
+				SCRIPT_NAME=$(basename "${elms[10]}" .sh)
 				if [[ $# -eq 1 ]]; then
 					echo ${elms[8]}
-				elif [[ "${elms[8]}" == "${2^^}" || "${elms[8]}" == "$2" ]]; then
+				elif [[ "${elms[8]}" == "${2^^}" || "${elms[8]}" == "$2" || "$SCRIPT_NAME" == "$2" ]]; then
 					#
 					RN=${elms[10]}            # real name of script "script.sh" else "script"
 					SP=$PRE""$chek"/"$RN

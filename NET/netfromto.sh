@@ -6,7 +6,13 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=false
-PCA=("IN_INT" "FROM_PORT" "TO_IP" "TO_PORT" "YES" "DEBUG")
+PCA=("ACTION" "IN_INT" "FROM_PORT" "TO_IP" "TO_PORT" "YES" "DEBUG")
+
+ARG_ACTION=""
+ARG_ACTION_STRING=true
+ACTION_SHORT_ARG="-a"
+ACTION_ARG="--action"
+ACTION_VAL=true
 
 ARG_IN_INT=""
 ARG_IN_INT_STRING=true
@@ -49,6 +55,7 @@ debug_echo() {
 	[[ "$ARG_DEBUG" == "true" ]] && echo "[DEBUG] $*" >&2
 }
 
+ACTION="${ARG_ACTION:-ADD}"
 IN_INT="${ARG_IN_INT:-enp2s0}"
 FROM_PORT="${ARG_FROM_PORT:-8080}"
 TO_IP="${ARG_TO_IP}"
@@ -66,9 +73,9 @@ if [[ "$TO_IP" == "" ]]; then
 	exit 1
 fi
 
-debug_echo "IN_INT=$IN_INT, FROM_PORT=$FROM_PORT, TO_IP=$TO_IP, TO_PORT=$TO_PORT"
+debug_echo "ACTION=$ACTION, IN_INT=$IN_INT, FROM_PORT=$FROM_PORT, TO_IP=$TO_IP, TO_PORT=$TO_PORT"
 
-echo "Port forwarding configuration:"
+echo "Port forwarding $ACTION:"
 echo "  In interface: $IN_INT"
 echo "  From port: $FROM_PORT"
 echo "  To IP: $TO_IP"
@@ -84,8 +91,16 @@ if [[ "$YES" != "true" ]]; then
 	fi
 fi
 
-debug_echo "Adding DNAT rule: $IN_INT:$FROM_PORT -> $TO_IP:$TO_PORT"
-
-iptables -t nat -A PREROUTING -i "$IN_INT" -p tcp --dport "$FROM_PORT" -j DNAT --to-destination "$TO_IP:$TO_PORT"
-
-echo "Done. Port $FROM_PORT forwarded to $TO_IP:$TO_PORT"
+if [[ "${ACTION^^}" == "ADD" ]]; then
+	debug_echo "Adding DNAT rule: $IN_INT:$FROM_PORT -> $TO_IP:$TO_PORT"
+	iptables -t nat -A PREROUTING -i "$IN_INT" -p tcp --dport "$FROM_PORT" -j DNAT --to-destination "$TO_IP:$TO_PORT"
+	echo "Done. Port $FROM_PORT forwarded to $TO_IP:$TO_PORT"
+elif [[ "${ACTION^^}" == "DELETE" || "${ACTION^^}" == "DEL" ]]; then
+	debug_echo "Deleting DNAT rule: $IN_INT:$FROM_PORT -> $TO_IP:$TO_PORT"
+	iptables -t nat -D PREROUTING -i "$IN_INT" -p tcp --dport "$FROM_PORT" -j DNAT --to-destination "$TO_IP:$TO_PORT"
+	echo "Done. Rule deleted for port $FROM_PORT"
+else
+	echo "ERROR: Invalid action '$ACTION'. Use ADD or DELETE"
+	echo "Use '$0 -h' for help"
+	exit 1
+fi
