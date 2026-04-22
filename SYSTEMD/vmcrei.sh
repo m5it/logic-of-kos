@@ -5,7 +5,7 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=true
-PCA=("NAME" "SIZE" "TYPE" "DEBUG")
+PCA=("NAME" "SIZE" "TYPE" "YES" "DEBUG")
 
 ARG_NAME=""
 ARG_NAME_STRING=true
@@ -24,6 +24,12 @@ ARG_TYPE_STRING=true
 TYPE_SHORT_ARG="-t"
 TYPE_ARG="--type"
 TYPE_VAL=true
+
+ARG_YES=""
+ARG_YES_STRING=false
+YES_SHORT_ARG="-Y"
+YES_ARG="--yes"
+YES_VAL=false
 
 ARG_DEBUG=false
 DEBUG_SHORT_ARG="-d"
@@ -52,16 +58,12 @@ check_required_commands() {
 	local type="${ARG_TYPE:-raw}"
 	local errors=0
 	
-	debug_echo "Checking required commands for type: $type"
-	
 	if ! check_command "dd" "coreutils"; then ((errors++)); fi
 	
 	if [[ "$type" == "qcow2" ]]; then
 		if ! check_command "qemu-img" "qemu-utils"; then ((errors++)); fi
-	else
-		if ! check_command "gdisk" "gdisk"; then ((errors++)); fi
+	elif [[ "$type" == "raw" ]]; then
 		if ! check_command "mkfs.ext4" "e2fsprogs"; then ((errors++)); fi
-		if ! check_command "mount" "mount"; then ((errors++)); fi
 	fi
 	
 	return $errors
@@ -70,6 +72,7 @@ check_required_commands() {
 NAME="${ARG_NAME}"
 SIZE="${ARG_SIZE:-10240}"  # Default 10GB
 TYPE="${ARG_TYPE:-raw}"      # Default raw
+YES="${ARG_YES:-false}"
 
 check_disk_space() {
 	local required_mb=$1
@@ -108,19 +111,17 @@ if [[ "$NAME" == "" ]]; then
 	echo "Usage: $0 -n <name> [-s <size_mb>] [-t <type>]"
 	echo "  -n, --name: VM name (e.g. myvm.raw or myvm.qcow2)"
 	echo "  -s, --size: Size in MB (default: 10240 = 10GB)"
-	echo "  -t, --type: Image type: raw or qcow2 (default: raw)"
+	echo "  -t, --type: Image type: raw, qcow2 (default: raw)"
 	exit 1
 fi
 
-# Auto-detect type from extension if not specified
+# Auto-detect type from extension
 if [[ -z "$ARG_TYPE" ]]; then
 	case "$NAME" in
-		*.qcow2|*.qcow2) TYPE="qcow2" ;;
+		*.qcow2) TYPE="qcow2" ;;
 		*.raw|*.img|*) TYPE="raw" ;;
 	esac
 fi
-
-debug_echo "Using type: $TYPE"
 
 check_required_commands || exit 1
 
@@ -133,9 +134,11 @@ fi
 
 debug_echo "Creating VM '$NAME' with size ${SIZE}MB (type: $TYPE)"
 
-echo "Creating: $NAME, size: ${SIZE}MB, type: $TYPE"
-echo "Sleep 3s..."
-sleep 3
+if [[ "$YES" != "true" ]]; then
+	echo "Creating: $NAME, size: ${SIZE}MB, type: $TYPE"
+	echo "Sleep 3s..."
+	sleep 3
+fi
 
 if [[ "$TYPE" == "qcow2" ]]; then
 	create_image_qcow2 "$NAME" "$size_gb"
