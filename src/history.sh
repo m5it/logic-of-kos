@@ -38,6 +38,22 @@ history_init() {
 	fi
 }
 
+history_init_from_dir() {
+	local prog=$1
+	local histdir=$2
+	HIST_PROG=$prog
+	
+	HISTORY_DIR="$histdir"
+	HISTORY_FILE="$HISTORY_DIR/history.log"
+	
+	if [[ ! -d "$HISTORY_DIR" ]]; then
+		if ! mkdir -p "$HISTORY_DIR"; then
+			echo "Failed creating $HISTORY_DIR, check permissions!"
+			return 1
+		fi
+	fi
+}
+
 history_add() {
 	if [[ "$HISTORY_ENABLED" != "true" ]]; then
 		return

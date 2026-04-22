@@ -43,8 +43,9 @@ CNF_INSTALL=$PRE"install.dbk"
 ARG_UNINSTALL=false
 ARG_PREVIEW=false
 ARG_AVAILABLE=false
-#
-PCA=("AVAILABLE" "PREVIEW" "UNINSTALL")
+ARG_HISTORY_ALL=false
+
+PCA=("AVAILABLE" "PREVIEW" "UNINSTALL" "HISTORY_ALL")
 #
 PCA_ON_NONE_HELP=false
 #
@@ -59,6 +60,10 @@ PREVIEW_VAL=false
 AVAILABLE_SHORT_ARG="-a"
 AVAILABLE_ARG="--available"
 AVAILABLE_VAL=false
+
+HISTORY_ALL_SHORT_ARG="-H"
+HISTORY_ALL_ARG="--history-all"
+HISTORY_ALL_VAL=false
 
 # PARSE command line arguments
 source $PRE"src/pca.sh"
@@ -158,10 +163,10 @@ if [[ $NPCA == 0 ]]; then
 					SP=$PRE""$chek"/"$RN
 					SN=$(strip_file_type $RN)
 					#
-					livedir="$DL/$real/$SN"       # /home/t3ch/.config/lok/live/SYSTEMD/mscnet
-					livefile=$livedir"/config"  # /home/t3ch/.config/lok/live/SYSTEMD/mscnet/config
-					savesdir="$DS/$real/$SN"
-					historydir="$DH/$real/$SN"
+					livedir="$DL/$chek/$SN"
+					livefile=$livedir"/config"
+					savesdir="$DS/$chek/$SN"
+					historydir="$DH/$chek/$SN"
 					# Check if $1 directory dont exists then create it
 					if [[ ! -d "$livedir" ]]; then
 						if ! mkdir -p "$livedir"; then
@@ -215,7 +220,7 @@ if [[ $NPCA == 0 ]]; then
 					elif [[ "${3^^}" == "DISABLE_HISTORY" ]]; then
 						cmd_disable_history "$4"
 					elif [[ "${3^^}" == "RUN" ]]; then
-						cmd_run "$SP" "$livefile" "$SN"
+						cmd_run "$SP" "$livefile" "$SN" "$historydir"
 					else
 						echo "Available lok commands: "
 						echo "HELP SET GET DEL VIEW CLEAR RUN HISTORY USE"
@@ -256,6 +261,22 @@ elif [[ $ARG_PREVIEW == true ]]; then
 elif [[ $ARG_AVAILABLE == true ]]; then
 	echo "LOK => Available..."
 	#
-	find $PRE -maxdepth 2 ! -name "pca.sh" ! -name "isadmin.sh" ! -name "install.sh" ! -name 'continue.sh' ! -name 'prepare.sh' ! -path './tests*' ! -name 'test*' | grep -E "*.sh+$|*.py+$|*.php+$"
+	find $PRE -maxdepth 2 -type f \( -name "*.sh" -o -name "*.py" -o -name "*.php" \) ! -path "*/src/*" ! -path "*/tests/*" ! -name "lok.sh" ! -name "install.sh" ! -name "test*.sh" ! -name "*_test*"
+#
+elif [[ $ARG_HISTORY_ALL == true ]]; then
+	echo "LOK => All History..."
+	#
+	for histdir in "$DH"/*; do
+		[[ -d "$histdir" ]] || continue
+		for subdir in "$histdir"/*; do
+			if [[ -d "$subdir" && -f "$subdir/history.log" ]]; then
+				script=$(basename "$subdir")
+				dir=$(basename "$histdir")
+				echo "=== $dir/$script ==="
+				tac "$subdir/history.log" | head -5
+				echo ""
+			fi
+		done
+	done | head -50
 fi
 
