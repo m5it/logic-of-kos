@@ -93,8 +93,13 @@ for arg in "$@"; do
 		exit 1
 	# (integrated argument) Run with configuration defined by lok
 	elif [[ $arg == "-RR" || $arg == "--run_config" ]]; then
-		tmpd=$DL"/"$(basename $P)
-		tmpf=$tmpd"/"$B"/config"
+		_RAN_WITH_CONFIG=true
+		if [[ -n "$LOK_DIR" ]]; then
+			tmpd=$DL"/$LOK_DIR/$B"
+		else
+			tmpd=$DL"/"$(basename $P)"/$B"
+		fi
+		tmpf=$tmpd"/config"
 		if [[ -f "$tmpf" ]]; then
 			for tmp in $(cat $tmpf); do
 				IFS=':' read -r -a arr <<< "$tmp"
@@ -102,6 +107,8 @@ for arg in "$@"; do
 				declare -gx "$next_arg"="${arr[1]}"
 			done
 		fi
+		next_arg=""
+		cnt_arg=0
 	# (script arguments) Run with default script arguments
 	elif [[ $next_arg != "" ]]; then
 		ARG_OVERWRITE=$next_arg"_OVERWRITE"
@@ -170,6 +177,25 @@ for arg in "$@"; do
 	done
 	let cnt_arg=cnt_arg+1
 done
+
+# Save history if run with config (-RR was used)
+if [[ -n "$_RAN_WITH_CONFIG" ]]; then
+	if [[ -n "$LOK_DIR" ]]; then
+		tmpd=$DL"/$LOK_DIR/$B"
+	else
+		tmpd=$DL"/"$(basename $P)"/$B"
+	fi
+	tmpf=$tmpd"/config"
+	if [[ -f "$tmpf" ]]; then
+		progdir=$(basename $P)
+		prog=$(basename $B)
+		HISTSCRIPT="$progdir/$prog"
+		source $PRE'src/history.sh'
+		config_data=$(concat_lines "$tmpf")
+		history_init "$HISTSCRIPT"
+		history_add "$config_data"
+	fi
+fi
 
 # No action was specified, displaying help if exists...
 #if [[ $PCA_ON_NONE_HELP == true && $find_arg == false ]]; then

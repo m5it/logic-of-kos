@@ -89,12 +89,17 @@ cmd_disable_history() {
 	echo "Firing DISABLE_HISTORY at "$2
 }
 
-# RUN command - expects SP, livefile, SN, historydir
+# RUN command - expects SP, livefile, SN, historydir, chek (directory name)
 cmd_run() {
 	local SP=$1
 	local livefile=$2
 	local SN=$3
 	local historydir=$4
+	local chekdir=$5
+	local histpath="$historydir"
+	if [[ -n "$chekdir" ]]; then
+		histpath="$DH/$chekdir/$SN"
+	fi
 	atmp=$($SP -RR -Y)
 	ERR=$?
 	IFS=$'\n'
@@ -119,6 +124,6 @@ cmd_run() {
 		echo $tmp
 		exit 1
 	fi
-	history_init_from_dir "$SN" "$historydir"
+	history_init_from_dir "$SN" "$histpath"
 	history_add "$tmp"
 }

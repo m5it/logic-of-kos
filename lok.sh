@@ -220,7 +220,8 @@ if [[ $NPCA == 0 ]]; then
 					elif [[ "${3^^}" == "DISABLE_HISTORY" ]]; then
 						cmd_disable_history "$4"
 					elif [[ "${3^^}" == "RUN" ]]; then
-						cmd_run "$SP" "$livefile" "$SN" "$historydir"
+						export LOK_DIR="$chek"
+						cmd_run "$SP" "$livefile" "$SN" "$historydir" "$chek"
 					else
 						echo "Available lok commands: "
 						echo "HELP SET GET DEL VIEW CLEAR RUN HISTORY USE"

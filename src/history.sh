@@ -17,8 +17,18 @@ HISTORY_FILE=""
 HIST_PROG=""
 
 history_init() {
-	local prog=$1
-	HIST_PROG=$prog
+	local relpath=$1
+	local dir script
+	
+	if [[ "$relpath" == *"/"* ]]; then
+		dir=$(echo "$relpath" | cut -d/ -f1)
+		script=$(echo "$relpath" | cut -d/ -f2)
+	else
+		dir=""
+		script="$relpath"
+	fi
+	
+	HIST_PROG=$script
 	
 	if [[ -z "$DH" ]]; then
 		local _src="${BASH_SOURCE[0]}"
@@ -27,7 +37,11 @@ history_init() {
 		source $PRE'src/prepare.sh'
 	fi
 	
-	HISTORY_DIR="$DH/$prog"
+	if [[ -n "$dir" ]]; then
+		HISTORY_DIR="$DH/$dir/$script"
+	else
+		HISTORY_DIR="$DH/$script"
+	fi
 	HISTORY_FILE="$HISTORY_DIR/history.log"
 	
 	if [[ ! -d "$HISTORY_DIR" ]]; then

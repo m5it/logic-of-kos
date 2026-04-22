@@ -50,17 +50,18 @@ CNT=0
 IFS=$'\n'
 for line in $(systemd-run -M $MACHINE_NAME --pipe ip addr show host0); do
 	trim=$(echo $line | sed 's/^[[:space:]]*//')
-	echo "trim: "$trim
-	# inet 192.168.224.98/28 scope global host0
-	if [[ "$trim" =~ ^inet[[:space:]]+([0-9]{1,3}\.){3}.+([16|24|28|32]).+scope.+global.+host0 ]]; then
-				IFS=' ' read -r -a arr <<< "$trim"
-				#echo "debug: "${arr[@]}
-				if ! systemd-run -M $MACHINE_NAME --pipe ip addr delete ${arr[1]} dev ${arr[4]}; then
-						echo "ERROR deleting ip "${arr[1]}" dev "${arr[4]}
-						exit 1
-				else
-						CNT=$((CNT += 1 ))
-				fi
+	# Skip interface lines like "2: host0@if4:"
+	echo "$trim" | grep -qE "^[0-9]+:" && continue
+	# Match inet lines: "inet 192.168.1.1/24"
+	echo "$trim" | grep -qE "^inet" || continue
+	IFS=' ' read -r -a arr <<< "$trim"
+	ip_with_prefix="${arr[1]}"
+	dev_name="host0"
+	echo "Deleting: $ip_with_prefix dev $dev_name"
+	if ! systemd-run -M $MACHINE_NAME --pipe ip addr delete $ip_with_prefix dev $dev_name; then
+		echo "ERROR deleting $ip_with_prefix dev $dev_name"
+	else
+		CNT=$((CNT + 1))
 	fi
 done
-echo "Done. Removed ips: "$CNT
+echo "Done. Removed ips: $CNT"
