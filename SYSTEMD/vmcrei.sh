@@ -5,7 +5,7 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=true
-PCA=("NAME" "SIZE" "TYPE" "YES" "DEBUG")
+PCA=("NAME" "SIZE" "TYPE" "FORMAT" "YES" "DEBUG")
 
 ARG_NAME=""
 ARG_NAME_STRING=true
@@ -24,6 +24,12 @@ ARG_TYPE_STRING=true
 TYPE_SHORT_ARG="-t"
 TYPE_ARG="--type"
 TYPE_VAL=true
+
+ARG_FORMAT=""
+ARG_FORMAT_STRING=true
+FORMAT_SHORT_ARG="-f"
+FORMAT_ARG="--format"
+FORMAT_VAL=true
 
 ARG_YES=""
 ARG_YES_STRING=false
@@ -56,14 +62,26 @@ check_command() {
 
 check_required_commands() {
 	local type="${ARG_TYPE:-raw}"
+	local fmt="${FORMAT:-ext4}"
 	local errors=0
 	
 	if ! check_command "dd" "coreutils"; then ((errors++)); fi
 	
 	if [[ "$type" == "qcow2" ]]; then
 		if ! check_command "qemu-img" "qemu-utils"; then ((errors++)); fi
-	elif [[ "$type" == "raw" ]]; then
-		if ! check_command "mkfs.ext4" "e2fsprogs"; then ((errors++)); fi
+	fi
+	
+	if [[ "$fmt" != "none" ]]; then
+		if [[ "$fmt" == "ext4" ]]; then
+			if ! check_command "mkfs.ext4" "e2fsprogs"; then ((errors++)); fi
+		elif [[ "$fmt" == "xfs" ]]; then
+			if ! check_command "mkfs.xfs" "xfsprogs"; then ((errors++)); fi
+		elif [[ "$fmt" == "btrfs" ]]; then
+			if ! check_command "mkfs.btrfs" "btrfs-progs"; then ((errors++)); fi
+		else
+			echo "ERROR: Unknown format: $fmt"
+			((errors++))
+		fi
 	fi
 	
 	return $errors
@@ -72,6 +90,7 @@ check_required_commands() {
 NAME="${ARG_NAME}"
 SIZE="${ARG_SIZE:-10240}"  # Default 10GB
 TYPE="${ARG_TYPE:-raw}"      # Default raw
+FORMAT="${ARG_FORMAT:-ext4}"  # Default ext4 filesystem
 YES="${ARG_YES:-false}"
 
 check_disk_space() {
@@ -108,10 +127,11 @@ create_image_qcow2() {
 }
 
 if [[ "$NAME" == "" ]]; then
-	echo "Usage: $0 -n <name> [-s <size_mb>] [-t <type>]"
-	echo "  -n, --name: VM name (e.g. myvm.raw or myvm.qcow2)"
+	echo "Usage: $0 -n <name> [-s <size_mb>] [-t <type>] [-f <format>]"
+	echo "  -n, --name: VM name (e.g. myvm.raw)"
 	echo "  -s, --size: Size in MB (default: 10240 = 10GB)"
 	echo "  -t, --type: Image type: raw, qcow2 (default: raw)"
+	echo "  -f, --format: Filesystem: ext4, xfs, btrfs, none (default: ext4)"
 	exit 1
 fi
 
@@ -144,6 +164,12 @@ if [[ "$TYPE" == "qcow2" ]]; then
 	create_image_qcow2 "$NAME" "$size_gb"
 else
 	create_image_raw "$NAME" "$SIZE"
+fi
+
+# Create filesystem if format is specified
+if [[ "$FORMAT" != "none" ]]; then
+	echo "Creating filesystem: $FORMAT"
+	mkfs.$FORMAT -F "$NAME"
 fi
 
 echo "Done: $NAME created"
