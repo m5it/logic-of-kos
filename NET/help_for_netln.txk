@@ -1,0 +1,12 @@
+* USAGE =>
+	netln -h
+	netln -t bridge -n br0 -r 192.168.3.1 -p 24 -Y
+	netln -t bridge -n br0 -m 00:11:22:33:44:55 -Y
+	netln -t bridge -a DELETE -n br0 -Y
+	netln -t veth -n veth0 -e veth1 -Y
+	netln -t veth -n veth0 -e veth1 -m 00:11:22:33:44:55 -M 66:77:88:99:aa:bb -Y
+
+  * ABOUT =>
+	Script create or delete network interfaces.
+	Use -t bridge or -t veth for interface type.
+	Use -a ADD or -a DELETE for action.
