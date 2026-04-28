@@ -1,9 +1,10 @@
-#--
-# Logic - Of - KOS | GrandeKOS
-#--
-
-LOK -> Support two types of syntax.
+# LOK #
+#
+# LOK -> Support two types of syntax.
+#
 1.) Default ex.: scriptname -A someaction -B anotherOption
+
+#
 2.) 
 	LOK ex.: lok net scriptlink view
 	LOK ex.: lok net scriptlink set IP=192.168.0.123
