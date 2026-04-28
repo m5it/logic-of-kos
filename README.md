@@ -1,10 +1,17 @@
 #
-# LOK -> Support two types of syntax.
+# LOK -> Support two types of syntax or we can say three types of syntax.. Last is like we all know, just run with second arg ex.: ./scriptName argOpt1
 #
-# 1.) 
-Default ex.: scriptname -A someaction -B anotherOption
 #
+# 1.)
+# This example require special argument to be set. Depend what option can be used as first argument, you add ARG1_DEFAULT=true
+./scriptName "useThisValueOnStart"
+
 # 2.) 
+# Default ex.: 
+./scriptName -A someaction -B anotherOption
+
+#
+# 3.) 
 #
 	LOK ex.: lok net scriptlink view
 #
