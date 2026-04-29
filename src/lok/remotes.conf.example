@@ -1,0 +1,7 @@
+# LoK Remote Server Configuration
+# Format: host:port:token
+# One entry per line
+
+# Example:
+# server1:192.168.1.10:19876:your-token-here
+# server2:example.com:19876:another-token-here;
