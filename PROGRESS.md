@@ -1,23 +1,55 @@
 # LoK Progress Summary
 
-## Date: 2026-04-21
+## Date: 2026-04-22
 
 ---
 
 ## Recently Fixed/Updated
 
 ### lok.sh (Framework)
-- Refactored commands to `src/lok/commands.sh` for modularity
+- Added remote execution via HTTP API (`-r`, `--remote` flags)
+- Added remote config management (`-R`, `--remote-name` flags)
+- Modularized commands into `src/lok/commands.sh`
 - All commands now case-insensitive (lowercase/uppercase)
-- SET now supports multiple key=value pairs: `lok br SET name=br0 route=192.168.3.1`
+- SET now supports multiple key=value pairs
+- Added `-H` / `--history-all` to view all history
+- Fixed preview to show both symlinks and regular scripts
 
-### netbr.sh
-- Added ACTION option: -a ADD or -a DELETE
-- Supports delete bridge functionality
+### src/lok-server.sh (New!)
+- HTTP API server for remote LoK command execution
+- Token-based authentication
+- Simple TCP server using socat
+- Endpoints: `/ping`, `/run`
 
-### netfromto.sh
-- Added ACTION option: -a ADD or -a DELETE
+### NET/netln.sh (was netbr.sh)
+- Renamed from netbr.sh, supports bridge and veth interface types
+- Added MAC address support (`-m`, `--mac`)
+- Added peer MAC for veth (`-M`, `--peer-mac`)
+- Backward compatible: `BR` symlink still works
+
+### NET/netfromto.sh
+- Added ACTION option: `-a ADD` or `-a DELETE`
 - Supports delete DNAT rule functionality
+
+### SYSTEMD/vmcrei.sh
+- Supports raw and qcow2 image types
+- Auto-detects type from extension
+- Creates filesystem (ext4 default, supports xfs, btrfs)
+- Added `-f`, `--format` option
+
+### SYSTEMD/vmstart.sh (was vmstart.sh)
+- Uses pca.sh framework
+- Options: `-i` (image), `-D` (directory), `-v` (video framebuffer)
+- Supports KVM and NVIDIA container modes
+
+### SYSTEMD/vmrcmd.sh (was vmrcmd.sh)
+- Uses pca.sh framework
+- Options: `-M` (machine name)
+- Runs commands in container via systemd-run
+
+### vmlist.sh
+- Fixed regex to properly delete VM IPs
+- Skips interface definition lines correctly
 
 ### vmlist.sh (SYSTEMD)
 
