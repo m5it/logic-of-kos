@@ -292,3 +292,107 @@ elif [[ $ARG_HISTORY_ALL == true ]]; then
 	done | head -50
 fi
 
+
+# Handle remote config management (-R flag)
+if [[ -n "$ARG_REMOTE_NAME" ]]; then
+	config_file="$HOME/.config/lok/remotes.conf"
+	mkdir -p "$(dirname "$config_file")"
+	
+	# Parse: lok -R server_name [host:port] [token]
+	if [[ $# -eq 0 ]]; then
+		# List all remotes
+		if [[ -f "$config_file" ]]; then
+			echo "Configured remotes:"
+			cat "$config_file" | nl
+		else
+			echo "No remotes configured."
+			echo "Usage: lok -R <name> [host:port] [token]"
+		fi
+		exit 0
+	elif [[ $# -eq 1 ]]; then
+		# Show specific remote
+		if [[ -f "$config_file" ]]; then
+			entry=$(grep "^$1:" "$config_file")
+			if [[ -n "$entry" ]]; then
+				echo "Remote: $1"
+				echo "$entry" | sed 's/:/ - /; s/:/ - Token: /'
+			else
+				echo "Remote '$1' not found."
+			fi
+		else
+			echo "No remotes configured."
+		fi
+		exit 0
+	else
+		# Add/update remote
+		host_port="$2"
+		token="${3:-}"
+		
+		if [[ -z "$token" ]]; then
+			# Try to get token from server
+			echo "No token provided. Trying to get token from server..."
+			token=$(curl -s "http://$host_port/ping" | grep -v "pong" | head -1)
+			if [[ -z "$token" ]]; then
+				echo "Warning: Could not get token automatically."
+				echo "Please provide token: lok -R $1 $2 <token>"
+			fi
+		fi
+		
+		# Remove old entry and add new one
+		if [[ -f "$config_file" ]]; then
+			grep -v "^$1:" "$config_file" > "$config_file.tmp"
+			mv "$config_file.tmp" "$config_file"
+		fi
+		echo "$1:$host_port:$token" >> "$config_file"
+		echo "Added remote '$1' -> $host_port"
+		exit 0
+	fi
+fi
+
+# Handle remote execution (-r flag)
+if [[ -n "$ARG_REMOTE" ]]; then
+	# Parse host:port or name
+	if [[ "$ARG_REMOTE" =~ ^[^:]+:[0-9]+$ ]]; then
+		host="${ARG_REMOTE%:*}"
+		port="${ARG_REMOTE##*:}"
+		token_file="$HOME/.config/lok/remotes.conf"
+		token=$(grep "^.*:$host:$port:" "$token_file" | head -1 | cut -d: -f3)
+	else
+		# Treat as name - look up in config
+		token_file="$HOME/.config/lok/remotes.conf"
+		entry=$(grep "^$ARG_REMOTE:" "$token_file" | head -1)
+		if [[ -z "$entry" ]]; then
+			echo "Error: Remote '$ARG_REMOTE' not found in $token_file"
+			echo "Use: lok -R to configure remotes"
+			exit 1
+		fi
+		host=$(echo "$entry" | cut -d: -f2)
+		port=$(echo "$entry" | cut -d: -f3)
+		token=$(echo "$entry" | cut -d: -f4)
+	fi
+	
+	if [[ -z "$token" ]]; then
+		echo "Error: No token found for $host:$port"
+		exit 1
+	fi
+	
+	# Build command string (skip -r and -R flags)
+	args=()
+	for ((i=1; i<=$#; i++)); do
+		[[ "${!i}" == "-r" || "${!i}" == "--remote" || \
+		 "${!i}" == "-R" || "${!i}" == "--remote-name" ]] && {
+			((i++))
+			continue
+		}
+		args+=("${!i}")
+	done
+	cmd_str="${args[*]}"
+	
+	# Send request
+	response=$(curl -s -X POST "http://$host:$port/run" \
+		-H "Authorization: Bearer $token" \
+		-d "cmd=$cmd_str" 2>&1)
+	
+	echo "$response"
+	exit 0
+fi
