@@ -1,10 +1,47 @@
+  * USAGE =>
+	lok                              # Show available places
+	lok DIRECTORY                    # List scripts in DIRECTORY
+	lok NET CALC_PREFIX_IP HELP        # Get help for script
+	lok NET CALC_PREFIX_IP SET key=value  # Persist config
+	lok NET CALC_PREFIX_IP GET key          # Get config value
+	lok NET CALC_PREFIX_IP VIEW         # View config
+	lok NET CALC_PREFIX_IP RUN          # Run script with config
+	lok NET CALC_PREFIX_IP HISTORY     # Show script history
+	lok NET CALC_PREFIX_IP USE 3         # Use history entry 3
 
--u or --uninstall                        # Uninstall scripts
--a or --available                        # Preview available tools
--p or --preview                          # Preview installed tools
--h or --help                             # What you are reading right now
+  * REMOTE EXECUTION =>
+	lok -r 192.168.1.10:19876 NET GEOIP RUN    # Execute on remote by IP:port
+	lok -r server1 NET GEOIP RUN               # Execute on remote by name
 
-or you can use DIRECTORY commands.
-Ex.:
-lok git push # will fire GIT/gitp.sh
+  * REMOTE CONFIGURATION =>
+	lok -R                            # List all remotes
+	lok -R server1                     # Show remote config
+	lok -R server1 192.168.1.10:19876 token  # Add/update remote
 
+  * OPTIONS =>
+	-u, --uninstall               # Uninstall all scripts
+	-a, --available               # List all available scripts
+	-p, --preview                # Preview installed (linked) scripts
+	-H, --history-all            # Show all history for all scripts
+	-r, --remote <host:port|name> # Execute on remote machine
+	-R, --remote-name <name>     # Manage remote configurations
+	-h, --help                   # Show this help
+
+  * EXAMPLES =>
+	# Install/Uninstall
+	./install.sh -l               # Link all scripts to /usr/local/bin/
+	./install.sh -u               # Unlink all scripts
+
+	# Using lok framework
+	lok NET GEOIP SET ip=8.8.8.8
+	lok NET GEOIP RUN
+	lok NET LN SET name=br0 action=ADD
+	lok NET LN RUN
+
+	# Remote execution
+	lok -R myserver 192.168.1.10:19876 mytoken
+	lok -r myserver SYSTEM cputemp RUN
+
+  * ABOUT =>
+	Logic Of Kos v0.3 - Collection of handy bash scripts.
+	Supports: PCA framework, config persistence, history, remote execution.
