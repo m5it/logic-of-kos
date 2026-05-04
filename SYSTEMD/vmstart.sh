@@ -23,7 +23,7 @@ DIRECTORY_VAL=true
 
 ARG_VFB=""
 ARG_VFB_STRING=true
-VFB_SHORT_ARG="-v"
+VFB_SHORT_ARG="-V"
 VFB_ARG="--vfb"
 VFB_VAL=true
 
@@ -57,7 +57,7 @@ if [[ "$VFB" == "KVM" || "$VFB" == "NVIDIA" ]]; then
 	if [[ "$VFB" == "NVIDIA" ]]; then
 		CMD="$CMD --bind=/dev/nvidia-modeset --bind=/dev/nvidia-uvm --bind=/dev/nvidia-uvm-tools --bind=/dev/nvidia0 --bind=/dev/nvidiactl"
 		CMD="$CMD --bind=/usr/lib/nvidia --bind=/usr/src/nvidia-590.48.01 --bind=/etc/ld.so.conf.d/libc.conf"
-		CMD="$CMD --bind=/etc/ld.so.conf.d/x86_64-linux-gnu.conf --bind=/lib/modules/6.17.0-14-generic --bind=/sys/module"
+		CMD="$CMD --bind=/etc/ld.so.conf.d/x86_64-linux-gnu.conf --bind=/lib/modules/$(uname -r) --bind=/sys/module"
 	fi
 	CMD="$CMD -u root --network-veth"
 else
