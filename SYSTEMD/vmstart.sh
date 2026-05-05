@@ -56,7 +56,7 @@ if [[ "$VFB" == "KVM" || "$VFB" == "NVIDIA" ]]; then
 	CMD="$CMD --bind=/dev/kvm --bind=/dev/pts --bind=/dev/dri --bind=/dev/input --bind=/dev/shm"
 	if [[ "$VFB" == "NVIDIA" ]]; then
 		CMD="$CMD --bind=/dev/nvidia-modeset --bind=/dev/nvidia-uvm --bind=/dev/nvidia-uvm-tools --bind=/dev/nvidia0 --bind=/dev/nvidiactl"
-		CMD="$CMD --bind=/usr/lib/nvidia --bind=/usr/src/nvidia-$(ls /usr/src/ | grep nvidia | head -1) --bind=/etc/ld.so.conf.d/libc.conf"
+		CMD="$CMD --bind=/usr/lib/nvidia --bind=/usr/src/$(ls /usr/src/ | grep nvidia | head -1) --bind=/etc/ld.so.conf.d/libc.conf"
 		CMD="$CMD --bind=/etc/ld.so.conf.d/x86_64-linux-gnu.conf --bind=/lib/modules/$(uname -r) --bind=/sys/module"
 	fi
 	CMD="$CMD -u root --network-veth"
