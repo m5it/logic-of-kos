@@ -1,0 +1,38 @@
+GIT/acp (gitp.sh) - Quick git add/commit/push with master protection
+
+Stages all changes, commits (reusing last commit message by default),
+and pushes to the specified remote. Refuses to push from master/main.
+
+Also known as: acp (Add, Commit, Push)
+
+Usage:
+  acp
+  acp -r upstream
+  acp -m "my message"
+  ./lok.sh GIT acp RUN
+  ./lok.sh GIT acp SET remote=origin
+  ./lok.sh GIT acp RUN
+
+Options:
+  -r, --remote    Remote name (default: origin)
+  -m, --message   Commit message (default: last commit message)
+  -Y, --yes       Skip confirmation prompt
+
+Config (.gitp/config in project directory):
+  DENY_AUTO_PUSH_BRANCH  Comma-separated branch names to block (default: master,main)
+
+Hooks (.gitp/hooks/ in project directory):
+  BEFORE_ADD              Runs before 'git add .'
+  BEFORE_COMMIT / AFTER_ADD  Runs before 'git commit' (after add)
+  BEFORE_PUSH  / AFTER_COMMIT Runs before 'git push' (after commit)
+
+  Hook scripts must be executable. If a hook exits non-zero, gitp aborts.
+  Hook files ending in .sample are ignored (rename to activate).
+
+Examples:
+  acp
+  acp -m "fix: typo"
+  acp -r upstream -Y
+  ./lok.sh GIT acp SET remote=origin
+  ./lok.sh GIT acp RUN
+  ./lok.sh GIT acp -m "feat: add login" -Y
