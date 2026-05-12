@@ -11,7 +11,7 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=false
-PCA=("REMOTE" "MESSAGE" "YES")
+PCA=("REMOTE" "MESSAGE")
 
 ARG_REMOTE=""
 ARG_REMOTE_STRING=true
@@ -25,11 +25,11 @@ MESSAGE_SHORT_ARG="-m"
 MESSAGE_ARG="--message"
 MESSAGE_VAL=true
 
-ARG_YES=""
-ARG_YES_STRING=false
-YES_SHORT_ARG="-Y"
-YES_ARG="--yes"
-YES_VAL=false
+#ARG_YES=""
+#ARG_YES_STRING=false
+#YES_SHORT_ARG="-Y"
+#YES_ARG="--yes"
+#YES_VAL=false
 
 source $PRE'src/pca.sh'
 
@@ -89,14 +89,14 @@ if [[ -z "$MESSAGE" ]]; then
 	MESSAGE=$(git log -n1 --pretty="format:%s")
 fi
 
-if [[ "$YES" != "true" ]]; then
-	echo "Branch: $cbranch"
-	echo "Remote: $REMOTE"
-	echo "Message: $MESSAGE"
-	echo "Continue? (Y/n)"
-	read TMP
-	[[ "$TMP" != "Y" ]] && { echo "Exiting"; exit 1; }
-fi
+#if [[ "$YES" != "true" ]]; then
+#	echo "Branch: $cbranch"
+#	echo "Remote: $REMOTE"
+#	echo "Message: $MESSAGE"
+#	echo "Continue? (Y/n)"
+#	read TMP
+#	[[ "$TMP" != "Y" ]] && { echo "Exiting"; exit 1; }
+#fi
 
 run_hook "BEFORE_ADD" || exit 1
 
