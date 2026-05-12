@@ -85,16 +85,6 @@ if [[ $? -ne 0 || -z "$cbranch" ]]; then
 	exit 1
 fi
 
-IFS=',' read -ra deny_branches <<< "$DENY_AUTO_PUSH_BRANCH"
-for branch in "${deny_branches[@]}"; do
-	branch="${branch// /}"
-	if [[ "$cbranch" == "$branch" ]]; then
-		echo "ERROR: Cannot push from '$branch' branch (denied by DENY_AUTO_PUSH_BRANCH)."
-		echo "  Use -h for help"
-		exit 1
-	fi
-done
-
 if [[ -z "$MESSAGE" ]]; then
 	MESSAGE=$(git log -n1 --pretty="format:%s")
 fi
@@ -117,5 +107,16 @@ run_hook_aliases "BEFORE_COMMIT" "AFTER_ADD"
 git commit -m "$MESSAGE" || exit 1
 
 run_hook_aliases "BEFORE_PUSH" "AFTER_COMMIT"
+
+# Prevent push only not add and commit
+IFS=',' read -ra deny_branches <<< "$DENY_AUTO_PUSH_BRANCH"
+for branch in "${deny_branches[@]}"; do
+        branch="${branch// /}"
+        if [[ "$cbranch" == "$branch" ]]; then
+                echo "ERROR: Cannot push from '$branch' branch (denied by DENY_AUTO_PUSH_BRANCH)."
+                echo "  Use -h for help"
+                exit 1
+        fi
+done
 
 git push "$REMOTE" || exit 1

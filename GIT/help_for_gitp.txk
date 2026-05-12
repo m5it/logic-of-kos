@@ -6,12 +6,12 @@ and pushes to the specified remote. Refuses to push from master/main.
 Also known as: acp (Add, Commit, Push)
 
 Usage:
-  acp
-  acp -r upstream
-  acp -m "my message"
-  ./lok.sh GIT acp RUN
-  ./lok.sh GIT acp SET remote=origin
-  ./lok.sh GIT acp RUN
+  gitp
+  gitp -r upstream
+  gitp -m "my message"
+  lok GIT acp RUN
+  lok GIT acp SET remote=origin
+  lok GIT acp RUN
 
 Options:
   -r, --remote    Remote name (default: origin)
@@ -30,9 +30,9 @@ Hooks (.gitp/hooks/ in project directory):
   Hook files ending in .sample are ignored (rename to activate).
 
 Examples:
-  acp
-  acp -m "fix: typo"
-  acp -r upstream -Y
-  ./lok.sh GIT acp SET remote=origin
-  ./lok.sh GIT acp RUN
-  ./lok.sh GIT acp -m "feat: add login" -Y
+  gitp
+  gitp -m "fix: typo"
+  gitp -r upstream -Y
+  lok GIT acp SET remote=origin
+  lok GIT acp RUN
+  lok GIT acp -m "feat: add login" -Y
