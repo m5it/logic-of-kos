@@ -16,7 +16,6 @@ Usage:
 Options:
   -r, --remote    Remote name (default: origin)
   -m, --message   Commit message (default: last commit message)
-  -Y, --yes       Skip confirmation prompt
 
 Config (.gitp/config in project directory):
   DENY_AUTO_PUSH_BRANCH  Comma-separated branch names to block (default: master,main)
@@ -32,7 +31,7 @@ Hooks (.gitp/hooks/ in project directory):
 Examples:
   gitp
   gitp -m "fix: typo"
-  gitp -r upstream -Y
+  gitp -r upstream
   lok GIT acp SET remote=origin
   lok GIT acp RUN
-  lok GIT acp -m "feat: add login" -Y
+  lok GIT acp -m "feat: add login"
