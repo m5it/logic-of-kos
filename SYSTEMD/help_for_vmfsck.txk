@@ -1,0 +1,17 @@
+SYSTEMD/vmfsck.sh - Check and repair filesystem on VM image
+
+This script uses e2fsck to check and repair a filesystem on a
+VM disk image. It handles loop device setup/teardown automatically.
+
+Usage:
+  ./lok.sh SYSTEMD vmfsck -i <image_file>
+  ./lok.sh SYSTEMD vmfsck SET image=test.raw RUN
+
+Options:
+  -i, --image   Path to VM image file (required)
+  -Y, --yes     Skip all confirmation prompts
+
+Examples:
+  ./lok.sh SYSTEMD vmfsck -i debian.raw
+  ./lok.sh SYSTEMD vmfsck -i debian.raw -Y
+  ./lok.sh SYSTEMD vmfsck SET image=debian.raw RUN

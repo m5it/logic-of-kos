@@ -83,6 +83,12 @@
 - Added: `-d` / `--debug`
 - Fixed save_data() using heredoc (was causing hangs)
 
+### vmfsck.sh (SYSTEMD)
+- Rewritten to use pca.sh framework
+- Added `-i` / `--image` and `-Y` / `--yes` options
+- Fixed awk variable expansion in loop device detection
+- Added help file: help_for_vmfsck.txk
+
 ### vmfnet.sh (SYSTEMD)
 - Fixed `lok` path to use `/usr/local/bin/lok`
 - Fixed subscripts paths: msdnet, vmdnet, vmcnet
