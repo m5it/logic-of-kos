@@ -1,0 +1,28 @@
+GIT/gittimer - Timer daemon for auto-commit/auto-push
+
+Reads instruction files from gitautocommit and gitautopush,
+then periodically checks each watched git directory for
+uncommitted changes. Acts every 60 seconds on repos that
+haven't been checked in the last 5 minutes.
+
+- Entries from gitautocommit: auto-commits changes
+- Entries from gitautopush:   auto-commits and pushes
+  (uses configured remote and branch from instructions)
+
+Usage:
+  gittimer -s                        Start daemon
+  gittimer -d                        Stop daemon
+  gittimer -S                        Show daemon status
+
+Options:
+  -s, --start    Start the timer daemon in background
+  -d, --stop     Stop the timer daemon
+  -S, --status   Show daemon status, queues, and recent log
+
+Storage:
+  ~/.config/lok/GIT/gittimer/timer.pid
+  ~/.config/lok/GIT/gittimer/timer.log
+  ~/.config/lok/GIT/gitautocommit/instructions
+  ~/.config/lok/GIT/gitautopush/instructions
+
+Entry format: TIMESTAMP|/path/to/repo|REMOTE|BRANCH
