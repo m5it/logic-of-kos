@@ -1,0 +1,3 @@
+Extract UUID or PARTUUID from a block device.
+Usage: lok SYSTEM uuidex RUN -d /dev/sda
+       lok SYSTEM uuidex RUN -d /dev/sda1 -p

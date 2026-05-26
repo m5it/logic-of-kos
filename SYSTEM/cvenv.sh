@@ -13,7 +13,7 @@ if [[ $1 == "" ]]; then
 	exit
 fi
 #
-python -m venv $1
+python3 -m venv $1
 #
 echo "To activate: "
 echo "source "$1"/bin/activate"
