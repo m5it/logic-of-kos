@@ -1,0 +1,22 @@
+GIT/gitautopush - Manage auto-push directory list
+
+Add or remove git directories from the auto-push watch list.
+The timer daemon (gittimer) reads this list and auto-commits
+then auto-pushes any uncommitted changes found in watched repos.
+
+Usage:
+  gitautopush -a add -r origin -b main /path/to/repo
+  gitautopush -a delete /path/to/repo
+  gitautopush /path/to/repo                    (defaults: add, origin, current branch)
+  gitautopush -l                               (list all entries)
+  lok GIT gitautopush RUN
+
+Options:
+  -a, --action    Action: add or delete (default: add)
+  -l, --list      List all entries with check times
+  -r, --remote    Git remote name (default: origin)
+  -b, --branch    Git branch to push to (default: current branch)
+
+Storage:
+  ~/.config/lok/GIT/gitautopush/instructions
+  Format: TIMESTAMP|PATH|REMOTE|BRANCH

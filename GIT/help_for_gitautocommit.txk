@@ -1,0 +1,22 @@
+GIT/gitautocommit - Manage auto-commit directory list
+
+Add or remove git directories from the auto-commit watch list.
+The timer daemon (gittimer) reads this list and auto-commits
+any uncommitted changes found in watched repos.
+
+Usage:
+  gitautocommit -a add -r origin -b main /path/to/repo
+  gitautocommit -a delete /path/to/repo
+  gitautocommit /path/to/repo                    (defaults: add, origin, current branch)
+  gitautocommit -l                               (list all entries)
+  lok GIT gitautocommit RUN
+
+Options:
+  -a, --action    Action: add or delete (default: add)
+  -l, --list      List all entries with check times
+  -r, --remote    Git remote name (default: origin)
+  -b, --branch    Git branch to push to (default: current branch)
+
+Storage:
+  ~/.config/lok/GIT/gitautocommit/instructions
+  Format: TIMESTAMP|PATH|REMOTE|BRANCH
