@@ -7,7 +7,7 @@ PRE=$(dirname $(realpath $0))"/../"
 source $PRE'src/prepare.sh'
 
 PCA_ON_NONE_HELP=true
-PCA=("IMAGE" "DIRECTORY" "VFB" "YES")
+PCA=("IMAGE" "DIRECTORY" "VFB" "YES" "BIND")
 
 ARG_IMAGE=""
 ARG_IMAGE_STRING=true
@@ -33,7 +33,15 @@ YES_SHORT_ARG="-Y"
 YES_ARG="--yes"
 YES_VAL=false
 
+ARG_BIND=""
+ARG_BIND_STRING=true
+BIND_SHORT_ARG="-B"
+BIND_ARG="--bind"
+BIND_VAL=true
+
 source $PRE'src/pca.sh'
+
+[[ -z "$ARG_IMAGE" && -z "$ARG_DIRECTORY" && -n "$1" && "$1" != -* ]] && ARG_IMAGE="$1"
 
 debug_echo() {
 	[[ "$ARG_DEBUG" == "true" ]] && echo "[DEBUG] $*" >&2
@@ -43,12 +51,21 @@ IMAGE="${ARG_IMAGE}"
 DIRECTORY="${ARG_DIRECTORY}"
 VFB="${ARG_VFB}"
 YES="${ARG_YES:-false}"
+BIND="${ARG_BIND}"
 
 # Build command
 if [[ -n "$DIRECTORY" ]]; then
 	CMD="-D $DIRECTORY"
 else
 	CMD="--image $IMAGE"
+fi
+
+# Parse semicolon-separated bind directories
+if [[ -n "$BIND" ]]; then
+	IFS=';' read -ra BIND_DIRS <<< "$BIND"
+	for dir in "${BIND_DIRS[@]}"; do
+		CMD="$CMD --bind=$dir"
+	done
 fi
 
 # Video Framebuffer options

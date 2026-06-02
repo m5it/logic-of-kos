@@ -1,0 +1,87 @@
+{
+  "id": "1779837879.0993385",
+  "title": "Create mirroring bash script",
+  "instructions": "Create a Bash script at SYSTEM/mirdir.sh that mirrors two directories specified by the command\u2011line options -s <source> and -d <destination>. The script should validate inputs, display help, and perform a true mirror (including deletions) using rsync.",
+  "startTimestamp": 1779837879.0993795,
+  "endTimestamp": 1779841180.4055934,
+  "tasks": {
+    "1779837879.1024337": {
+      "id": "1779837879.1024337",
+      "status": "in_progress",
+      "instruction": "Create SYSTEM/mirdir.sh with a shebang line and a placeholder for usage help. Ensure the file has executable permissions.",
+      "startTimestamp": 1779837887.7681036,
+      "endTimestamp": null,
+      "log": [
+        {
+          "timestamp": 1779841167.5620217,
+          "text": "Build started"
+        }
+      ]
+    },
+    "1779837879.1053526": {
+      "id": "1779837879.1053526",
+      "status": "in_progress",
+      "instruction": "Implement option parsing to accept -s <source> and -d <destination>. Include a -h or --help flag that prints usage information. Validate that both -s and -d are provided and that the source directory exists.",
+      "startTimestamp": 1779838509.8566296,
+      "endTimestamp": null,
+      "log": [
+        {
+          "timestamp": 1779841167.5620277,
+          "text": "Build started"
+        }
+      ]
+    },
+    "1779837879.1278207": {
+      "id": "1779837879.1278207",
+      "status": "completed",
+      "instruction": "Check whether the destination directory exists. If not, create it. If it exists, ensure it is a directory. Handle errors gracefully.",
+      "startTimestamp": null,
+      "endTimestamp": 1779841172.687098,
+      "log": [
+        {
+          "timestamp": 1779841174.4543571,
+          "text": "Created SYSTEM/mirdir.sh with shebang and basic structure including usage help."
+        }
+      ]
+    },
+    "1779837879.130856": {
+      "id": "1779837879.130856",
+      "status": "completed",
+      "instruction": "Use rsync with the following options: -a (archive), --delete (remove files in dest not in src), -v (verbose). Construct the command as `rsync -av --delete \"$SRC\"/ \"$DST\"/` ensuring trailing slashes for correct behavior.",
+      "startTimestamp": null,
+      "endTimestamp": 1779841174.4583397,
+      "log": [
+        {
+          "timestamp": 1779841176.4523387,
+          "text": "Implemented rsync command with -a, --delete, and -v options. Ensured trailing slashes for correct behavior."
+        }
+      ]
+    },
+    "1779837879.13324": {
+      "id": "1779837879.13324",
+      "status": "completed",
+      "instruction": "After rsync completes, exit with the same status code. If any validation fails, exit with a non\u2011zero status and an appropriate error message.",
+      "startTimestamp": null,
+      "endTimestamp": 1779841176.4564548,
+      "log": [
+        {
+          "timestamp": 1779841178.5131211,
+          "text": "Added exit status handling to propagate rsync exit code. Implemented error handling for validation failures with appropriate error messages and non-zero exit codes."
+        }
+      ]
+    },
+    "1779837879.1357334": {
+      "id": "1779837879.1357334",
+      "status": "completed",
+      "instruction": "Add descriptive comments throughout the script explaining each section and the purpose of key variables and commands.",
+      "startTimestamp": null,
+      "endTimestamp": 1779841178.5164912,
+      "log": [
+        {
+          "timestamp": 1779841180.4011815,
+          "text": "Added comprehensive comments to explain the script structure, variable purposes, and command functions."
+        }
+      ]
+    }
+  }
+}

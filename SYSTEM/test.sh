@@ -1,7 +1,7 @@
 #!/bin/bash
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/../"
-source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+source $PRE'src/prepare.sh'
 
 # 
 IDENTIFY_SHORT_ARG="-i"          #
@@ -13,10 +13,11 @@ function IDENTIFY_FUNCTION(){    #
 }
 #
 PCA=("IDENTIFY")
+PCA_ON_NONE_HELP=false
 #
 ARG_IDENTIFY="" # defined value from command line arguments
 #
-source $PRE"pca.sh"
+source $PRE'src/pca.sh'
 
 #
 echo "ARG_IDENTIFY: "$ARG_IDENTIFY

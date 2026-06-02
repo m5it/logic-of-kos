@@ -4,7 +4,7 @@
 #--
 # Prepare global variables and data
 PRE=$(dirname $(realpath $0))"/../"
-source $PRE'prepare.sh' # include prepared global variables like: realpath, filenick, filename..
+source $PRE'src/prepare.sh'
 
 #--
 # Define variables for pca.sh ( parse command line arguments )
@@ -51,7 +51,7 @@ PATH_VAL=true
 
 #--
 # Parse command line arguments
-source $PRE'pca.sh'
+source $PRE'src/pca.sh'
 #
 #echo "ARG_IDENTIFY: "$ARG_IDENTIFY
 #echo "ARG_UMOUNT: "$ARG_UMOUNT

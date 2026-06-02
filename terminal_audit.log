@@ -1,0 +1,2 @@
+[2026-05-27 00:06:54] CMD: mkdir your_directory_name | SUCCESS: True | OUTPUT_LEN: 0
+[2026-05-27 00:06:54] CMD: ls your_directory_name | SUCCESS: True | OUTPUT_LEN: 0
