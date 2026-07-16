@@ -13,6 +13,27 @@ PCA=()
 
 PCA_ON_NONE_HELP=false
 
+# Special flags handled before PCA
+for arg in "$@"; do
+	if [[ "$arg" == "-HH" ]]; then
+		# Show history of this tool
+		SN="gmd-gui"
+		history_init "$SN"
+		history_list
+		exit 0
+	elif [[ "$arg" == "--tool-help" ]]; then
+		# gmd-gui has no CLI help, explain that
+		if submodule_check "$SM_PATH"; then
+			echo "gmd-gui launches a graphical interface - no CLI help available."
+			echo "Run 'gmd-gui' to launch the GUI."
+		else
+			echo "Error: Submodule 'gmd' is not installed." >&2
+			exit 1
+		fi
+		exit 0
+	fi
+done
+
 source $PRE'src/pca.sh'
 
 # Check if submodule is installed

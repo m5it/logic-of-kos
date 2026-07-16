@@ -70,6 +70,12 @@ ARG1_VAL=true|false               # true=takes value, false=boolean flag
 - `-RR`, `--run_config` - lok's run-with-config (loads config from $DL)
 - `-Y`, `--yes` - lok's confirm flag
 
+**Submodule wrapper scripts support `-HH` and `--tool-help`:**
+- `-HH` shows the script's run history (e.g., `gmd-merge -HH`)
+- `--tool-help` shows the underlying submodule tool's real help (e.g., `gmd-merge --tool-help`)
+- `-h` still shows the PCA-based framework help
+- Implemented by checking `$@` before sourcing `pca.sh`
+
 ## Directory Convention
 
 - Uppercase dirs: `NET/`, `SYSTEMD/`, `GIT/`, `DB/`, etc.

@@ -65,6 +65,26 @@ JOBS_SHORT_ARG="-j"
 JOBS_ARG="--jobs"
 JOBS_VAL=true
 
+# Special flags handled before PCA
+for arg in "$@"; do
+	if [[ "$arg" == "-HH" ]]; then
+		# Show history of this tool
+		SN="gmd-commit"
+		history_init "$SN"
+		history_list
+		exit 0
+	elif [[ "$arg" == "--tool-help" ]]; then
+		# Show real submodule tool help
+		if submodule_check "$SM_PATH"; then
+			export PYTHONPATH="$SM_PATH:$PYTHONPATH"
+			exec python3 "$SM_PATH/gmd/cli/commit.py" --help
+		else
+			echo "Error: Submodule 'gmd' is not installed." >&2
+			exit 1
+		fi
+	fi
+done
+
 source $PRE'src/pca.sh'
 
 # Check if submodule is installed
@@ -126,9 +146,5 @@ tmpdata=$(concat_lines "$livefile")
 # Execute the actual command
 export PYTHONPATH="$SM_PATH:$PYTHONPATH"
 python3 "$SM_PATH/gmd/cli/commit.py" "${ARGS[@]}"
-exit_code=$?
+exit $?
 
-echo ""
-history_list 3
-
-exit $exit_code
