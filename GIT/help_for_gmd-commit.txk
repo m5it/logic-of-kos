@@ -1,0 +1,30 @@
+gmd-commit (GIT/gmd-commit.sh) - LoK wrapper for gmd-commit batch commit tool
+
+Commits changes across multiple git submodules using the gmd submodule.
+
+Usage:
+  gmd-commit -M /path/to/repo -m "Update dependencies" --push
+  gmd-commit -M /path/to/repo -o status
+  lok GIT gmd-commit RUN -M /path/to/repo -m "Update" --push
+
+Special flags:
+  -h, --help        Show this LoK/PCA framework help
+  -HH, --HH         Show run history for this tool
+  --tool-help       Show the real gmd-commit --help from the submodule
+
+Options:
+  -M, --directory   Git directory containing submodules
+  -m, --message     Commit message
+  -c, --config      Configuration file path
+  -f, --format      Output format: color, plain, json, silent
+  -n, --dry-run     Show what would be done without making changes
+  --push            Push after commit
+  -o, --operation   Operation: status, add, commit, push, full
+  --submodules      Specific submodules to process
+  -j, --jobs        Number of parallel workers
+
+Examples:
+  gmd-commit -M . -m "Update submodules" --push
+  gmd-commit -M . -o status
+  lok GIT gmd-commit SET directory=/path/to/repo message="Update"
+  lok GIT gmd-commit RUN

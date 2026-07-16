@@ -1,0 +1,21 @@
+gmd-gui (GIT/gmd-gui.sh) - LoK wrapper for gmd-gui graphical tool
+
+Launches the graphical user interface for GMD directory synchronization.
+
+Usage:
+  gmd-gui
+  lok GIT gmd-gui RUN
+
+Special flags:
+  -h, --help        Show this LoK/PCA framework help
+  -HH, --HH         Show run history for this tool
+  --tool-help       Show information about the gmd-gui tool
+
+Notes:
+  gmd-gui opens a Tkinter window. No command-line arguments are required.
+  The GUI provides side-by-side directory comparison, visual sync, and
+  exclude pattern configuration.
+
+Examples:
+  gmd-gui
+  lok GIT gmd-gui RUN

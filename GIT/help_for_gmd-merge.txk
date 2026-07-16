@@ -1,0 +1,34 @@
+gmd-merge (GIT/gmd-merge.sh) - LoK wrapper for gmd-merge directory sync tool
+
+Synchronizes files between two directories using the gmd submodule.
+
+Usage:
+  gmd-merge -M /path/to/master -S /path/to/slave -a preview
+  gmd-merge -M /src -S /dst -a sync --backup
+  lok GIT gmd-merge RUN -M /src -S /dst -a preview
+
+Special flags:
+  -h, --help        Show this LoK/PCA framework help
+  -HH, --HH         Show run history for this tool
+  --tool-help       Show the real gmd-merge --help from the submodule
+
+Options:
+  -M, --master      Master directory (source)
+  -S, --slave       Slave directory (destination)
+  -c, --config      Configuration file path
+  -a, --action      Action: preview, sync, diff, backup
+  -f, --format      Output format: color, plain, json, silent
+  -i, --interactive Interactive mode (confirm each file)
+  -b, --backup      Create backup before changes
+  -n, --dry-run     Show what would be done without making changes
+  -r, --reverse     Reverse direction (slave to master)
+  -e, --excludes    Exclude patterns
+  -p, --progress    Show progress bars
+  -y, --yes         Yes to all (skip confirmations)
+  --categories      Categories to process: missing,update,exists,extra
+
+Examples:
+  gmd-merge -M ./dev -S ./prod -a preview
+  gmd-merge -M ./dev -S ./prod -a sync --backup -y
+  lok GIT gmd-merge SET master=/src slave=/dst action=sync
+  lok GIT gmd-merge RUN

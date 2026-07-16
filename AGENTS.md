@@ -70,11 +70,64 @@ ARG1_VAL=true|false               # true=takes value, false=boolean flag
 - `-RR`, `--run_config` - lok's run-with-config (loads config from $DL)
 - `-Y`, `--yes` - lok's confirm flag
 
-**Submodule wrapper scripts support `-HH` and `--tool-help`:**
-- `-HH` shows the script's run history (e.g., `gmd-merge -HH`)
+**Submodule wrapper scripts support `-HH`, `--HH`, and `--tool-help`:**
+- `-HH` / `--HH` show the script's run history (e.g., `gmd-merge -HH`)
 - `--tool-help` shows the underlying submodule tool's real help (e.g., `gmd-merge --tool-help`)
-- `-h` still shows the PCA-based framework help
+- `-h` / `--help` show the PCA-based framework help
 - Implemented by checking `$@` before sourcing `pca.sh`
+
+## Submodule Generator
+
+Use `src/submodule-generate.sh` to create wrappers automatically:
+
+```bash
+./src/submodule-generate.sh GIT      # Generate for one category
+./src/submodule-generate.sh          # Generate for all categories
+```
+
+### Adding a New Submodule
+
+1. Add the submodule directory: `git submodule add <url> CATEGORY/<name>`
+2. Create `CATEGORY/<name>/.lok.conf`:
+
+```ini
+NAME:mytool
+URL:https://github.com/user/mytool.git
+INSTALL:git
+TYPE:python
+```
+
+3. Create `CATEGORY/<name>/.lok.d/<tool>.conf` for each exposed command:
+
+```ini
+NAME:mytool-cmd
+ENTRY:cli/cmd.py          # Path inside submodule
+DESCRIPTION:Does something useful
+PCA_ON_NONE_HELP:true
+
+ARG:INPUT:-i:--input:true
+ARG:OUTPUT:-o:--output:true
+ARG:VERBOSE:-v:--verbose:false
+```
+
+`ARG` format: `VARNAME:SHORT:LONG:HAS_VALUE` (`HAS_VALUE` = `true` or `false`)
+
+4. Run the generator:
+
+```bash
+./src/submodule-generate.sh CATEGORY
+```
+
+This creates:
+- `CATEGORY/<tool>.sh` — wrapper script
+- `CATEGORY/<tool>` — friendly symlink
+- `CATEGORY/help_for_<tool>.txk` — basic help file (edit to improve)
+
+5. Reinstall to update system symlinks:
+
+```bash
+./install.sh -u && ./install.sh -l
+```
 
 ## Directory Convention
 
