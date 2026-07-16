@@ -101,12 +101,12 @@ submodule_install_clone() {
 }
 
 # submodule_prompt - Interactive prompt when submodule not found
-# Usage: submodule_prompt "<name>" "<url>"
+# Usage: submodule_prompt "<name>" "<url>" "<path>"
 # Returns 0 if installed/ready, 1 if user skipped
 submodule_prompt() {
 	local name=$1
 	local url=$2
-	local sm_path="$PRE/GIT/$name"
+	local sm_path=$3
 	echo ""
 	echo "Submodule '$name' is not installed."
 	echo ""
@@ -149,6 +149,6 @@ submodule_ensure() {
 		echo "Error: No URL found for submodule '$name'. Check .lok.conf" >&2
 		return 1
 	fi
-	submodule_prompt "$name" "$url"
+	submodule_prompt "$name" "$url" "$path"
 	return $?
 }

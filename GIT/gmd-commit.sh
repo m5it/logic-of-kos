@@ -11,7 +11,7 @@ SM_PATH="$PRE/GIT/gmd"
 # Check if submodule is installed
 if ! submodule_check "$SM_PATH"; then
 	submodule_get_config "$SM_PATH" 2>/dev/null
-	submodule_prompt "${SM_NAME:-gmd}" "${SM_URL:-https://github.com/m5it/gmd.git}"
+	submodule_prompt "${SM_NAME:-gmd}" "${SM_URL:-https://github.com/m5it/gmd.git}" "$SM_PATH"
 	[[ $? -ne 0 ]] && exit 1
 	# Verify it got installed
 	if ! submodule_check "$SM_PATH"; then
