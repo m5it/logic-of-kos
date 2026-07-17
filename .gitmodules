@@ -11,3 +11,6 @@
 [submodule "FW/fwspoof"]
 	path = FW/fwspoof
 	url = https://github.com/m5it/fwspoof
+[submodule "FW/fwtrash"]
+	path = FW/fwtrash
+	url = https://github.com/m5it/fwtrash

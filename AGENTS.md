@@ -101,7 +101,10 @@ TYPE:python
 
 ```ini
 NAME:mytool-cmd
-ENTRY:cli/cmd.py          # Path inside submodule
+ENTRY:cli/cmd.py          # Path inside submodule (use ENTRY or MODULE)
+MODULE:mytool.cli.main    # Python module to run with -m (alternative to ENTRY)
+SUBCOMMAND:run            # Optional subcommand (e.g. for Typer/Click apps)
+PYTHONPATH:v2/src         # Optional extra PYTHONPATH relative to submodule root
 DESCRIPTION:Does something useful
 PCA_ON_NONE_HELP:true
 
@@ -111,6 +114,8 @@ ARG:VERBOSE:-v:--verbose:false
 ```
 
 `ARG` format: `VARNAME:SHORT:LONG:HAS_VALUE` (`HAS_VALUE` = `true` or `false`)
+
+Use `MODULE` + `SUBCOMMAND` when the tool is a Python package that must be run as a module (e.g. `python -m fwtrash.cli.main run`). Use `ENTRY` for a single Python script.
 
 4. Run the generator:
 

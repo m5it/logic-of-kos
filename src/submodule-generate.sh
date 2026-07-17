@@ -29,6 +29,9 @@ generate_wrapper() {
 	local spec_file=$6
 	local tool_name=""
 	local entry=""
+	local module=""
+	local subcommand=""
+	local pythonpath=""
 	local description=""
 	local pca_on_none="true"
 	local -a pca_list=()
@@ -42,6 +45,9 @@ generate_wrapper() {
 		case "$key" in
 			NAME) tool_name="$value" ;;
 			ENTRY) entry="$value" ;;
+			MODULE) module="$value" ;;
+			SUBCOMMAND) subcommand="$value" ;;
+			PYTHONPATH) pythonpath="$value" ;;
 			DESCRIPTION) description="$value" ;;
 			PCA_ON_NONE_HELP) pca_on_none="$value" ;;
 			ARG)
@@ -54,7 +60,7 @@ generate_wrapper() {
 	done < "$spec_file"
 	
 	[[ -z "$tool_name" ]] && { echo "Error: missing NAME in $spec_file"; return 1; }
-	[[ -z "$entry" ]] && { echo "Error: missing ENTRY in $spec_file"; return 1; }
+	[[ -z "$entry" && -z "$module" ]] && { echo "Error: missing ENTRY or MODULE in $spec_file"; return 1; }
 	
 	local wrapper="$PRE$category/$tool_name.sh"
 	local symlink="$PRE$category/$tool_name"
@@ -118,6 +124,28 @@ generate_wrapper() {
 		fi
 	done
 	
+	# Build pythonpath export
+	local py_path_export="export PYTHONPATH=\"\$SM_PATH:\$PYTHONPATH\""
+	if [[ -n "$pythonpath" ]]; then
+		py_path_export="export PYTHONPATH=\"\$SM_PATH/$pythonpath:\$SM_PATH:\$PYTHONPATH\""
+	fi
+	
+	# Build execution commands
+	local help_cmd=""
+	local run_cmd=""
+	if [[ -n "$module" ]]; then
+		if [[ -n "$subcommand" ]]; then
+			help_cmd="exec python3 -m $module $subcommand --help"
+			run_cmd="python3 -m $module $subcommand \"\${ARGS[@]}\""
+		else
+			help_cmd="exec python3 -m $module --help"
+			run_cmd="python3 -m $module \"\${ARGS[@]}\""
+		fi
+	else
+		help_cmd="exec python3 \"\$SM_PATH/$entry\" --help"
+		run_cmd="python3 \"\$SM_PATH/$entry\" \"\${ARGS[@]}\""
+	fi
+	
 	# Create wrapper script
 	cat > "$wrapper" <<EOF
 #!/bin/bash
@@ -148,8 +176,8 @@ for arg in "\$@"; do
 			;;
 		--tool-help)
 			if submodule_check "\$SM_PATH"; then
-				export PYTHONPATH="\$SM_PATH:\$PYTHONPATH"
-				exec python3 "\$SM_PATH/$entry" --help
+				$py_path_export
+				$help_cmd
 			else
 				echo "Error: Submodule '$sm_name' is not installed." >&2
 				exit 1
@@ -198,8 +226,8 @@ tmpdata=\$(concat_lines "\$livefile")
 [[ -n "\$tmpdata" ]] && history_add "\$tmpdata"
 
 # Execute the actual command
-export PYTHONPATH="\$SM_PATH:\$PYTHONPATH"
-python3 "\$SM_PATH/$entry" "\${ARGS[@]}"
+$py_path_export
+$run_cmd
 exit \$?
 EOF
 	
