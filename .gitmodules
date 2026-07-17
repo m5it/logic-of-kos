@@ -8,3 +8,6 @@
 [submodule "GIT/gmd"]
 	path = GIT/gmd
 	url = https://github.com/m5it/gmd.git
+[submodule "FW/fwspoof"]
+	path = FW/fwspoof
+	url = https://github.com/m5it/fwspoof
